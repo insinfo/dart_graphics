@@ -29,23 +29,41 @@ class Color implements IColorType {
         alpha = other.alpha;
 
   /// Parse hex string like "#RRGGBB" or "#RRGGBBAA"
-  factory Color.fromHex(String hex) {
+  factory Color.fromHex(String value) {
+    String hex = value.trim();
     if (hex.startsWith('#')) {
       hex = hex.substring(1);
+    } else if (hex.startsWith('0x') || hex.startsWith('0X')) {
+      hex = hex.substring(2);
     }
+
+    final originalLength = hex.length;
+    if (originalLength == 3 || originalLength == 4) {
+      final buffer = StringBuffer();
+      for (int i = 0; i < hex.length; i++) {
+        final char = hex[i];
+        buffer.write(char);
+        buffer.write(char);
+      }
+      hex = buffer.toString();
+    }
+
     if (hex.length == 6) {
-      int r = int.parse(hex.substring(0, 2), radix: 16);
-      int g = int.parse(hex.substring(2, 4), radix: 16);
-      int b = int.parse(hex.substring(4, 6), radix: 16);
-      return Color(r, g, b);
-    } else if (hex.length == 8) {
-      int r = int.parse(hex.substring(0, 2), radix: 16);
-      int g = int.parse(hex.substring(2, 4), radix: 16);
-      int b = int.parse(hex.substring(4, 6), radix: 16);
-      int a = int.parse(hex.substring(6, 8), radix: 16);
+      final r = int.parse(hex.substring(0, 2), radix: 16);
+      final g = int.parse(hex.substring(2, 4), radix: 16);
+      final b = int.parse(hex.substring(4, 6), radix: 16);
+      return Color(r, g, b, 255);
+    }
+
+    if (hex.length == 8) {
+      final r = int.parse(hex.substring(0, 2), radix: 16);
+      final g = int.parse(hex.substring(2, 4), radix: 16);
+      final b = int.parse(hex.substring(4, 6), radix: 16);
+      final a = int.parse(hex.substring(6, 8), radix: 16);
       return Color(r, g, b, a);
     }
-    throw FormatException("Invalid hex color format");
+
+    throw FormatException('Invalid hex color format: $value');
   }
 
   static Color fromWavelength(double w, [double gamma = 1.0]) {

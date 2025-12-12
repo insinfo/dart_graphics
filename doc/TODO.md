@@ -9,9 +9,12 @@ continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando ra
 e C:\MyDartProjects\agg\agg-sharp\Typography 
 
 portar os testes relevantes de C:\MyDartProjects\agg\agg-sharp\Tests para dart
+e tambem continue se inspirando nos testes de C:\MyDartProjects\agg\agg-rust\tests e implemente testes ispirados nisso em dart copie as imagens necessaria de C:\MyDartProjects\agg\agg-rust\images para C:\MyDartProjects\agg\resources e continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
 
 use (ripgrep) rg para busca no codigo fonte
 use magick.exe ou compare.exe
+
+mantenha este TODO atualizado C:\MyDartProjects\agg\doc\TODO.md
 ---
 use dart analyze para verficar se o codigo está correto
 ## ✅ Fase 0: Estrutura de Pastas e Utilitários Essenciais - CONCLUÍDO
@@ -733,3 +736,6 @@ GitHub
 +2
 GitHub
 +2 veja a pasta referencias la tem bastantes testes e arquivos que podem ser copiados para dentro de resources para testes comece a implementar bastantes teste unitarios e de integração C:\MyDartProjects\agg\referencias
+
+analize o codigo fonte original minuciosamente em C# C:\MyDartProjects\agg\agg-sharp\agg e 
+C:\MyDartProjects\agg\agg-sharp\Typography e os testes relevantes em C:\MyDartProjects\agg\agg-sharp\Tests\Agg.Tests\Agg   C:\MyDartProjects\agg\agg-sharp\Tests\Agg.Tests\Agg.VectorMath C:\MyDartProjects\agg\agg-sharp\Tests\Agg.Tests\Other e os testes relevantes em C:\MyDartProjects\agg\agg-rust\tests e atualize C:\MyDartProjects\agg\doc\TODO.md com tudo que esta faltando portar e implementar

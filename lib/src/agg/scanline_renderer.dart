@@ -9,7 +9,8 @@ import 'package:agg/src/agg/spans/span_generator.dart';
 
 /// Helpers to render scanlines into an image buffer.
 class ScanlineRenderer {
-  static void renderSolid(IRasterizer ras, IScanlineCache sl, IImageByte img, Color color) {
+  static void renderSolid(
+      IRasterizer ras, IScanlineCache sl, IImageByte img, Color color) {
     if (!ras.rewind_scanlines()) return;
     sl.reset(ras.min_x(), ras.max_x());
     while (ras.sweep_scanline(sl)) {
@@ -33,19 +34,23 @@ class ScanlineRenderer {
     }
   }
 
-  static void _renderSolidSingleScanline(IScanlineCache sl, IImageByte img, Color color) {
+  static void _renderSolidSingleScanline(
+      IScanlineCache sl, IImageByte img, Color color) {
     final int y = sl.y();
     if (y < 0 || y >= img.height) return;
 
     final Uint8List covers = sl.getCovers();
+    final bool hasCovers = covers.isNotEmpty;
     ScanlineSpan span = sl.begin();
     int remaining = sl.num_spans();
     while (true) {
       final int spanLen = span.len;
       if (spanLen > 0) {
-        _blendClippedSolidSpan(img, color, covers, span.x, spanLen, span.cover_index, y);
+        _blendClippedSolidSpan(img, color, covers, span.x, spanLen,
+            span.cover_index, y, hasCovers);
       } else if (spanLen < 0) {
-        _blendClippedHLine(img, color, covers[span.cover_index], span.x, -spanLen, y);
+        final int cover = hasCovers ? covers[span.cover_index] : 255;
+        _blendClippedHLine(img, color, cover, span.x, -spanLen, y);
       }
 
       if (--remaining == 0) break;
@@ -61,6 +66,7 @@ class ScanlineRenderer {
     int len,
     int coverIndex,
     int y,
+    bool hasCovers,
   ) {
     if (len <= 0 || x >= img.width || y < 0 || y >= img.height) return;
     int startX = x;
@@ -73,12 +79,17 @@ class ScanlineRenderer {
     if (startX >= img.width) return;
     int maxLen = img.width - startX;
     if (len > maxLen) len = maxLen;
-    if (len > 0) {
+    if (len <= 0) return;
+
+    if (hasCovers) {
       img.blend_solid_hspan(startX, y, len, color, covers, startCover);
+    } else {
+      img.blend_hline(startX, y, startX + len - 1, color, 255);
     }
   }
 
-  static void _blendClippedHLine(IImageByte img, Color color, int cover, int x, int len, int y) {
+  static void _blendClippedHLine(
+      IImageByte img, Color color, int cover, int x, int len, int y) {
     if (len <= 0 || x >= img.width || y < 0 || y >= img.height) return;
     int startX = x;
     int endX = x + len - 1;
@@ -97,6 +108,7 @@ class ScanlineRenderer {
     if (y < 0 || y >= img.height) return;
 
     final Uint8List covers = sl.getCovers();
+    final bool hasCovers = covers.isNotEmpty;
     ScanlineSpan span = sl.begin();
     int remaining = sl.num_spans();
     while (true) {
@@ -108,7 +120,8 @@ class ScanlineRenderer {
       if (len > 0) {
         final List<Color> colors = alloc.allocate(len);
         generator.generate(colors, 0, x, y, len);
-        _blendGeneratedSpan(img, colors, covers, x, y, len, span.cover_index, firstCoverForAll);
+        _blendGeneratedSpan(img, colors, covers, x, y, len, span.cover_index,
+            firstCoverForAll, hasCovers);
       }
 
       if (--remaining == 0) break;
@@ -125,6 +138,7 @@ class ScanlineRenderer {
     int len,
     int coverIndex,
     bool firstCoverForAll,
+    bool hasCovers,
   ) {
     if (y < 0 || y >= img.height || len <= 0) return;
 
@@ -140,6 +154,12 @@ class ScanlineRenderer {
     if (len > maxLen) len = maxLen;
     if (len <= 0) return;
 
-    img.blend_color_hspan(startX, y, len, colors, 0, covers, startCoverIndex, firstCoverForAll);
+    if (hasCovers) {
+      img.blend_color_hspan(
+          startX, y, len, colors, 0, covers, startCoverIndex, firstCoverForAll);
+    } else {
+      final Uint8List fullCover = Uint8List(1)..[0] = 255;
+      img.blend_color_hspan(startX, y, len, colors, 0, fullCover, 0, true);
+    }
   }
 }
