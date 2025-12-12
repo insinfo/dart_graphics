@@ -8,8 +8,10 @@
 continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
 e C:\MyDartProjects\agg\agg-sharp\Typography 
 
-use (ripgrep) rg para busca no codigo fonte
+portar os testes relevantes de C:\MyDartProjects\agg\agg-sharp\Tests para dart
 
+use (ripgrep) rg para busca no codigo fonte
+use magick.exe ou compare.exe
 ---
 use dart analyze para verficar se o codigo está correto
 ## ✅ Fase 0: Estrutura de Pastas e Utilitários Essenciais - CONCLUÍDO

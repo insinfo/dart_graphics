@@ -22,6 +22,7 @@ void expectPngMatchesGolden(
   int maxDifferentPixels = 0,
   bool compareAlpha = true,
   String? diffOutputPath,
+  bool compositeOnWhite = false,
 }) {
   final generatedFile = File(generatedPath);
   final goldenFile = File(goldenPath);
@@ -47,15 +48,41 @@ void expectPngMatchesGolden(
     diff = img.Image(width: gen.width, height: gen.height);
   }
 
+  int compositeChannel(int src, int alpha, int bg) {
+    return ((src * alpha) + (bg * (255 - alpha)) + 127) ~/ 255;
+  }
+
   for (var y = 0; y < gen.height; y++) {
     for (var x = 0; x < gen.width; x++) {
       final a = gen.getPixel(x, y);
       final b = gold.getPixel(x, y);
 
-      final dr = (a.r.toInt() - b.r.toInt()).abs();
-      final dg = (a.g.toInt() - b.g.toInt()).abs();
-      final db = (a.b.toInt() - b.b.toInt()).abs();
-      final da = compareAlpha ? (a.a.toInt() - b.a.toInt()).abs() : 0;
+      int ar = a.r.toInt();
+      int ag = a.g.toInt();
+      int ab = a.b.toInt();
+      int aa = a.a.toInt();
+
+      int br = b.r.toInt();
+      int bg = b.g.toInt();
+      int bb = b.b.toInt();
+      int ba = b.a.toInt();
+
+      if (compositeOnWhite) {
+        ar = compositeChannel(ar, aa, 255);
+        ag = compositeChannel(ag, aa, 255);
+        ab = compositeChannel(ab, aa, 255);
+        aa = 255;
+
+        br = compositeChannel(br, ba, 255);
+        bg = compositeChannel(bg, ba, 255);
+        bb = compositeChannel(bb, ba, 255);
+        ba = 255;
+      }
+
+      final dr = (ar - br).abs();
+      final dg = (ag - bg).abs();
+      final db = (ab - bb).abs();
+      final da = compareAlpha && !compositeOnWhite ? (aa - ba).abs() : 0;
 
       final pixelMax = [dr, dg, db, da].reduce((m, v) => v > m ? v : m);
       if (pixelMax > maxAbsDiff) maxAbsDiff = pixelMax;
@@ -69,8 +96,10 @@ void expectPngMatchesGolden(
         if (firstDiffX == -1) {
           firstDiffX = x;
           firstDiffY = y;
-          firstA = 'r=${a.r.toInt()} g=${a.g.toInt()} b=${a.b.toInt()} a=${a.a.toInt()}';
-          firstB = 'r=${b.r.toInt()} g=${b.g.toInt()} b=${b.b.toInt()} a=${b.a.toInt()}';
+          firstA =
+              'r=${a.r.toInt()} g=${a.g.toInt()} b=${a.b.toInt()} a=${a.a.toInt()}';
+          firstB =
+              'r=${b.r.toInt()} g=${b.g.toInt()} b=${b.b.toInt()} a=${b.a.toInt()}';
         }
 
         if (diff != null) {
