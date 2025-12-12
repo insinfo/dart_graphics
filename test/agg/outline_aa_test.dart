@@ -41,7 +41,6 @@ void main() {
     // Verify against golden image
     final goldenFile = File('resources/outline_aa.png');
     if (goldenFile.existsSync()) {
-      final goldenBytes = goldenFile.readAsBytesSync();
       final generatedBytes = File('test/tmp/outline_aa.png').readAsBytesSync();
       
       // Simple byte comparison might fail due to compression differences or metadata.

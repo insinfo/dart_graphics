@@ -77,7 +77,7 @@ class VertexSourceAdapter implements IVertexSource {
             var px = RefParam(0.0);
             var py = RefParam(0.0);
             command = vertexSource.vertex(px, py);
-            
+
             if (ShapePath.isVertex(command)) {
               _lastCmd = command;
               if (ShapePath.isMoveTo(command)) {
@@ -86,7 +86,8 @@ class VertexSourceAdapter implements IVertexSource {
                 break;
               }
               _generator.addVertex(px.value, py.value, command);
-              _markers.addVertex(px.value, py.value, FlagsAndCommand.commandLineTo);
+              _markers.addVertex(
+                  px.value, py.value, FlagsAndCommand.commandLineTo);
             } else {
               if (ShapePath.isStop(command)) {
                 _lastCmd = FlagsAndCommand.commandStop;
@@ -131,7 +132,16 @@ class VertexSourceAdapter implements IVertexSource {
 
   @override
   int getLongHashCode([int hash = 0xcbf29ce484222325]) {
-    // TODO: Implement getLongHashCode properly if needed
-    return vertexSource.getLongHashCode(hash);
+    hash = vertexSource.getLongHashCode(hash);
+    hash = (hash ^ _generator.approximationScale.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.autoDetectOrientation.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.innerJoin.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.innerMiterLimit.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.lineCap.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.lineJoin.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.miterLimit.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.shorten.hashCode) * 1099511628211;
+    hash = (hash ^ _generator.width.hashCode) * 1099511628211;
+    return hash;
   }
 }

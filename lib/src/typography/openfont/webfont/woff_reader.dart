@@ -38,6 +38,8 @@ class WoffTableDirectory {
 class WoffReader {
   WoffHeader? _header;
 
+  int _align4(int value) => (value + 3) & ~3;
+
   Typeface? read(ByteOrderSwappingBinaryReader reader) {
     _header = _readWoffHeader(reader);
     if (_header == null) {
@@ -127,7 +129,7 @@ class WoffReader {
       table.expectedStartAt = expectedStartAt;
       table.name = Utils.tagToString(table.tag);
 
-      expectedStartAt += table.origLength;
+      expectedStartAt += _align4(table.origLength);
     }
 
     return tableDirs;
@@ -148,12 +150,17 @@ class WoffReader {
           final decompressedBuffer =
               ZLibDecoder().decodeBytes(compressedBuffer);
           if (decompressedBuffer.length != table.origLength) {
-             // Warning?
+            // Mismatch is not fatal but indicates padding differences.
           }
           outputBuffer.add(decompressedBuffer);
         } catch (e) {
-          return false;
+          throw FormatException('Failed to decompress WOFF table ${table.name}', e);
         }
+      }
+
+      final padding = _align4(table.origLength) - table.origLength;
+      if (padding > 0) {
+        outputBuffer.add(Uint8List(padding));
       }
     }
     return true;

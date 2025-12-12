@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:brotli/brotli.dart';
+import 'package:agg/src/brotli/brotli.dart';
 import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
 import 'package:agg/src/typography/openfont/open_font_reader.dart';
 import 'package:agg/src/typography/openfont/tables/table_entry.dart';
@@ -40,6 +40,8 @@ class Woff2TableDirectory {
 class Woff2Reader {
   Woff2Header? _header;
 
+  int _align4(int value) => (value + 3) & ~3;
+
   static final List<String> _knownTableTags = [
     "cmap", "head", "hhea", "hmtx", "maxp", "name", "OS/2", "post", "cvt ",
     "fpgm", "glyf", "loca", "prep", "CFF ", "VORG", "EBDT", "EBLC", "gasp",
@@ -65,8 +67,9 @@ class Woff2Reader {
     try {
       final decompressedBuffer =
           brotli.decode(compressedBuffer); // brotli package
+      final paddedBuffer = _withFourBytePadding(decompressedBuffer, woff2TableDirs);
       final decompressedStream =
-          ByteOrderSwappingBinaryReader(Uint8List.fromList(decompressedBuffer));
+          ByteOrderSwappingBinaryReader(paddedBuffer);
 
       TableEntryCollection tableEntryCollection =
           _createTableEntryCollection(woff2TableDirs);
@@ -75,9 +78,52 @@ class Woff2Reader {
       return openFontReader.readTableEntryCollection(
           tableEntryCollection, decompressedStream);
     } catch (e) {
-      // Decompression failed
-      return null;
+      throw StateError('Failed to read WOFF2 font: $e');
     }
+  }
+  Uint8List _withFourBytePadding(
+      List<int> decompressedBuffer, List<Woff2TableDirectory> dirs) {
+    final alignedSize = dirs.fold<int>(
+      0,
+      (sum, dir) => sum + _align4(_tableStoredLength(dir)),
+    );
+
+    final padded = Uint8List(alignedSize);
+    var dstOffset = 0;
+    var srcOffset = 0;
+
+    for (final dir in dirs) {
+      final length = _tableStoredLength(dir);
+      final endSrc = srcOffset + length;
+      if (endSrc > decompressedBuffer.length) {
+        throw StateError('Unexpected end of WOFF2 compressed stream');
+      }
+
+      padded.setRange(dstOffset, dstOffset + length,
+          decompressedBuffer.sublist(srcOffset, endSrc));
+
+      srcOffset = endSrc;
+      dstOffset += length;
+
+      final pad = _align4(length) - length;
+      if (pad > 0) {
+        dstOffset += pad;
+      }
+    }
+
+    if (srcOffset != decompressedBuffer.length) {
+      // Remaining bytes may correspond to metadata/private blocks; ignore for now.
+    }
+
+    return padded;
+  }
+
+  int _tableStoredLength(Woff2TableDirectory dir) {
+    if (dir.preprocessingTransformation == 0 &&
+        (dir.name == 'glyf' || dir.name == 'loca')) {
+      return dir.transformLength;
+    }
+    return dir.origLength;
   }
 
   Woff2Header? _readHeader(ByteOrderSwappingBinaryReader reader) {
@@ -121,7 +167,9 @@ class Woff2Reader {
     for (int i = 0; i < tableCount; ++i) {
       final table = tableDirs[i];
       int flags = reader.readByte();
-      int knownTableIndex = flags & 0x1F;
+      // Bits [0..5] => known-table index (0..62), 63 => explicit tag follows.
+      // Bits [6..7] => preprocessing transformation (0..3).
+      int knownTableIndex = flags & 0x3F;
 
       if (knownTableIndex < 63) {
         table.name = _knownTableTags[knownTableIndex];
@@ -129,24 +177,21 @@ class Woff2Reader {
         table.name = Utils.tagToString(reader.readUInt32());
       }
 
-      table.preprocessingTransformation = (flags >> 5) & 0x3;
-      table.expectedStartAt = expectedTableStartAt;
-
+      table.preprocessingTransformation = (flags >> 6) & 0x3;
       table.origLength = _readUIntBase128(reader);
 
-      switch (table.preprocessingTransformation) {
-        case 0:
-          if (table.name == 'glyf' || table.name == 'loca') {
-             table.transformLength = _readUIntBase128(reader);
-             expectedTableStartAt += table.transformLength;
-          } else {
-             expectedTableStartAt += table.origLength;
-          }
-          break;
-        default:
-          expectedTableStartAt += table.origLength;
-          break;
+      int tableDataLength;
+      if (table.preprocessingTransformation == 0 &&
+          (table.name == 'glyf' || table.name == 'loca')) {
+        table.transformLength = _readUIntBase128(reader);
+        tableDataLength = table.transformLength;
+      } else {
+        tableDataLength = table.origLength;
+        table.transformLength = table.origLength;
       }
+
+      table.expectedStartAt = expectedTableStartAt;
+      expectedTableStartAt += _align4(tableDataLength);
     }
     return tableDirs;
   }

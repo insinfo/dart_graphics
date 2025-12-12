@@ -29,7 +29,7 @@ class TrueTypeInterpreter {
 
     MaxProfile? maximumProfile = typeface.maxProfile;
     if (maximumProfile == null) {
-       return;
+      return;
     }
 
     _interpreter = SharpFontInterpreter(
@@ -50,10 +50,12 @@ class TrueTypeInterpreter {
     double glyphSizeInPixel,
   ) {
     if (_currentTypeFace == null) return [];
-    
+
     Glyph glyph = _currentTypeFace!.getGlyph(glyphIndex);
-    int horizontalAdv = _currentTypeFace!.getHAdvanceWidthFromGlyphIndex(glyphIndex);
-    int hFrontSideBearing = _currentTypeFace!.getHFrontSideBearingFromGlyphIndex(glyphIndex);
+    int horizontalAdv =
+        _currentTypeFace!.getHAdvanceWidthFromGlyphIndex(glyphIndex);
+    int hFrontSideBearing =
+        _currentTypeFace!.getHFrontSideBearingFromGlyphIndex(glyphIndex);
 
     return hintGlyphInternal(
       horizontalAdv,
@@ -84,7 +86,7 @@ class TrueTypeInterpreter {
     // 1. Setup phantom points
     int verticalAdv = 0;
     int vFrontSideBearing = 0;
-    
+
     var pp1 = GlyphPointF((minX - hFrontSideBearing).toDouble(), 0, true);
     var pp2 = GlyphPointF(pp1.x + horizontalAdv, 0, true);
     var pp3 = GlyphPointF(0, (maxY + vFrontSideBearing).toDouble(), true);
@@ -92,8 +94,7 @@ class TrueTypeInterpreter {
 
     // 2. Clone points and add phantom points
     List<GlyphPointF> newGlyphPoints = List<GlyphPointF>.from(
-      glyphPoints.map((p) => GlyphPointF(p.x, p.y, p.onCurve))
-    );
+        glyphPoints.map((p) => GlyphPointF(p.x, p.y, p.onCurve)));
     newGlyphPoints.add(pp1);
     newGlyphPoints.add(pp2);
     newGlyphPoints.add(pp3);
@@ -121,11 +122,11 @@ class TrueTypeInterpreter {
 
     // 5. Hint
     if (instructions != null && instructions.isNotEmpty) {
-       Uint8List instrBytes = instructions is Uint8List 
-          ? instructions 
+      Uint8List instrBytes = instructions is Uint8List
+          ? instructions
           : Uint8List.fromList(instructions);
-          
-       _interpreter!.hintGlyph(newGlyphPoints, contourEndPoints, instrBytes);
+
+      _interpreter!.hintGlyph(newGlyphPoints, contourEndPoints, instrBytes);
     }
 
     // 6. Scale back
@@ -154,6 +155,7 @@ class SharpFontInterpreter {
   List<int>? _contours;
   double _scale = 0.0;
   int _ppem = 0;
+  double _pointSize = 0.0;
   int _callStackSize = 0;
   double _fdotp = 0.0;
   double _roundThreshold = 0.0;
@@ -161,35 +163,37 @@ class SharpFontInterpreter {
   double _roundPeriod = 0.0;
   Zone? _zp0, _zp1, _zp2;
   Zone? _points, _twilight;
-  
+
   static const double sqrt2Over2 = 0.7071067811865476;
   static const int maxCallStack = 128;
   static const double epsilon = 0.000001;
 
-  SharpFontInterpreter(
-      int maxStack,
-      int maxStorage,
-      int maxFunctions,
-      int maxInstructionDefs,
-      int maxTwilightPoints) {
+  SharpFontInterpreter(int maxStack, int maxStorage, int maxFunctions,
+      int maxInstructionDefs, int maxTwilightPoints) {
     _stack = ExecutionStack(maxStack);
     _storage = List<int>.filled(maxStorage, 0);
     _functions = List<InstructionStream?>.filled(maxFunctions, null);
-    _instructionDefs = List<InstructionStream?>.filled(maxInstructionDefs > 0 ? 256 : 0, null);
-    _twilight = Zone(List<GlyphPointF>.generate(maxTwilightPoints, (i) => GlyphPointF(0, 0, false)), isTwilight: true);
+    _instructionDefs =
+        List<InstructionStream?>.filled(maxInstructionDefs > 0 ? 256 : 0, null);
+    _twilight = Zone(
+        List<GlyphPointF>.generate(
+            maxTwilightPoints, (i) => GlyphPointF(0, 0, false)),
+        isTwilight: true);
   }
 
   void initializeFunctionDefs(Uint8List instructions) {
     execute(InstructionStream(instructions), false, true);
   }
 
-  void setControlValueTable(Int16List? cvt, double scale, double ppem, Uint8List? cvProgram) {
+  void setControlValueTable(
+      Int16List? cvt, double scale, double ppem, Uint8List? cvProgram) {
     if (_scale == scale || cvt == null) return;
 
-    if (_controlValueTable == null || _controlValueTable!.length != cvt.length) {
+    if (_controlValueTable == null ||
+        _controlValueTable!.length != cvt.length) {
       _controlValueTable = List<double>.filled(cvt.length, 0.0);
     }
-    
+
     // copy cvt and apply scale
     for (int i = cvt.length - 1; i >= 0; --i) {
       _controlValueTable![i] = cvt[i] * scale;
@@ -197,6 +201,7 @@ class SharpFontInterpreter {
 
     _scale = scale;
     _ppem = ppem.round();
+    _pointSize = ppem;
     _zp0 = _zp1 = _zp2 = _points;
     _state.reset();
     _stack.clear();
@@ -204,7 +209,9 @@ class SharpFontInterpreter {
     if (cvProgram != null) {
       execute(InstructionStream(cvProgram), false, false);
 
-      if ((_state.instructionControl & InstructionControlFlags.useDefaultGraphicsState) != 0) {
+      if ((_state.instructionControl &
+              InstructionControlFlags.useDefaultGraphicsState) !=
+          0) {
         _cvtState.reset();
       } else {
         // Copy state
@@ -226,7 +233,7 @@ class SharpFontInterpreter {
           ..rp1 = _state.rp1
           ..rp2 = _state.rp2
           ..autoFlip = _state.autoFlip;
-          
+
         _cvtState.freedom = Vector2(1.0, 0.0);
         _cvtState.projection = Vector2(1.0, 0.0);
         _cvtState.dualProjection = Vector2(1.0, 0.0);
@@ -236,10 +243,13 @@ class SharpFontInterpreter {
     }
   }
 
-  void hintGlyph(List<GlyphPointF> glyphPoints, List<int> contours, Uint8List instructions) {
+  void hintGlyph(List<GlyphPointF> glyphPoints, List<int> contours,
+      Uint8List instructions) {
     if (instructions.isEmpty) return;
 
-    if ((_state.instructionControl & InstructionControlFlags.inhibitGridFitting) != 0) {
+    if ((_state.instructionControl &
+            InstructionControlFlags.inhibitGridFitting) !=
+        0) {
       return;
     }
 
@@ -249,22 +259,22 @@ class SharpFontInterpreter {
 
     // Restore state
     _state = GraphicsState()
-          ..freedom = _cvtState.freedom.clone()
-          ..projection = _cvtState.projection.clone()
-          ..dualProjection = _cvtState.dualProjection.clone()
-          ..instructionControl = _cvtState.instructionControl
-          ..roundState = _cvtState.roundState
-          ..minDistance = _cvtState.minDistance
-          ..controlValueCutIn = _cvtState.controlValueCutIn
-          ..singleWidthCutIn = _cvtState.singleWidthCutIn
-          ..singleWidthValue = _cvtState.singleWidthValue
-          ..deltaBase = _cvtState.deltaBase
-          ..deltaShift = _cvtState.deltaShift
-          ..loop = _cvtState.loop
-          ..rp0 = _cvtState.rp0
-          ..rp1 = _cvtState.rp1
-          ..rp2 = _cvtState.rp2
-          ..autoFlip = _cvtState.autoFlip;
+      ..freedom = _cvtState.freedom.clone()
+      ..projection = _cvtState.projection.clone()
+      ..dualProjection = _cvtState.dualProjection.clone()
+      ..instructionControl = _cvtState.instructionControl
+      ..roundState = _cvtState.roundState
+      ..minDistance = _cvtState.minDistance
+      ..controlValueCutIn = _cvtState.controlValueCutIn
+      ..singleWidthCutIn = _cvtState.singleWidthCutIn
+      ..singleWidthValue = _cvtState.singleWidthValue
+      ..deltaBase = _cvtState.deltaBase
+      ..deltaShift = _cvtState.deltaShift
+      ..loop = _cvtState.loop
+      ..rp0 = _cvtState.rp0
+      ..rp1 = _cvtState.rp1
+      ..rp2 = _cvtState.rp2
+      ..autoFlip = _cvtState.autoFlip;
 
     _callStackSize = 0;
     _stack.clear();
@@ -288,7 +298,8 @@ class SharpFontInterpreter {
     }
   }
 
-  void execute(InstructionStream stream, bool inFunction, bool allowFunctionDefs) {
+  void execute(
+      InstructionStream stream, bool inFunction, bool allowFunctionDefs) {
     while (!stream.done) {
       var opcode = stream.nextOpCode();
       switch (opcode) {
@@ -302,8 +313,8 @@ class SharpFontInterpreter {
         case OpCode.PUSHB6:
         case OpCode.PUSHB7:
         case OpCode.PUSHB8:
-          var count = opcode == OpCode.NPUSHB 
-              ? stream.nextByte() 
+          var count = opcode == OpCode.NPUSHB
+              ? stream.nextByte()
               : opcode.index - OpCode.PUSHB1.index + 1;
           for (int i = 0; i < count; i++) {
             _stack.push(stream.nextByte());
@@ -318,8 +329,8 @@ class SharpFontInterpreter {
         case OpCode.PUSHW6:
         case OpCode.PUSHW7:
         case OpCode.PUSHW8:
-          var count = opcode == OpCode.NPUSHW 
-              ? stream.nextByte() 
+          var count = opcode == OpCode.NPUSHW
+              ? stream.nextByte()
               : opcode.index - OpCode.PUSHW1.index + 1;
           for (int i = 0; i < count; i++) {
             _stack.push(stream.nextWord());
@@ -330,7 +341,7 @@ class SharpFontInterpreter {
         case OpCode.RS:
           int addr = _stack.pop();
           if (addr < 0 || addr >= _storage.length) {
-             throw InvalidTrueTypeFontException('Storage address out of bounds');
+            throw InvalidTrueTypeFontException('Storage address out of bounds');
           }
           _stack.push(_storage[addr]);
           break;
@@ -338,7 +349,7 @@ class SharpFontInterpreter {
           int val = _stack.pop();
           int addr2 = _stack.pop();
           if (addr2 < 0 || addr2 >= _storage.length) {
-             throw InvalidTrueTypeFontException('Storage address out of bounds');
+            throw InvalidTrueTypeFontException('Storage address out of bounds');
           }
           _storage[addr2] = val;
           break;
@@ -347,23 +358,29 @@ class SharpFontInterpreter {
         case OpCode.WCVTP:
           int val2 = _stack.pop();
           int loc = _stack.pop();
-          if (_controlValueTable != null && loc >= 0 && loc < _controlValueTable!.length) {
-             _controlValueTable![loc] = ExecutionStack.f26Dot6ToFloat(val2);
+          if (_controlValueTable != null &&
+              loc >= 0 &&
+              loc < _controlValueTable!.length) {
+            _controlValueTable![loc] = ExecutionStack.f26Dot6ToFloat(val2);
           }
           break;
         case OpCode.WCVTF:
           int val3 = _stack.pop();
           int loc2 = _stack.pop();
-           if (_controlValueTable != null && loc2 >= 0 && loc2 < _controlValueTable!.length) {
-             _controlValueTable![loc2] = val3 * _scale;
+          if (_controlValueTable != null &&
+              loc2 >= 0 &&
+              loc2 < _controlValueTable!.length) {
+            _controlValueTable![loc2] = val3 * _scale;
           }
           break;
         case OpCode.RCVT:
           int loc3 = _stack.pop();
-          if (_controlValueTable != null && loc3 >= 0 && loc3 < _controlValueTable!.length) {
-             _stack.pushFloat(_controlValueTable![loc3]);
+          if (_controlValueTable != null &&
+              loc3 >= 0 &&
+              loc3 < _controlValueTable!.length) {
+            _stack.pushFloat(_controlValueTable![loc3]);
           } else {
-             _stack.push(0);
+            _stack.push(0);
           }
           break;
 
@@ -371,11 +388,11 @@ class SharpFontInterpreter {
         case OpCode.SVTCA0:
         case OpCode.SVTCA1:
           if (opcode == OpCode.SVTCA0) {
-             _state.freedom = Vector2(0.0, 1.0); // Y-axis
-             _state.projection = Vector2(0.0, 1.0);
+            _state.freedom = Vector2(0.0, 1.0); // Y-axis
+            _state.projection = Vector2(0.0, 1.0);
           } else {
-             _state.freedom = Vector2(1.0, 0.0); // X-axis
-             _state.projection = Vector2(1.0, 0.0);
+            _state.freedom = Vector2(1.0, 0.0); // X-axis
+            _state.projection = Vector2(1.0, 0.0);
           }
           _state.dualProjection = _state.projection.clone();
           onVectorsUpdated();
@@ -383,9 +400,9 @@ class SharpFontInterpreter {
         case OpCode.SPVTCA0:
         case OpCode.SPVTCA1:
           if (opcode == OpCode.SPVTCA0) {
-             _state.projection = Vector2(0.0, 1.0);
+            _state.projection = Vector2(0.0, 1.0);
           } else {
-             _state.projection = Vector2(1.0, 0.0);
+            _state.projection = Vector2(1.0, 0.0);
           }
           _state.dualProjection = _state.projection.clone();
           onVectorsUpdated();
@@ -393,9 +410,9 @@ class SharpFontInterpreter {
         case OpCode.SFVTCA0:
         case OpCode.SFVTCA1:
           if (opcode == OpCode.SFVTCA0) {
-             _state.freedom = Vector2(0.0, 1.0);
+            _state.freedom = Vector2(0.0, 1.0);
           } else {
-             _state.freedom = Vector2(1.0, 0.0);
+            _state.freedom = Vector2(1.0, 0.0);
           }
           onVectorsUpdated();
           break;
@@ -412,10 +429,10 @@ class SharpFontInterpreter {
           var vec = Vector2(f2Dot14ToFloat(x), f2Dot14ToFloat(y));
           vec.normalize();
           if (opcode == OpCode.SPVFS) {
-             _state.projection = vec;
-             _state.dualProjection = vec.clone();
+            _state.projection = vec;
+            _state.dualProjection = vec.clone();
           } else {
-             _state.freedom = vec;
+            _state.freedom = vec;
           }
           onVectorsUpdated();
           break;
@@ -454,24 +471,60 @@ class SharpFontInterpreter {
           break;
 
         // ==== GRAPHICS STATE ====
-        case OpCode.SRP0: _state.rp0 = _stack.pop(); break;
-        case OpCode.SRP1: _state.rp1 = _stack.pop(); break;
-        case OpCode.SRP2: _state.rp2 = _stack.pop(); break;
-        case OpCode.SZP0: _zp0 = getZoneFromStack(); break;
-        case OpCode.SZP1: _zp1 = getZoneFromStack(); break;
-        case OpCode.SZP2: _zp2 = getZoneFromStack(); break;
-        case OpCode.SZPS: _zp0 = _zp1 = _zp2 = getZoneFromStack(); break;
-        case OpCode.SLOOP: _state.loop = _stack.pop(); break;
-        case OpCode.RTG: _state.roundState = RoundMode.toGrid; break;
-        case OpCode.RTHG: _state.roundState = RoundMode.toHalfGrid; break;
-        case OpCode.SMD: _state.minDistance = _stack.popFloat(); break;
-        case OpCode.SCVTCI: _state.controlValueCutIn = _stack.popFloat(); break;
-        case OpCode.SSWCI: _state.singleWidthCutIn = _stack.popFloat(); break;
-        case OpCode.SSW: _state.singleWidthValue = readCvt(); break;
-        case OpCode.FLIPON: _state.autoFlip = true; break;
-        case OpCode.FLIPOFF: _state.autoFlip = false; break;
-        case OpCode.SDB: _state.deltaBase = _stack.pop(); break;
-        case OpCode.SDS: _state.deltaShift = _stack.pop(); break;
+        case OpCode.SRP0:
+          _state.rp0 = _stack.pop();
+          break;
+        case OpCode.SRP1:
+          _state.rp1 = _stack.pop();
+          break;
+        case OpCode.SRP2:
+          _state.rp2 = _stack.pop();
+          break;
+        case OpCode.SZP0:
+          _zp0 = getZoneFromStack();
+          break;
+        case OpCode.SZP1:
+          _zp1 = getZoneFromStack();
+          break;
+        case OpCode.SZP2:
+          _zp2 = getZoneFromStack();
+          break;
+        case OpCode.SZPS:
+          _zp0 = _zp1 = _zp2 = getZoneFromStack();
+          break;
+        case OpCode.SLOOP:
+          _state.loop = _stack.pop();
+          break;
+        case OpCode.RTG:
+          _state.roundState = RoundMode.toGrid;
+          break;
+        case OpCode.RTHG:
+          _state.roundState = RoundMode.toHalfGrid;
+          break;
+        case OpCode.SMD:
+          _state.minDistance = _stack.popFloat();
+          break;
+        case OpCode.SCVTCI:
+          _state.controlValueCutIn = _stack.popFloat();
+          break;
+        case OpCode.SSWCI:
+          _state.singleWidthCutIn = _stack.popFloat();
+          break;
+        case OpCode.SSW:
+          _state.singleWidthValue = readCvt();
+          break;
+        case OpCode.FLIPON:
+          _state.autoFlip = true;
+          break;
+        case OpCode.FLIPOFF:
+          _state.autoFlip = false;
+          break;
+        case OpCode.SDB:
+          _state.deltaBase = _stack.pop();
+          break;
+        case OpCode.SDS:
+          _state.deltaShift = _stack.pop();
+          break;
         case OpCode.MD0:
         case OpCode.MD1:
           var p1 = _zp1!.getOriginal(_stack.pop());
@@ -480,8 +533,12 @@ class SharpFontInterpreter {
           if (opcode == OpCode.MD1) dist = round(dist);
           _stack.pushFloat(dist);
           break;
-        case OpCode.MPPEM: _stack.push(_ppem); break;
-        case OpCode.MPS: _stack.pushFloat(12.0); break; // TODO: Implement MPS properly
+        case OpCode.MPPEM:
+          _stack.push(_ppem);
+          break;
+        case OpCode.MPS:
+          _stack.pushFloat(_pointSize);
+          break;
 
         // ==== MOVEMENT ====
         case OpCode.MIAP0:
@@ -529,14 +586,16 @@ class SharpFontInterpreter {
           var pointIndex = _stack.pop();
 
           if (_zp1!.isTwilight) {
-            var p = _zp0!.getOriginal(_state.rp0) + _state.freedom * (targetDistance / _fdotp);
+            var p = _zp0!.getOriginal(_state.rp0) +
+                _state.freedom * (targetDistance / _fdotp);
             _zp1!.original[pointIndex].updateX(p.x);
             _zp1!.original[pointIndex].updateY(p.y);
             _zp1!.current[pointIndex].updateX(p.x);
             _zp1!.current[pointIndex].updateY(p.y);
           }
 
-          var currentDistance = project(_zp1!.getCurrent(pointIndex) - _zp0!.getCurrent(_state.rp0));
+          var currentDistance = project(
+              _zp1!.getCurrent(pointIndex) - _zp0!.getCurrent(_state.rp0));
           movePoint(_zp1!, pointIndex, targetDistance - currentDistance);
 
           _state.rp1 = _state.rp0;
@@ -546,14 +605,17 @@ class SharpFontInterpreter {
         case OpCode.IP:
           var originalBase = _zp0!.getOriginal(_state.rp1);
           var currentBase = _zp0!.getCurrent(_state.rp1);
-          var originalRange = dualProject(_zp1!.getOriginal(_state.rp2) - originalBase);
-          var currentRange = project(_zp1!.getCurrent(_state.rp2) - currentBase);
+          var originalRange =
+              dualProject(_zp1!.getOriginal(_state.rp2) - originalBase);
+          var currentRange =
+              project(_zp1!.getCurrent(_state.rp2) - currentBase);
 
           for (int i = 0; i < _state.loop; i++) {
             var pointIndex = _stack.pop();
             var point = _zp2!.getCurrent(pointIndex);
             var currentDistance = project(point - currentBase);
-            var originalDistance = dualProject(_zp2!.getOriginal(pointIndex) - originalBase);
+            var originalDistance =
+                dualProject(_zp2!.getOriginal(pointIndex) - originalBase);
 
             var newDistance = 0.0;
             if (originalDistance != 0.0) {
@@ -579,7 +641,8 @@ class SharpFontInterpreter {
         case OpCode.ALIGNPTS:
           var p1 = _stack.pop();
           var p2 = _stack.pop();
-          var distance = project(_zp0!.getCurrent(p2) - _zp1!.getCurrent(p1)) / 2;
+          var distance =
+              project(_zp0!.getCurrent(p2) - _zp1!.getCurrent(p1)) / 2;
           movePoint(_zp1!, p1, distance);
           movePoint(_zp0!, p2, -distance);
           break;
@@ -589,40 +652,41 @@ class SharpFontInterpreter {
         case OpCode.IUP0:
         case OpCode.IUP1:
           if (_contours == null || _contours!.isEmpty) break;
-          
+
           int firstPoint = 0;
           for (int i = 0; i < _contours!.length; i++) {
             int endPoint = _contours![i];
-            
+
             // Find first touched point
             int start = -1;
             int mask = opcode == OpCode.IUP0 ? TouchState.y : TouchState.x;
-            
+
             for (int j = firstPoint; j <= endPoint; j++) {
-                if ((_zp2!.touchState[j] & mask) != 0) {
-                    start = j;
-                    break;
-                }
+              if ((_zp2!.touchState[j] & mask) != 0) {
+                start = j;
+                break;
+              }
             }
 
             if (start != -1) {
-                int p1 = start;
-                int p2 = start;
-                do {
-                    p2 = p1 + 1;
-                    if (p2 > endPoint) p2 = firstPoint;
-                    while ((_zp2!.touchState[p2] & mask) == 0) {
-                        p2++;
-                        if (p2 > endPoint) p2 = firstPoint;
-                        if (p2 == start) break;
-                    }
-                    
-                    _interpolateIUP(p1, p2, firstPoint, endPoint, opcode == OpCode.IUP1);
-                    
-                    p1 = p2;
-                } while (p1 != start);
+              int p1 = start;
+              int p2 = start;
+              do {
+                p2 = p1 + 1;
+                if (p2 > endPoint) p2 = firstPoint;
+                while ((_zp2!.touchState[p2] & mask) == 0) {
+                  p2++;
+                  if (p2 > endPoint) p2 = firstPoint;
+                  if (p2 == start) break;
+                }
+
+                _interpolateIUP(
+                    p1, p2, firstPoint, endPoint, opcode == OpCode.IUP1);
+
+                p1 = p2;
+              } while (p1 != start);
             }
-            
+
             firstPoint = endPoint + 1;
           }
           break;
@@ -642,16 +706,18 @@ class SharpFontInterpreter {
           var touch = getTouchState();
           var contour = _stack.pop();
           var start = contour == 0 ? 0 : _contours![contour - 1] + 1;
-          var count = _zp2!.isTwilight ? _zp2!.current.length : _contours![contour] + 1;
-          
+          var count =
+              _zp2!.isTwilight ? _zp2!.current.length : _contours![contour] + 1;
+
           var dispVec = dispInfo.displacement;
 
           for (int i = start; i < count; i++) {
-            if (dispInfo.zone.current != _zp2!.current || dispInfo.pointIndex != i) {
-               var p = _zp2!.current[i];
-               p.updateX(p.x + dispVec.x);
-               p.updateY(p.y + dispVec.y);
-               _zp2!.touchState[i] |= touch;
+            if (dispInfo.zone.current != _zp2!.current ||
+                dispInfo.pointIndex != i) {
+              var p = _zp2!.current[i];
+              p.updateX(p.x + dispVec.x);
+              p.updateY(p.y + dispVec.y);
+              _zp2!.touchState[i] |= touch;
             }
           }
           break;
@@ -664,14 +730,15 @@ class SharpFontInterpreter {
           } else if (_contours != null && _contours!.isNotEmpty) {
             count = _contours!.last + 1;
           }
-          
+
           var dispVec = dispInfo.displacement;
 
           for (int i = 0; i < count; i++) {
-            if (dispInfo.zone.current != _zp2!.current || dispInfo.pointIndex != i) {
-               var p = _zp2!.current[i];
-               p.updateX(p.x + dispVec.x);
-               p.updateY(p.y + dispVec.y);
+            if (dispInfo.zone.current != _zp2!.current ||
+                dispInfo.pointIndex != i) {
+              var p = _zp2!.current[i];
+              p.updateX(p.x + dispVec.x);
+              p.updateY(p.y + dispVec.y);
             }
           }
           break;
@@ -683,12 +750,17 @@ class SharpFontInterpreter {
             while (indent > 0) {
               opcode = skipNext(stream);
               switch (opcode) {
-                case OpCode.IF: indent++; break;
-                case OpCode.EIF: indent--; break;
+                case OpCode.IF:
+                  indent++;
+                  break;
+                case OpCode.EIF:
+                  indent--;
+                  break;
                 case OpCode.ELSE:
                   if (indent == 1) indent = 0;
                   break;
-                default: break;
+                default:
+                  break;
               }
             }
           }
@@ -698,13 +770,19 @@ class SharpFontInterpreter {
           while (indent > 0) {
             opcode = skipNext(stream);
             switch (opcode) {
-              case OpCode.IF: indent++; break;
-              case OpCode.EIF: indent--; break;
-              default: break;
+              case OpCode.IF:
+                indent++;
+                break;
+              case OpCode.EIF:
+                indent--;
+                break;
+              default:
+                break;
             }
           }
           break;
-        case OpCode.EIF: break;
+        case OpCode.EIF:
+          break;
         case OpCode.JROT:
         case OpCode.JROF:
           if (_stack.popBool() == (opcode == OpCode.JROT)) {
@@ -734,28 +812,31 @@ class SharpFontInterpreter {
           break;
         case OpCode.ENDF:
           if (!inFunction) {
-            throw InvalidTrueTypeFontException("Found invalid ENDF marker outside of a function definition.");
+            throw InvalidTrueTypeFontException(
+                "Found invalid ENDF marker outside of a function definition.");
           }
           return;
         case OpCode.CALL:
         case OpCode.LOOPCALL:
           _callStackSize++;
           if (_callStackSize > maxCallStack) {
-            throw InvalidTrueTypeFontException("Stack overflow; infinite recursion?");
+            throw InvalidTrueTypeFontException(
+                "Stack overflow; infinite recursion?");
           }
           var function = _functions[_stack.pop()];
           var count = opcode == OpCode.LOOPCALL ? _stack.pop() : 1;
           for (int i = 0; i < count; i++) {
             if (function != null) {
-               // Clone stream to execute function? 
-               // InstructionStream is struct in C#, so it's passed by value (copy).
-               // In Dart it's a class, so we need to clone it or create new one with same state.
-               // But wait, FDEF stores the stream at the point of definition.
-               // We need to execute it from there.
-               // The stored stream has 'ip' at the start of function body.
-               // We should probably clone the stored stream to avoid modifying the stored 'ip'.
-               var funcStream = InstructionStream(function.instructions)..ip = function.ip;
-               execute(funcStream, true, false);
+              // Clone stream to execute function?
+              // InstructionStream is struct in C#, so it's passed by value (copy).
+              // In Dart it's a class, so we need to clone it or create new one with same state.
+              // But wait, FDEF stores the stream at the point of definition.
+              // We need to execute it from there.
+              // The stored stream has 'ip' at the start of function body.
+              // We should probably clone the stored stream to avoid modifying the stored 'ip'.
+              var funcStream = InstructionStream(function.instructions)
+                ..ip = function.ip;
+              execute(funcStream, true, false);
             }
           }
           _callStackSize--;
@@ -773,12 +854,24 @@ class SharpFontInterpreter {
         case OpCode.NROUND2:
         case OpCode.NROUND3:
           break;
-        case OpCode.RTDG: _state.roundState = RoundMode.toDoubleGrid; break;
-        case OpCode.RUTG: _state.roundState = RoundMode.upToGrid; break;
-        case OpCode.RDTG: _state.roundState = RoundMode.downToGrid; break;
-        case OpCode.ROFF: _state.roundState = RoundMode.off; break;
-        case OpCode.SROUND: setSuperRound(1.0); break;
-        case OpCode.S45ROUND: setSuperRound(sqrt2Over2); break;
+        case OpCode.RTDG:
+          _state.roundState = RoundMode.toDoubleGrid;
+          break;
+        case OpCode.RUTG:
+          _state.roundState = RoundMode.upToGrid;
+          break;
+        case OpCode.RDTG:
+          _state.roundState = RoundMode.downToGrid;
+          break;
+        case OpCode.ROFF:
+          _state.roundState = RoundMode.off;
+          break;
+        case OpCode.SROUND:
+          setSuperRound(1.0);
+          break;
+        case OpCode.S45ROUND:
+          setSuperRound(sqrt2Over2);
+          break;
 
         // ==== DELTA ====
         case OpCode.DELTAC1:
@@ -797,7 +890,8 @@ class SharpFontInterpreter {
               if (amount >= 0) amount++;
               amount *= 1 << (6 - _state.deltaShift);
               checkIndex(cvtIndex, _controlValueTable!.length);
-              _controlValueTable![cvtIndex] += ExecutionStack.f26Dot6ToFloat(amount);
+              _controlValueTable![cvtIndex] +=
+                  ExecutionStack.f26Dot6ToFloat(amount);
             }
           }
           break;
@@ -818,7 +912,8 @@ class SharpFontInterpreter {
               var amount = (arg & 0xF) - 8;
               if (amount >= 0) amount++;
               amount *= 1 << (6 - _state.deltaShift);
-              movePoint(_zp0!, pointIndex, ExecutionStack.f26Dot6ToFloat(amount));
+              movePoint(
+                  _zp0!, pointIndex, ExecutionStack.f26Dot6ToFloat(amount));
             }
           }
           break;
@@ -900,15 +995,29 @@ class SharpFontInterpreter {
           var result = (a * b) >> 6;
           _stack.push(result);
           break;
-        case OpCode.ABS: _stack.push(_stack.pop().abs()); break;
-        case OpCode.NEG: _stack.push(-_stack.pop()); break;
-        case OpCode.FLOOR: _stack.push(_stack.pop() & ~63); break;
-        case OpCode.CEILING: _stack.push((_stack.pop() + 63) & ~63); break;
-        case OpCode.MAX: _stack.push(math.max(_stack.pop(), _stack.pop())); break;
-        case OpCode.MIN: _stack.push(math.min(_stack.pop(), _stack.pop())); break;
+        case OpCode.ABS:
+          _stack.push(_stack.pop().abs());
+          break;
+        case OpCode.NEG:
+          _stack.push(-_stack.pop());
+          break;
+        case OpCode.FLOOR:
+          _stack.push(_stack.pop() & ~63);
+          break;
+        case OpCode.CEILING:
+          _stack.push((_stack.pop() + 63) & ~63);
+          break;
+        case OpCode.MAX:
+          _stack.push(math.max(_stack.pop(), _stack.pop()));
+          break;
+        case OpCode.MIN:
+          _stack.push(math.min(_stack.pop(), _stack.pop()));
+          break;
 
         // ==== MISC ====
-        case OpCode.DEBUG: _stack.pop(); break;
+        case OpCode.DEBUG:
+          _stack.pop();
+          break;
         case OpCode.GETINFO:
           var selector = _stack.pop();
           var result = 0;
@@ -923,104 +1032,123 @@ class SharpFontInterpreter {
           } else if (opcode.index >= OpCode.MDRP.index) {
             moveDirectRelative(opcode.index - OpCode.MDRP.index);
           } else {
-             // Check runtime defined opcodes
-             // Not implemented fully yet
+            // Check runtime defined opcodes
+            // Not implemented fully yet
           }
           break;
       }
     }
   }
-  
+
   void onVectorsUpdated() {
-      if (_state.freedom.dot(_state.projection) < epsilon) {
-          _state.freedom = _state.projection.clone();
-      }
-      _fdotp = _state.freedom.dot(_state.projection);
-      if (_fdotp.abs() < epsilon) _fdotp = 1.0;
+    if (_state.freedom.dot(_state.projection) < epsilon) {
+      _state.freedom = _state.projection.clone();
+    }
+    _fdotp = _state.freedom.dot(_state.projection);
+    if (_fdotp.abs() < epsilon) _fdotp = 1.0;
   }
-  
+
   void setSuperRound(double period) {
-      var mode = _stack.pop();
-      switch (mode & 0xC0) {
-        case 0: _roundPeriod = period / 2; break;
-        case 0x40: _roundPeriod = period; break;
-        case 0x80: _roundPeriod = period * 2; break;
-        default: throw InvalidTrueTypeFontException("Unknown rounding period multiplier.");
-      }
+    var mode = _stack.pop();
+    switch (mode & 0xC0) {
+      case 0:
+        _roundPeriod = period / 2;
+        break;
+      case 0x40:
+        _roundPeriod = period;
+        break;
+      case 0x80:
+        _roundPeriod = period * 2;
+        break;
+      default:
+        throw InvalidTrueTypeFontException(
+            "Unknown rounding period multiplier.");
+    }
 
-      switch (mode & 0x30) {
-        case 0: _roundPhase = 0; break;
-        case 0x10: _roundPhase = _roundPeriod / 4; break;
-        case 0x20: _roundPhase = _roundPeriod / 2; break;
-        case 0x30: _roundPhase = _roundPeriod * 3 / 4; break;
-      }
+    switch (mode & 0x30) {
+      case 0:
+        _roundPhase = 0;
+        break;
+      case 0x10:
+        _roundPhase = _roundPeriod / 4;
+        break;
+      case 0x20:
+        _roundPhase = _roundPeriod / 2;
+        break;
+      case 0x30:
+        _roundPhase = _roundPeriod * 3 / 4;
+        break;
+    }
 
-      if ((mode & 0xF) == 0) {
-        _roundThreshold = _roundPeriod - 1;
-      } else {
-        _roundThreshold = ((mode & 0xF) - 4) * _roundPeriod / 8;
-      }
+    if ((mode & 0xF) == 0) {
+      _roundThreshold = _roundPeriod - 1;
+    } else {
+      _roundThreshold = ((mode & 0xF) - 4) * _roundPeriod / 8;
+    }
   }
 
   void setVectorsToLine(int mode, bool dual) {
-      // mode: 0: SPVTL0, 1: SPVTL1, 2: SFVTL0, 3: SFVTL1
-      // Map opcode index to 0-3?
-      // OpCode.SPVTL0 is base.
-      // But wait, the caller passes opcode.index.
-      // I should pass 0, 1, 2, 3 based on opcode.
-      // SPVTL0, SPVTL1, SFVTL0, SFVTL1 are contiguous in my enum?
-      // Let's check opcodes.dart.
-      // SPVTL0, SPVTL1, SFVTL0, SFVTL1. Yes.
-      
-      int internalMode = 0;
-      if (mode == OpCode.SPVTL0.index) internalMode = 0;
-      else if (mode == OpCode.SPVTL1.index) internalMode = 1;
-      else if (mode == OpCode.SFVTL0.index) internalMode = 2;
-      else if (mode == OpCode.SFVTL1.index) internalMode = 3;
+    // mode: 0: SPVTL0, 1: SPVTL1, 2: SFVTL0, 3: SFVTL1
+    // Map opcode index to 0-3?
+    // OpCode.SPVTL0 is base.
+    // But wait, the caller passes opcode.index.
+    // I should pass 0, 1, 2, 3 based on opcode.
+    // SPVTL0, SPVTL1, SFVTL0, SFVTL1 are contiguous in my enum?
+    // Let's check opcodes.dart.
+    // SPVTL0, SPVTL1, SFVTL0, SFVTL1. Yes.
 
-      int index1 = _stack.pop();
-      int index2 = _stack.pop();
-      var p1 = _zp2!.getCurrent(index1);
-      var p2 = _zp1!.getCurrent(index2);
+    int internalMode = 0;
+    if (mode == OpCode.SPVTL0.index)
+      internalMode = 0;
+    else if (mode == OpCode.SPVTL1.index)
+      internalMode = 1;
+    else if (mode == OpCode.SFVTL0.index)
+      internalMode = 2;
+    else if (mode == OpCode.SFVTL1.index) internalMode = 3;
 
-      var line = p2 - p1;
+    int index1 = _stack.pop();
+    int index2 = _stack.pop();
+    var p1 = _zp2!.getCurrent(index1);
+    var p2 = _zp1!.getCurrent(index2);
+
+    var line = p2 - p1;
+    if (line.length2 == 0) {
+      if (internalMode >= 2) {
+        _state.freedom = Vector2(1.0, 0.0);
+      } else {
+        _state.projection = Vector2(1.0, 0.0);
+        _state.dualProjection = Vector2(1.0, 0.0);
+      }
+    } else {
+      if ((internalMode & 0x1) != 0) {
+        line = Vector2(-line.y, line.x);
+      }
+      line.normalize();
+
+      if (internalMode >= 2) {
+        _state.freedom = line;
+      } else {
+        _state.projection = line;
+        _state.dualProjection = line;
+      }
+    }
+
+    if (dual) {
+      p1 = _zp2!.getOriginal(index1);
+      p2 = _zp2!.getOriginal(index2);
+      line = p2 - p1;
+
       if (line.length2 == 0) {
-        if (internalMode >= 2) {
-          _state.freedom = Vector2(1.0, 0.0);
-        } else {
-          _state.projection = Vector2(1.0, 0.0);
-          _state.dualProjection = Vector2(1.0, 0.0);
-        }
+        _state.dualProjection = Vector2(1.0, 0.0);
       } else {
         if ((internalMode & 0x1) != 0) {
           line = Vector2(-line.y, line.x);
         }
         line.normalize();
-
-        if (internalMode >= 2) {
-          _state.freedom = line;
-        } else {
-          _state.projection = line;
-          _state.dualProjection = line;
-        }
+        _state.dualProjection = line;
       }
-
-      if (dual) {
-        p1 = _zp2!.getOriginal(index1);
-        p2 = _zp2!.getOriginal(index2);
-        line = p2 - p1;
-
-        if (line.length2 == 0) {
-          _state.dualProjection = Vector2(1.0, 0.0);
-        } else {
-          if ((internalMode & 0x1) != 0) {
-            line = Vector2(-line.y, line.x);
-          }
-          line.normalize();
-          _state.dualProjection = line;
-        }
-      }
-      onVectorsUpdated();
+    }
+    onVectorsUpdated();
   }
 
   static double f2Dot14ToFloat(int value) {
@@ -1035,9 +1163,12 @@ class SharpFontInterpreter {
 
   Zone getZoneFromStack() {
     switch (_stack.pop()) {
-      case 0: return _twilight!;
-      case 1: return _points!;
-      default: throw InvalidTrueTypeFontException('Invalid zone pointer.');
+      case 0:
+        return _twilight!;
+      case 1:
+        return _points!;
+      default:
+        throw InvalidTrueTypeFontException('Invalid zone pointer.');
     }
   }
 
@@ -1053,8 +1184,8 @@ class SharpFontInterpreter {
       case OpCode.PUSHB6:
       case OpCode.PUSHB7:
       case OpCode.PUSHB8:
-        var count = opcode == OpCode.NPUSHB 
-            ? stream.nextByte() 
+        var count = opcode == OpCode.NPUSHB
+            ? stream.nextByte()
             : opcode.index - OpCode.PUSHB1.index + 1;
         for (int i = 0; i < count; i++) stream.nextByte();
         break;
@@ -1067,8 +1198,8 @@ class SharpFontInterpreter {
       case OpCode.PUSHW6:
       case OpCode.PUSHW7:
       case OpCode.PUSHW8:
-        var count = opcode == OpCode.NPUSHW 
-            ? stream.nextByte() 
+        var count = opcode == OpCode.NPUSHW
+            ? stream.nextByte()
             : opcode.index - OpCode.PUSHW1.index + 1;
         for (int i = 0; i < count; i++) stream.nextWord();
         break;
@@ -1100,7 +1231,8 @@ class SharpFontInterpreter {
     }
 
     var point = _zp1!.getCurrent(pointIndex);
-    var originalDistance = dualProject(_zp1!.getOriginal(pointIndex) - originalReference);
+    var originalDistance =
+        dualProject(_zp1!.getOriginal(pointIndex) - originalReference);
     var currentDistance = project(point - _zp0!.getCurrent(_state.rp0));
 
     if (_state.autoFlip && originalDistance.sign != cvt.sign) {
@@ -1109,7 +1241,8 @@ class SharpFontInterpreter {
 
     var distance = cvt;
     if ((flags & 0x4) != 0) {
-      if (_zp0!.isTwilight == _zp1!.isTwilight && (cvt - originalDistance).abs() > _state.controlValueCutIn) {
+      if (_zp0!.isTwilight == _zp1!.isTwilight &&
+          (cvt - originalDistance).abs() > _state.controlValueCutIn) {
         cvt = originalDistance;
       }
       distance = round(cvt);
@@ -1137,7 +1270,8 @@ class SharpFontInterpreter {
     var p2 = _zp1!.getOriginal(pointIndex);
     var originalDistance = dualProject(p2 - p1);
 
-    if ((originalDistance - _state.singleWidthValue).abs() < _state.singleWidthCutIn) {
+    if ((originalDistance - _state.singleWidthValue).abs() <
+        _state.singleWidthCutIn) {
       if (originalDistance >= 0) {
         originalDistance = _state.singleWidthValue;
       } else {
@@ -1158,7 +1292,8 @@ class SharpFontInterpreter {
       }
     }
 
-    var currentDistance = project(_zp1!.getCurrent(pointIndex) - _zp0!.getCurrent(_state.rp0));
+    var currentDistance =
+        project(_zp1!.getCurrent(pointIndex) - _zp0!.getCurrent(_state.rp0));
     movePoint(_zp1!, pointIndex, distance - currentDistance);
     _state.rp1 = _state.rp0;
     _state.rp2 = pointIndex;
@@ -1167,7 +1302,8 @@ class SharpFontInterpreter {
     }
   }
 
-  void interpolatePointsXAxis(List<GlyphPointF> current, List<GlyphPointF> original, int start, int end, int ref1, int ref2) {
+  void interpolatePointsXAxis(List<GlyphPointF> current,
+      List<GlyphPointF> original, int start, int end, int ref1, int ref2) {
     if (start > end) return;
 
     double delta1, delta2;
@@ -1203,7 +1339,8 @@ class SharpFontInterpreter {
     }
   }
 
-  void interpolatePointsYAxis(List<GlyphPointF> current, List<GlyphPointF> original, int start, int end, int ref1, int ref2) {
+  void interpolatePointsYAxis(List<GlyphPointF> current,
+      List<GlyphPointF> original, int start, int end, int ref1, int ref2) {
     if (start > end) return;
 
     double delta1, delta2;
@@ -1253,10 +1390,10 @@ class SharpFontInterpreter {
     // But I did implement OpCodeExtension.fromInt.
     // However, opcode.index is just the index in the enum list.
     // I should use the OpCode enum values to determine mode.
-    
+
     bool isMode1 = false;
-    if (opcodeIndex == OpCode.SHP1.index || 
-        opcodeIndex == OpCode.SHC1.index || 
+    if (opcodeIndex == OpCode.SHP1.index ||
+        opcodeIndex == OpCode.SHC1.index ||
         opcodeIndex == OpCode.SHZ1.index) {
       isMode1 = true;
     }
@@ -1273,32 +1410,37 @@ class SharpFontInterpreter {
     return _DisplacementInfo(_state.freedom * (distance / _fdotp), zone, point);
   }
 
-
-
-  void _interpolateIUP(int p1, int p2, int contourStart, int contourEnd, bool isX) {
+  void _interpolateIUP(
+      int p1, int p2, int contourStart, int contourEnd, bool isX) {
     if (p1 == p2) return;
-    
+
     if (p2 > p1) {
       if (p2 > p1 + 1) {
         if (isX) {
-          interpolatePointsXAxis(_zp2!.current, _zp2!.original, p1 + 1, p2 - 1, p1, p2);
+          interpolatePointsXAxis(
+              _zp2!.current, _zp2!.original, p1 + 1, p2 - 1, p1, p2);
         } else {
-          interpolatePointsYAxis(_zp2!.current, _zp2!.original, p1 + 1, p2 - 1, p1, p2);
+          interpolatePointsYAxis(
+              _zp2!.current, _zp2!.original, p1 + 1, p2 - 1, p1, p2);
         }
       }
     } else {
       if (p1 < contourEnd) {
         if (isX) {
-          interpolatePointsXAxis(_zp2!.current, _zp2!.original, p1 + 1, contourEnd, p1, p2);
+          interpolatePointsXAxis(
+              _zp2!.current, _zp2!.original, p1 + 1, contourEnd, p1, p2);
         } else {
-          interpolatePointsYAxis(_zp2!.current, _zp2!.original, p1 + 1, contourEnd, p1, p2);
+          interpolatePointsYAxis(
+              _zp2!.current, _zp2!.original, p1 + 1, contourEnd, p1, p2);
         }
       }
       if (p2 > contourStart) {
         if (isX) {
-          interpolatePointsXAxis(_zp2!.current, _zp2!.original, contourStart, p2 - 1, p1, p2);
+          interpolatePointsXAxis(
+              _zp2!.current, _zp2!.original, contourStart, p2 - 1, p1, p2);
         } else {
-          interpolatePointsYAxis(_zp2!.current, _zp2!.original, contourStart, p2 - 1, p1, p2);
+          interpolatePointsYAxis(
+              _zp2!.current, _zp2!.original, contourStart, p2 - 1, p1, p2);
         }
       }
     }
@@ -1312,9 +1454,13 @@ class SharpFontInterpreter {
       case RoundMode.toGrid:
         return value >= 0 ? value.roundToDouble() : -(-value).roundToDouble();
       case RoundMode.toHalfGrid:
-        return value >= 0 ? value.floorToDouble() + 0.5 : -((-value).floorToDouble() + 0.5);
+        return value >= 0
+            ? value.floorToDouble() + 0.5
+            : -((-value).floorToDouble() + 0.5);
       case RoundMode.toDoubleGrid:
-        return value >= 0 ? (value * 2).roundToDouble() / 2 : -((-value * 2).roundToDouble() / 2);
+        return value >= 0
+            ? (value * 2).roundToDouble() / 2
+            : -((-value * 2).roundToDouble() / 2);
       case RoundMode.downToGrid:
         return value >= 0 ? value.floorToDouble() : -(-value).floorToDouble();
       case RoundMode.upToGrid:
@@ -1324,10 +1470,12 @@ class SharpFontInterpreter {
         double result;
         if (value >= 0) {
           result = value - _roundPhase + _roundThreshold;
-          result = (result / _roundPeriod).floorToDouble() * _roundPeriod + _roundPhase;
+          result = (result / _roundPeriod).floorToDouble() * _roundPeriod +
+              _roundPhase;
         } else {
           result = -value - _roundPhase + _roundThreshold;
-          result = -((result / _roundPeriod).floorToDouble() * _roundPeriod + _roundPhase);
+          result = -((result / _roundPeriod).floorToDouble() * _roundPeriod +
+              _roundPhase);
         }
         return result;
       case RoundMode.off:
@@ -1362,7 +1510,9 @@ class SharpFontInterpreter {
 
   double readCvt() {
     int index = _stack.pop();
-    if (_controlValueTable == null || index < 0 || index >= _controlValueTable!.length) {
+    if (_controlValueTable == null ||
+        index < 0 ||
+        index >= _controlValueTable!.length) {
       return 0.0;
     }
     return _controlValueTable![index];
@@ -1370,7 +1520,8 @@ class SharpFontInterpreter {
 
   void checkIndex(int index, int length) {
     if (index < 0 || index >= length) {
-      throw InvalidTrueTypeFontException("Index out of bounds: $index (length: $length)");
+      throw InvalidTrueTypeFontException(
+          "Index out of bounds: $index (length: $length)");
     }
   }
 
@@ -1389,4 +1540,3 @@ class _DisplacementInfo {
 
   _DisplacementInfo(this.displacement, this.zone, this.pointIndex);
 }
-

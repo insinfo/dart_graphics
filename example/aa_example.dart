@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:agg/agg.dart';
 import 'package:agg/src/agg/image/image_buffer.dart';
 import 'package:agg/src/agg/primitives/color.dart';
 import 'package:agg/src/agg/scanline_rasterizer.dart';

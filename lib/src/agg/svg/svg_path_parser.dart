@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
 
 class SvgPathParser {
@@ -171,6 +172,38 @@ class SvgPathParser {
             lastCy = cpy;
           }
           break;
+        case 'A':
+        case 'a':
+          while (true) {
+            int nextI = _skipWhitespace(d, i);
+            if (nextI >= d.length || _isCommandLetter(d[nextI])) break;
+
+            final rxRead = _readNumber(d, nextI);
+            final ryRead = _readNumber(d, rxRead.nextIndex);
+            final rotRead = _readNumber(d, ryRead.nextIndex);
+            final largeArcRead = _readFlag(d, rotRead.nextIndex);
+            final sweepRead = _readFlag(d, largeArcRead.nextIndex);
+            final xRead = _readNumber(d, sweepRead.nextIndex);
+            final yRead = _readNumber(d, xRead.nextIndex);
+
+            i = yRead.nextIndex;
+
+            double rx = rxRead.value.abs();
+            double ry = ryRead.value.abs();
+            double rot = rotRead.value;
+            bool largeArc = largeArcRead.value != 0.0;
+            bool sweep = sweepRead.value != 0.0;
+            double x = ch == 'a' ? cx + xRead.value : xRead.value;
+            double y = ch == 'a' ? cy + yRead.value : yRead.value;
+
+            _arcToBezier(vs, cx, cy, rx, ry, rot, largeArc, sweep, x, y);
+
+            cx = x;
+            cy = y;
+            lastCx = cx;
+            lastCy = cy;
+          }
+          break;
         case 'Z':
         case 'z':
           vs.closePath();
@@ -186,7 +219,8 @@ class SvgPathParser {
     return vs;
   }
 
-  static bool _isSkip(String ch) => ch == ' ' || ch == '\n' || ch == '\t' || ch == ',';
+  static bool _isSkip(String ch) =>
+      ch == ' ' || ch == '\n' || ch == '\t' || ch == ',';
 
   static int _skipWhitespace(String s, int index) {
     while (index < s.length && _isSkip(s[index])) index++;
@@ -202,14 +236,26 @@ class SvgPathParser {
   static _NumberRead _readNumber(String s, int index) {
     while (index < s.length && _isSkip(s[index])) index++;
     final start = index;
+    bool hasDot = false;
+    bool hasE = false;
+
     if (index < s.length && (s[index] == '+' || s[index] == '-')) index++;
-    while (index < s.length &&
-        (_isDigit(s[index]) || s[index] == '.' || s[index] == 'e' || s[index] == 'E')) {
-      if (s[index] == 'e' || s[index] == 'E') {
+
+    while (index < s.length) {
+      final ch = s[index];
+      if (_isDigit(ch)) {
+        index++;
+      } else if (ch == '.') {
+        if (hasDot || hasE) break;
+        hasDot = true;
+        index++;
+      } else if (ch == 'e' || ch == 'E') {
+        if (hasE) break;
+        hasE = true;
         index++;
         if (index < s.length && (s[index] == '+' || s[index] == '-')) index++;
       } else {
-        index++;
+        break;
       }
     }
     final str = s.substring(start, index);
@@ -218,6 +264,17 @@ class SvgPathParser {
     } catch (e) {
       return _NumberRead(0.0, index);
     }
+  }
+
+  static _NumberRead _readFlag(String s, int index) {
+    while (index < s.length && _isSkip(s[index])) index++;
+    if (index < s.length) {
+      final ch = s[index];
+      if (ch == '0' || ch == '1') {
+        return _NumberRead(double.parse(ch), index + 1);
+      }
+    }
+    return _NumberRead(0.0, index);
   }
 
   static bool _isDigit(String ch) {
@@ -230,6 +287,109 @@ class SvgPathParser {
     if (ch.length != 1) return false;
     final code = ch.codeUnitAt(0);
     return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+  }
+
+  static void _arcToBezier(VertexStorage vs, double cx, double cy, double rx,
+      double ry, double rot, bool largeArc, bool sweep, double px, double py) {
+    if (rx == 0 || ry == 0) {
+      vs.lineTo(px, py);
+      return;
+    }
+
+    final sinPhi = math.sin(rot * math.pi / 180.0);
+    final cosPhi = math.cos(rot * math.pi / 180.0);
+
+    final pxp = cosPhi * (cx - px) / 2.0 + sinPhi * (cy - py) / 2.0;
+    final pyp = -sinPhi * (cx - px) / 2.0 + cosPhi * (cy - py) / 2.0;
+
+    if (pxp == 0 && pyp == 0) {
+      return;
+    }
+
+    double rxSq = rx * rx;
+    double rySq = ry * ry;
+    final pxpSq = pxp * pxp;
+    final pypSq = pyp * pyp;
+
+    double rad = pxpSq / rxSq + pypSq / rySq;
+
+    if (rad > 1.0) {
+      rad = math.sqrt(rad);
+      rx *= rad;
+      ry *= rad;
+      rxSq = rx * rx;
+      rySq = ry * ry;
+    }
+
+    double sign = (largeArc == sweep) ? -1.0 : 1.0;
+    double numerator = rxSq * rySq - rxSq * pypSq - rySq * pxpSq;
+    double root = 0.0;
+
+    if (numerator > 0) {
+      root = sign * math.sqrt(numerator / (rxSq * pypSq + rySq * pxpSq));
+    }
+
+    final cxp = root * rx * pyp / ry;
+    final cyp = -root * ry * pxp / rx;
+
+    final cxCenter = cosPhi * cxp - sinPhi * cyp + (cx + px) / 2.0;
+    final cyCenter = sinPhi * cxp + cosPhi * cyp + (cy + py) / 2.0;
+
+    final theta1 = _vectorAngle(1.0, 0.0, (pxp - cxp) / rx, (pyp - cyp) / ry);
+    var dTheta = _vectorAngle((pxp - cxp) / rx, (pyp - cyp) / ry,
+        (-pxp - cxp) / rx, (-pyp - cyp) / ry);
+
+    if (!sweep && dTheta > 0) {
+      dTheta -= 2.0 * math.pi;
+    } else if (sweep && dTheta < 0) {
+      dTheta += 2.0 * math.pi;
+    }
+
+    final segments = (dTheta.abs() * 2.0 / math.pi).ceil();
+    final delta = dTheta / segments;
+    final t = 8.0 /
+        3.0 *
+        math.sin(delta / 4.0) *
+        math.sin(delta / 4.0) /
+        math.sin(delta / 2.0);
+
+    double x1 = cx, y1 = cy;
+
+    for (int i = 0; i < segments; i++) {
+      final cosTheta1 = math.cos(theta1 + i * delta);
+      final sinTheta1 = math.sin(theta1 + i * delta);
+      final theta2 = theta1 + (i + 1) * delta;
+      final cosTheta2 = math.cos(theta2);
+      final sinTheta2 = math.sin(theta2);
+
+      final epx = cosPhi * rx * cosTheta2 - sinPhi * ry * sinTheta2 + cxCenter;
+      final epy = sinPhi * rx * cosTheta2 + cosPhi * ry * sinTheta2 + cyCenter;
+
+      final dx1 = t * (-cosPhi * rx * sinTheta1 - sinPhi * ry * cosTheta1);
+      final dy1 = t * (-sinPhi * rx * sinTheta1 + cosPhi * ry * cosTheta1);
+
+      final dx2 = t * (cosPhi * rx * sinTheta2 + sinPhi * ry * cosTheta2);
+      final dy2 = t * (sinPhi * rx * sinTheta2 - cosPhi * ry * cosTheta2);
+
+      vs.curve4(x1 + dx1, y1 + dy1, epx + dx2, epy + dy2, epx, epy);
+      x1 = epx;
+      y1 = epy;
+    }
+  }
+
+  static double _vectorAngle(double u1, double v1, double u2, double v2) {
+    // It should be u1 * v2 - u2 * v1 (cross product z-component)
+    final dot = u1 * u2 + v1 * v2;
+    final mag = math.sqrt(u1 * u1 + v1 * v1) * math.sqrt(u2 * u2 + v2 * v2);
+
+    // Fix sign calculation
+    final cross = u1 * v2 - u2 * v1;
+    final sign2 = (cross < 0.0) ? -1.0 : 1.0;
+
+    var arg = dot / mag;
+    if (arg < -1.0) arg = -1.0;
+    if (arg > 1.0) arg = 1.0;
+    return sign2 * math.acos(arg);
   }
 }
 

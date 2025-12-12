@@ -1,6 +1,3 @@
-import 'dart:math' as math;
-
-import 'package:agg/src/agg/agg_basics.dart';
 import 'package:agg/src/agg/line_aa_basics.dart';
 import 'package:agg/src/agg/line_aa_vertex_sequence.dart';
 import 'package:agg/src/shared/ref_param.dart';
@@ -23,8 +20,6 @@ class RasterizerOutlineAA {
   final LineAAVertexSequence _srcVertices = LineAAVertexSequence();
   OutlineJoin _lineJoin = OutlineJoin.round; // Default to round like Rust
   bool _roundCap = false;
-  int _startX = 0;
-  int _startY = 0;
 
   RasterizerOutlineAA(this._renderer);
 
@@ -39,8 +34,6 @@ class RasterizerOutlineAA {
 
   void moveTo(int x, int y) {
     _srcVertices.add(LineAAVertex(x, y));
-    _startX = x;
-    _startY = y;
   }
 
   void lineTo(int x, int y) {
@@ -398,16 +391,6 @@ class RasterizerOutlineAA {
           break;
       }
     }
-  }
-
-  bool _accurateJoin(LineParameters lp1, LineParameters lp2) {
-    final double d = (lp1.x2 - lp1.x1).toDouble() * (lp2.y2 - lp2.y1) -
-        (lp1.y2 - lp1.y1).toDouble() * (lp2.x2 - lp2.x1);
-    if (d == 0) return false;
-    return ((lp1.x2 - lp1.x1) * (lp2.y2 - lp1.y1) -
-                (lp1.y2 - lp1.y1) * (lp2.x2 - lp1.x1)) /
-            d >
-        0;
   }
 }
 

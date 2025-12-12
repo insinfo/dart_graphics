@@ -7,10 +7,7 @@ import 'vertex_data.dart';
 import '../primitives/point2d.dart';
 import '../util.dart';
 
-enum CurveApproximationMethod {
-  curve_inc,
-  curve_div
-}
+enum CurveApproximationMethod { curve_inc, curve_div }
 
 class Curves {
   static const double curve_distance_epsilon = 1e-30;
@@ -18,9 +15,8 @@ class Curves {
   static const double curve_angle_tolerance_epsilon = 0.01;
   static const int curve_recursion_limit = 32;
 
-  static Curve4Points catrom_to_bezier(
-      double x1, double y1, double x2, double y2,
-      double x3, double y3, double x4, double y4) {
+  static Curve4Points catrom_to_bezier(double x1, double y1, double x2,
+      double y2, double x3, double y3, double x4, double y4) {
     return Curve4Points(
       x2,
       y2,
@@ -38,9 +34,8 @@ class Curves {
         cp[0], cp[1], cp[2], cp[3], cp[4], cp[5], cp[6], cp[7]);
   }
 
-  static Curve4Points ubspline_to_bezier(
-      double x1, double y1, double x2, double y2,
-      double x3, double y3, double x4, double y4) {
+  static Curve4Points ubspline_to_bezier(double x1, double y1, double x2,
+      double y2, double x3, double y3, double x4, double y4) {
     return Curve4Points(
       (x1 + 4 * x2 + x3) / 6,
       (y1 + 4 * y2 + y3) / 6,
@@ -58,9 +53,8 @@ class Curves {
         cp[0], cp[1], cp[2], cp[3], cp[4], cp[5], cp[6], cp[7]);
   }
 
-  static Curve4Points hermite_to_bezier(
-      double x1, double y1, double x2, double y2,
-      double x3, double y3, double x4, double y4) {
+  static Curve4Points hermite_to_bezier(double x1, double y1, double x2,
+      double y2, double x3, double y3, double x4, double y4) {
     return Curve4Points(
       x1,
       y1,
@@ -98,7 +92,13 @@ class Curve3Inc {
   double m_saved_dfx = 0.0;
   double m_saved_dfy = 0.0;
 
-  Curve3Inc([double x1 = 0, double y1 = 0, double x2 = 0, double y2 = 0, double x3 = 0, double y3 = 0]) {
+  Curve3Inc(
+      [double x1 = 0,
+      double y1 = 0,
+      double x2 = 0,
+      double y2 = 0,
+      double x3 = 0,
+      double y3 = 0]) {
     if (x1 != 0 || y1 != 0 || x2 != 0 || y2 != 0 || x3 != 0 || y3 != 0) {
       init(x1, y1, x2, y2, x3, y3);
     }
@@ -120,7 +120,8 @@ class Curve3Inc {
     double dx2 = x2 - cx;
     double dy2 = y2 - cy;
 
-    double len = math.sqrt(dx1 * dx1 + dy1 * dy1) + math.sqrt(dx2 * dx2 + dy2 * dy2);
+    double len =
+        math.sqrt(dx1 * dx1 + dy1 * dy1) + math.sqrt(dx2 * dx2 + dy2 * dy2);
 
     m_num_steps = Util.uround(len * 0.25 * m_scale);
 
@@ -220,7 +221,13 @@ class Curve3Div {
   int m_count = 0;
   final List<Point2D> m_points = [];
 
-  Curve3Div([double x1 = 0, double y1 = 0, double cx = 0, double cy = 0, double x2 = 0, double y2 = 0]) {
+  Curve3Div(
+      [double x1 = 0,
+      double y1 = 0,
+      double cx = 0,
+      double cy = 0,
+      double x2 = 0,
+      double y2 = 0]) {
     if (x1 != 0 || y1 != 0 || cx != 0 || cy != 0 || x2 != 0 || y2 != 0) {
       init(x1, y1, cx, cy, x2, y2);
     }
@@ -281,16 +288,20 @@ class Curve3Div {
     Point2D p = m_points[m_count++];
     x.value = p.x;
     y.value = p.y;
-    return (m_count == 1) ? FlagsAndCommand.commandMoveTo : FlagsAndCommand.commandLineTo;
+    return (m_count == 1)
+        ? FlagsAndCommand.commandMoveTo
+        : FlagsAndCommand.commandLineTo;
   }
 
-  void bezier(double x1, double y1, double x2, double y2, double x3, double y3) {
+  void bezier(
+      double x1, double y1, double x2, double y2, double x3, double y3) {
     m_points.add(Point2D(x1, y1));
     recursive_bezier(x1, y1, x2, y2, x3, y3, 0);
     m_points.add(Point2D(x3, y3));
   }
 
-  void recursive_bezier(double x1, double y1, double x2, double y2, double x3, double y3, int level) {
+  void recursive_bezier(double x1, double y1, double x2, double y2, double x3,
+      double y3, int level) {
     if (level > Curves.curve_recursion_limit) {
       return;
     }
@@ -315,7 +326,8 @@ class Curve3Div {
           return;
         }
 
-        da = (math.atan2(y3 - y2, x3 - x2) - math.atan2(y2 - y1, x2 - x1)).abs();
+        da =
+            (math.atan2(y3 - y2, x3 - x2) - math.atan2(y2 - y1, x2 - x1)).abs();
         if (da >= math.pi) da = 2 * math.pi - da;
 
         if (da < m_angle_tolerance) {
@@ -353,14 +365,35 @@ class Curve3Div {
 class Curve4Points {
   final List<double> cp = List.filled(8, 0.0);
 
-  Curve4Points([double x1 = 0, double y1 = 0, double x2 = 0, double y2 = 0, double x3 = 0, double y3 = 0, double x4 = 0, double y4 = 0]) {
-    cp[0] = x1; cp[1] = y1; cp[2] = x2; cp[3] = y2;
-    cp[4] = x3; cp[5] = y3; cp[6] = x4; cp[7] = y4;
+  Curve4Points(
+      [double x1 = 0,
+      double y1 = 0,
+      double x2 = 0,
+      double y2 = 0,
+      double x3 = 0,
+      double y3 = 0,
+      double x4 = 0,
+      double y4 = 0]) {
+    cp[0] = x1;
+    cp[1] = y1;
+    cp[2] = x2;
+    cp[3] = y2;
+    cp[4] = x3;
+    cp[5] = y3;
+    cp[6] = x4;
+    cp[7] = y4;
   }
 
-  void init(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
-    cp[0] = x1; cp[1] = y1; cp[2] = x2; cp[3] = y2;
-    cp[4] = x3; cp[5] = y3; cp[6] = x4; cp[7] = y4;
+  void init(double x1, double y1, double x2, double y2, double x3, double y3,
+      double x4, double y4) {
+    cp[0] = x1;
+    cp[1] = y1;
+    cp[2] = x2;
+    cp[3] = y2;
+    cp[4] = x3;
+    cp[5] = y3;
+    cp[6] = x4;
+    cp[7] = y4;
   }
 
   double operator [](int i) => cp[i];
@@ -388,9 +421,25 @@ class Curve4Increment {
   double m_saved_ddfx = 0.0;
   double m_saved_ddfy = 0.0;
 
-  Curve4Increment([double xStart = 0, double yStart = 0, double xControl1 = 0, double yControl1 = 0, double xControl2 = 0, double yControl2 = 0, double xEnd = 0, double yEnd = 0]) {
-    if (xStart != 0 || yStart != 0 || xControl1 != 0 || yControl1 != 0 || xControl2 != 0 || yControl2 != 0 || xEnd != 0 || yEnd != 0) {
-      init(xStart, yStart, xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
+  Curve4Increment(
+      [double xStart = 0,
+      double yStart = 0,
+      double xControl1 = 0,
+      double yControl1 = 0,
+      double xControl2 = 0,
+      double yControl2 = 0,
+      double xEnd = 0,
+      double yEnd = 0]) {
+    if (xStart != 0 ||
+        yStart != 0 ||
+        xControl1 != 0 ||
+        yControl1 != 0 ||
+        xControl2 != 0 ||
+        yControl2 != 0 ||
+        xEnd != 0 ||
+        yEnd != 0) {
+      init(xStart, yStart, xControl1, yControl1, xControl2, yControl2, xEnd,
+          yEnd);
     }
   }
 
@@ -403,7 +452,8 @@ class Curve4Increment {
     remainingSteps = -1;
   }
 
-  void init(double xStart, double yStart, double xControl1, double yControl1, double xControl2, double yControl2, double xEnd, double yEnd) {
+  void init(double xStart, double yStart, double xControl1, double yControl1,
+      double xControl2, double yControl2, double xEnd, double yEnd) {
     double dx1 = xControl1 - xStart;
     double dy1 = yControl1 - yStart;
     double dx2 = xControl2 - xControl1;
@@ -412,13 +462,25 @@ class Curve4Increment {
     double dy3 = yEnd - yControl2;
 
     double len = (math.sqrt(dx1 * dx1 + dy1 * dy1) +
-                  math.sqrt(dx2 * dx2 + dy2 * dy2) +
-                  math.sqrt(dx3 * dx3 + dy3 * dy3)) * 0.25 * scale;
+            math.sqrt(dx2 * dx2 + dy2 * dy2) +
+            math.sqrt(dx3 * dx3 + dy3 * dy3)) *
+        0.25 *
+        scale;
 
-    initSteps(xStart, yStart, xControl1, yControl1, xControl2, yControl2, xEnd, yEnd, Util.uround(len));
+    initSteps(xStart, yStart, xControl1, yControl1, xControl2, yControl2, xEnd,
+        yEnd, Util.uround(len));
   }
 
-  void initSteps(double xStart, double yStart, double xControl1, double yControl1, double xControl2, double yControl2, double xEnd, double yEnd, int numSteps) {
+  void initSteps(
+      double xStart,
+      double yStart,
+      double xControl1,
+      double yControl1,
+      double xControl2,
+      double yControl2,
+      double xEnd,
+      double yEnd,
+      int numSteps) {
     start.x = xStart;
     start.y = yStart;
     end.x = xEnd;
@@ -448,8 +510,10 @@ class Curve4Increment {
     m_saved_fx = m_fx = xStart;
     m_saved_fy = m_fy = yStart;
 
-    m_saved_dfx = m_dfx = (xControl1 - xStart) * pre1 + tmp1x * pre2 + tmp2x * subdivide_step3;
-    m_saved_dfy = m_dfy = (yControl1 - yStart) * pre1 + tmp1y * pre2 + tmp2y * subdivide_step3;
+    m_saved_dfx = m_dfx =
+        (xControl1 - xStart) * pre1 + tmp1x * pre2 + tmp2x * subdivide_step3;
+    m_saved_dfy = m_dfy =
+        (yControl1 - yStart) * pre1 + tmp1y * pre2 + tmp2y * subdivide_step3;
 
     m_saved_ddfx = m_ddfx = tmp1x * pre4 + tmp2x * pre5;
     m_saved_ddfy = m_ddfy = tmp1y * pre4 + tmp2y * pre5;
@@ -489,7 +553,7 @@ class Curve4Increment {
       remainingSteps = -1;
       return;
     }
-    
+
     remainingSteps = numSteps;
     m_fx = m_saved_fx;
     m_fy = m_saved_fy;
@@ -542,8 +606,23 @@ class Curve4Div {
   int m_count = 0;
   final List<Point2D> m_points = [];
 
-  Curve4Div([double x1 = 0, double y1 = 0, double x2 = 0, double y2 = 0, double x3 = 0, double y3 = 0, double x4 = 0, double y4 = 0]) {
-    if (x1 != 0 || y1 != 0 || x2 != 0 || y2 != 0 || x3 != 0 || y3 != 0 || x4 != 0 || y4 != 0) {
+  Curve4Div(
+      [double x1 = 0,
+      double y1 = 0,
+      double x2 = 0,
+      double y2 = 0,
+      double x3 = 0,
+      double y3 = 0,
+      double x4 = 0,
+      double y4 = 0]) {
+    if (x1 != 0 ||
+        y1 != 0 ||
+        x2 != 0 ||
+        y2 != 0 ||
+        x3 != 0 ||
+        y3 != 0 ||
+        x4 != 0 ||
+        y4 != 0) {
       init(x1, y1, x2, y2, x3, y3, x4, y4);
     }
   }
@@ -557,7 +636,8 @@ class Curve4Div {
     m_count = 0;
   }
 
-  void init(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+  void init(double x1, double y1, double x2, double y2, double x3, double y3,
+      double x4, double y4) {
     m_points.clear();
     m_distance_tolerance_square = 0.5 / m_approximation_scale;
     m_distance_tolerance_square *= m_distance_tolerance_square;
@@ -612,16 +692,20 @@ class Curve4Div {
     Point2D p = m_points[m_count++];
     x.value = p.x;
     y.value = p.y;
-    return (m_count == 1) ? FlagsAndCommand.commandMoveTo : FlagsAndCommand.commandLineTo;
+    return (m_count == 1)
+        ? FlagsAndCommand.commandMoveTo
+        : FlagsAndCommand.commandLineTo;
   }
 
-  void bezier(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+  void bezier(double x1, double y1, double x2, double y2, double x3, double y3,
+      double x4, double y4) {
     m_points.add(Point2D(x1, y1));
     recursive_bezier(x1, y1, x2, y2, x3, y3, x4, y4, 0);
     m_points.add(Point2D(x4, y4));
   }
 
-  void recursive_bezier(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, int level) {
+  void recursive_bezier(double x1, double y1, double x2, double y2, double x3,
+      double y3, double x4, double y4, int level) {
     if (level > Curves.curve_recursion_limit) {
       return;
     }
@@ -705,7 +789,8 @@ class Curve4Div {
             return;
           }
 
-          da1 = (math.atan2(y4 - y3, x4 - x3) - math.atan2(y3 - y2, x3 - x2)).abs();
+          da1 = (math.atan2(y4 - y3, x4 - x3) - math.atan2(y3 - y2, x3 - x2))
+              .abs();
           if (da1 >= math.pi) da1 = 2 * math.pi - da1;
 
           if (da1 < m_angle_tolerance) {
@@ -730,7 +815,8 @@ class Curve4Div {
             return;
           }
 
-          da1 = (math.atan2(y3 - y2, x3 - x2) - math.atan2(y2 - y1, x2 - x1)).abs();
+          da1 = (math.atan2(y3 - y2, x3 - x2) - math.atan2(y2 - y1, x2 - x1))
+              .abs();
           if (da1 >= math.pi) da1 = 2 * math.pi - da1;
 
           if (da1 < m_angle_tolerance) {
@@ -749,7 +835,8 @@ class Curve4Div {
         break;
 
       case 3:
-        if ((d2 + d3) * (d2 + d3) <= m_distance_tolerance_square * (dx * dx + dy * dy)) {
+        if ((d2 + d3) * (d2 + d3) <=
+            m_distance_tolerance_square * (dx * dx + dy * dy)) {
           if (m_angle_tolerance < Curves.curve_angle_tolerance_epsilon) {
             m_points.add(Point2D(x23, y23));
             return;
@@ -789,9 +876,17 @@ class Curve4Div {
 class Curve3 implements IVertexSource {
   final Curve3Inc m_curve_inc = Curve3Inc();
   final Curve3Div m_curve_div = Curve3Div();
-  CurveApproximationMethod m_approximation_method = CurveApproximationMethod.curve_div;
+  CurveApproximationMethod m_approximation_method =
+      CurveApproximationMethod.curve_div;
+  double _x1 = 0, _y1 = 0, _cx = 0, _cy = 0, _x2 = 0, _y2 = 0;
 
-  Curve3([double x1 = 0, double y1 = 0, double cx = 0, double cy = 0, double x2 = 0, double y2 = 0]) {
+  Curve3(
+      [double x1 = 0,
+      double y1 = 0,
+      double cx = 0,
+      double cy = 0,
+      double x2 = 0,
+      double y2 = 0]) {
     if (x1 != 0 || y1 != 0 || cx != 0 || cy != 0 || x2 != 0 || y2 != 0) {
       init(x1, y1, cx, cy, x2, y2);
     }
@@ -803,6 +898,12 @@ class Curve3 implements IVertexSource {
   }
 
   void init(double x1, double y1, double cx, double cy, double x2, double y2) {
+    _x1 = x1;
+    _y1 = y1;
+    _cx = cx;
+    _cy = cy;
+    _x2 = x2;
+    _y2 = y2;
     if (m_approximation_method == CurveApproximationMethod.curve_inc) {
       m_curve_inc.init(x1, y1, cx, cy, x2, y2);
     } else {
@@ -862,10 +963,15 @@ class Curve3 implements IVertexSource {
 
   @override
   int getLongHashCode([int hash = 0xcbf29ce484222325]) {
-    // TODO: Implement hash code
+    hash = (hash ^ _x1.hashCode) * 1099511628211;
+    hash = (hash ^ _y1.hashCode) * 1099511628211;
+    hash = (hash ^ _cx.hashCode) * 1099511628211;
+    hash = (hash ^ _cy.hashCode) * 1099511628211;
+    hash = (hash ^ _x2.hashCode) * 1099511628211;
+    hash = (hash ^ _y2.hashCode) * 1099511628211;
     return hash;
   }
-  
+
   @override
   Iterable<VertexData> vertices() sync* {
     var x = RefParam(0.0);
@@ -881,10 +987,34 @@ class Curve3 implements IVertexSource {
 class Curve4 implements IVertexSource {
   final Curve4Increment m_curve_inc = Curve4Increment();
   final Curve4Div m_curve_div = Curve4Div();
-  CurveApproximationMethod m_approximation_method = CurveApproximationMethod.curve_div;
+  CurveApproximationMethod m_approximation_method =
+      CurveApproximationMethod.curve_div;
+  double _x1 = 0,
+      _y1 = 0,
+      _cx1 = 0,
+      _cy1 = 0,
+      _cx2 = 0,
+      _cy2 = 0,
+      _x2 = 0,
+      _y2 = 0;
 
-  Curve4([double x1 = 0, double y1 = 0, double cx1 = 0, double cy1 = 0, double cx2 = 0, double cy2 = 0, double x2 = 0, double y2 = 0]) {
-    if (x1 != 0 || y1 != 0 || cx1 != 0 || cy1 != 0 || cx2 != 0 || cy2 != 0 || x2 != 0 || y2 != 0) {
+  Curve4(
+      [double x1 = 0,
+      double y1 = 0,
+      double cx1 = 0,
+      double cy1 = 0,
+      double cx2 = 0,
+      double cy2 = 0,
+      double x2 = 0,
+      double y2 = 0]) {
+    if (x1 != 0 ||
+        y1 != 0 ||
+        cx1 != 0 ||
+        cy1 != 0 ||
+        cx2 != 0 ||
+        cy2 != 0 ||
+        x2 != 0 ||
+        y2 != 0) {
       init(x1, y1, cx1, cy1, cx2, cy2, x2, y2);
     }
   }
@@ -898,11 +1028,22 @@ class Curve4 implements IVertexSource {
     m_curve_div.reset();
   }
 
-  void init(double xStart, double yStart, double xControl1, double yControl1, double xControl2, double yControl2, double xEnd, double yEnd) {
+  void init(double xStart, double yStart, double xControl1, double yControl1,
+      double xControl2, double yControl2, double xEnd, double yEnd) {
+    _x1 = xStart;
+    _y1 = yStart;
+    _cx1 = xControl1;
+    _cy1 = yControl1;
+    _cx2 = xControl2;
+    _cy2 = yControl2;
+    _x2 = xEnd;
+    _y2 = yEnd;
     if (m_approximation_method == CurveApproximationMethod.curve_inc) {
-      m_curve_inc.init(xStart, yStart, xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
+      m_curve_inc.init(xStart, yStart, xControl1, yControl1, xControl2,
+          yControl2, xEnd, yEnd);
     } else {
-      m_curve_div.init(xStart, yStart, xControl1, yControl1, xControl2, yControl2, xEnd, yEnd);
+      m_curve_div.init(xStart, yStart, xControl1, yControl1, xControl2,
+          yControl2, xEnd, yEnd);
     }
   }
 
@@ -962,10 +1103,16 @@ class Curve4 implements IVertexSource {
 
   @override
   int getLongHashCode([int hash = 0xcbf29ce484222325]) {
-    // TODO: Implement hash code
+    hash = (hash ^ _x1.hashCode) * 1099511628211;
+    hash = (hash ^ _y1.hashCode) * 1099511628211;
+    hash = (hash ^ _cx1.hashCode) * 1099511628211;
+    hash = (hash ^ _cy1.hashCode) * 1099511628211;
+    hash = (hash ^ _cx2.hashCode) * 1099511628211;
+    hash = (hash ^ _cy2.hashCode) * 1099511628211;
+    hash = (hash ^ _x2.hashCode) * 1099511628211;
+    hash = (hash ^ _y2.hashCode) * 1099511628211;
     return hash;
   }
-
   @override
   Iterable<VertexData> vertices() sync* {
     var x = RefParam(0.0);

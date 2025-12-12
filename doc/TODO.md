@@ -1,13 +1,15 @@
-# TODO - Porte da Biblioteca Typography para Dart
+# TODO - Porte da Biblioteca AGG e Typography para Dart
 
 ## Status Geral
-**Projeto:** Porte da biblioteca Typography (agg-sharp) de C# para Dart  
+**Projeto:** Porte da biblioteca AGG e Typography  (agg-sharp) de C# para Dart  
 **Data de Início:** 07 de Novembro de 2025  
 **Status Atual:** Em Progresso - Fase 3 (AGG Core & Interpreter) - 90%
+
 continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
 e C:\MyDartProjects\agg\agg-sharp\Typography 
 
 use (ripgrep) rg para busca no codigo fonte
+
 ---
 use dart analyze para verficar se o codigo está correto
 ## ✅ Fase 0: Estrutura de Pastas e Utilitários Essenciais - CONCLUÍDO
@@ -154,18 +156,6 @@ use dart analyze para verficar se o codigo está correto
   - ✅ Suporte a versões 1.0, 2.0, 2.5, 3.0
   - ✅ Integração com Typeface e OpenFontReader
 
-### Tabelas de Variações (OpenType Variations)
-- [x] `FVar` - `lib/src/typography/openfont/tables/variations/fvar.dart`
-  - ✅ Font Variations (Eixos e Instâncias)
-  - ✅ Integração com Typeface e OpenFontReader
-
-- [x] `GVar` - `lib/src/typography/openfont/tables/variations/gvar.dart`
-  - ✅ Glyph Variations (Dados de variação de glifos)
-  - ✅ Leitura de headers e tuplas compartilhadas
-  - ⚠️ Parsing completo de deltas pendente
-
-- [x] `HVar` & `VVar` - `lib/src/typography/openfont/tables/variations/hvar.dart`, `vvar.dart`
-  - ✅ Horizontal/Vertical Metrics Variations
   - ✅ ItemVariationStore
   - ⚠️ DeltaSetIndexMap pendente
 
@@ -511,25 +501,233 @@ Nenhum no momento.
 ## 🛠️ Dívida Técnica e TODOs Específicos (Codebase)
 
 ### AGG Core
-- [ ] `agg_curves.dart`: Implementar `hashCode` (linhas 865, 965).
-- [ ] `vertex_source_adapter.dart`: Implementar `getLongHashCode` corretamente.
+#### OpenFont Tables
+- [x] `BASE` (Baseline) - **Concluído**
+- [x] `JSTF` (Justification) - **Concluído**
+- [x] `MATH` (Math Layout) - **Concluído**
+- [x] `COLR` & `CPAL` (Color Fonts) - **Concluído**
+- [x] `CFF` (Compact Font Format) - **Concluído**
+  - ✅ Leitura da tabela CFF
+  - ✅ Parser CFF1 (Header, Indexes, DICTs)
+  - ✅ Integração com Typeface e OpenFontReader
+  - ✅ Parser de CharStrings (Type 2)
+  - ✅ Engine de Avaliação (Stack Machine)
+  - ✅ Interface IGlyphTranslator
+- [x] `Bitmap/SVG` fonts (EBLC, EBDT, SVG, etc.) - **Concluído**
+  - ✅ EBLC (Embedded Bitmap Location)
+  - ✅ EBDT (Embedded Bitmap Data)
+  - ✅ CBLC (Color Bitmap Location)
+  - ✅ CBDT (Color Bitmap Data)
+  - ✅ SVG (Scalable Vector Graphics)
+  - ✅ Integração com Typeface e OpenFontReader
+- [x] `Variations` (fvar, gvar, HVAR, MVAR, STAT, VVAR) - **Concluído**
+- [x] `Vertical Metrics` (vhea, vmtx) - **Concluído**
+- [x] `Kerning` (kern - legacy) - **Concluído**
+- [x] `PostScript` (post) - **Concluído**
 
-### Typography / OpenFont
-#### Tables
-- [ ] **BASE**: Implementar BaseCoord Format 3 (Device Table / Variation Index).
-- [ ] **CFF**: Implementar leitura de Encoding (`cff_parser.dart`).
-- [ ] **GPOS**:
-  - [ ] Implementar Contextual Positioning Format 1, 2, 3.
-  - [ ] Implementar Chaining Contextual Positioning Format 1, 2, 3.
-- [ ] **KERN**: Revisar suporte a múltiplas tabelas e implementação específica.
-- [ ] **SVG**: Revisar lazy load e suporte a gzip-encoded.
-- [ ] **Variations**:
-  - [ ] **GVAR**: Implementar parsing completo de dados de variação (deltas).
-  - [ ] **HVAR/VVAR**: Implementar `DeltaSetIndexMap`.
-  - [ ] **ItemVariationStore**: Verificar implementação.
+#### TrueType Interpreter
+- [x] Hinting engine (bytecode interpreter) - **Implementado (Core)**
+  - ✅ Stack, GraphicsState, Zone, InstructionStream
+  - ✅ Opcodes: Arithmetic, Logical, Flow Control, Function Defs
+  - ✅ Opcodes: Move (MIAP, MDAP, etc), Shift (SHP, SHC, etc), Delta, Interpolate (IUP)
+  - ⚠️ `MPS` opcode precisa de implementação correta (tamanho em pontos)
+
+#### WebFont
+- [ ] WOFF Reader
+- [ ] WOFF2 Reader
+
+---
+
+## 🎯 Fase 3: Finalização - NÃO INICIADO
+
+- [ ] Extensões de Escala de Pixels
+- [ ] API Pública (Barrel File) - `lib/typography.dart`
+- [ ] Documentação completa
+- [ ] Testes de integração
+  - ✅ `lion_test.dart`: Renderização de caminhos complexos e transformações (baseado em `lion.rs`)
+  - ✅ `rounded_rect_test.dart`: Renderização de primitivas e stroking (baseado em `rounded_rect.rs`)
+  - ✅ `outline_aa_test.dart`: Renderização de contornos AA (baseado em `outline_aa.rs`) - **Corrigido bug em LineProfileAA para linhas largas**
+  - ✅ `image_buffer_test.dart`: Teste básico de buffer de imagem (baseado em `t01_rendering_buffer.rs`)
+  - ✅ `line_join_test.dart`: Teste de junções de linha (baseado em `t21_line_join.rs`)
+  - ✅ `pixel_formats_test.dart`: Teste de formatos de pixel e manipulação direta (baseado em `t02_pixel_formats.rs`)
+  - ✅ `solar_spectrum_test.dart`: Teste de espectro solar e conversão de comprimento de onda (baseado em `t03_solar_spectrum.rs`)
+  - ✅ Migração de assets para `resources/` para remover dependências externas.
+
+---
+
+## 📊 Métricas do Projeto
+
+### Arquivos Portados: 19/50+ (38%)
+Atual: ~26/50 (52%) com rasterização AA, ImageBuffer, accessors e caps AA básicos.
+
+**Fase 1 - Análise de Fontes:**
+- ByteOrderSwappingBinaryReader ✅
+- Utils ✅
+- TableEntry ✅
+- TableHeader ✅
+- TableEntryCollection ✅
+- OpenFontReader ✅
+- Head ✅
+- MaxProfile ✅
+- HorizontalHeader ✅
+- OS2Table ✅
+- HorizontalMetrics ✅
+- NameEntry ✅
+- Cmap ✅
+- GlyphLocations ✅
+- Glyf ✅
+- Glyph & GlyphPointF ✅
+- Typeface ✅
+
+**Fase 2 - Layout de Texto:**
+- GlyphPlan ✅
+- GlyphIndexList ✅
+- **GlyphLayout** ✅ (versão básica)
+- **GSUB** ✅ (parcial)
+- ScriptList, FeatureList, CoverageTable, ClassDefTable ✅
+
+### Testes: 71/71 passando (100%)
+
+**Fase 1 - OpenFont Tables (47 testes):**
+- ByteOrderSwappingBinaryReader: 5 testes ✅
+- Utils: 4 testes ✅
+- Bounds: 3 testes ✅
+- Head: 3 testes ✅
+- MaxProfile: 3 testes ✅
+- HorizontalHeader: 2 testes ✅
+- OS2Table: 4 testes ✅
+- HorizontalMetrics: 5 testes ✅
+- NameEntry: 4 testes ✅
+- Cmap: 4 testes ✅
+- GlyphLocations: 2 testes ✅
+- Glyph & GlyphPointF: 4 testes ✅
+- Typeface: 4 testes ✅
+
+**Fase 2 - Text Layout (16 testes):**
+- UnscaledGlyphPlan: 2 testes ✅
+- UnscaledGlyphPlanList: 2 testes ✅
+- GlyphPlan: 1 teste ✅
+- GlyphIndexList: 4 testes ✅
+- **GlyphLayout: 7 testes** ✅ (Incluindo Ligaduras e Mark-to-Ligature)
+
+### Próximos Passos Imediatos
+1. ✅ Finalizar renderer para `RasterizerOutlineAA` (LineRenderer + blend).
+2. ✅ Portar `ScanlineRenderer`/`ImageLineRenderer` e `RasterBufferAccessors` para gerar pixels.
+3. ✅ Portar `ImageBuffer`/blenders e validar saídas das scanlines.
+4. ✅ Avançar GSUB/GPOS integração completa no GlyphLayout (kerning/marks).
+5. ✅ Integrar Typography com AGG Rasterizer (Renderizar glifos na tela/imagem).
+
+---
+
+## 🐛 Problemas Conhecidos
+Nenhum no momento.
+
+---
+
+## 📝 Notas Técnicas
+
+### Diferenças C# → Dart
+- **ref/out parameters**: Convertidos para retorno de objetos/records
+- **struct → class**: Todas as structs C# viram classes Dart
+- **unsafe code**: Substituído por Uint8List e ByteData
+- **BinaryReader**: Substituído por ByteOrderSwappingBinaryReader customizado
+
+### Decisões de Design
+- Usar `int` para todos os tipos numéricos (Dart não diferencia uint/int em tempo de compilação)
+- Usar `ByteData` com `Endian.big` para leitura big-endian
+- Manter nomes de campos em camelCase (convenção Dart)
+- Manter estrutura de pastas similar ao original
+
+---
+
+**Última Atualização:** 26 de Novembro de 2025 - 14:00  
+**Responsável:** insinfo
+
+**Últimas Alterações:**
+- ✅ Verificação e validação de componentes Core do AGG: `VectorClipper`, `ClipLiangBarsky`, `RasterizerCompoundAa`, `OutlineRenderer`, `ImageLineRenderer`, `ScanlineRenderer`, `ScanlineRasterizer`.
+- ✅ Implementação do algoritmo `FloodFill`.
+- ✅ Portadas tabelas de variações: fvar, gvar, HVAR, MVAR, STAT, VVAR.
+- ✅ Integradas tabelas de variações no Typeface e OpenFontReader.
+- ✅ Portadas tabelas de métricas verticais: vhea, vmtx.
+- ✅ Portadas tabelas legadas e auxiliares: gasp, kern, post.
+- ✅ Integradas novas tabelas no Typeface e OpenFontReader.
+- ✅ Portadas tabelas de layout avançado: MATH, COLR, CPAL.
+- ✅ Integradas tabelas MATH, COLR, CPAL no Typeface e OpenFontReader.
+- ✅ Corrigidos warnings do linter (variáveis não usadas, imports).
+- ✅ Corrigidos 122 erros de compilação em `VertexSource`, `ITransform`, `Image`.
+- ✅ Corrigidos 30 warnings (imports não usados, variáveis não usadas).
+- ✅ Corrigidos testes falhando em `vertex_source_test.dart` (tratamento de comando Stop).
+- ✅ Corrigidos testes falhando em `graphics2d_test.dart` (renderização de Arc/Circle).
+- ✅ Atualizado teste `lookup_flag_test.dart` para refletir comportamento correto de GPOS (subtração de advance).
+- ✅ Refatoração de `Arc`, `Ellipse`, `RoundedRect` para nova API `VertexSource`.
+- ✅ Atualização de `ImageClippingProxy`, `AlphaMaskAdaptor`, `SpanImageFilter`.
+
+---
+
+## 🎉 Marcos Importantes
+
+### ✅ Fase 1: Análise do Arquivo da Fonte - CONCLUÍDA!
+- ✅ Todas as tabelas fundamentais de fontes TrueType/OpenType
+- ✅ Leitura completa de glifos simples e compostos
+- ✅ Mapeamento de caracteres Unicode para glifos
+- ✅ Métricas horizontais completas
+- ✅ Objeto Typeface central integrando tudo
+- ✅ 47 testes unitários com 100% passando
+
+### ✅ Fase 2: Motor de Layout de Texto - CONCLUÍDA (Versão Inicial)
+- ✅ Estruturas de dados básicas (GlyphPlan, GlyphIndexList)
+- ✅ Motor GlyphLayout básico funcional
+- ✅ Suporte a texto simples e emoji (surrogate pairs)
+- ✅ Escalamento de fontes para pixels
+- ✅ 16 testes unitários com 100% passando
+- ✅ GSUB (ligaduras) - VALIDADO
+- ✅ GPOS (kerning/marks) - VALIDADO
+
+### 🔄 Fase 3: AGG Core & Integração - EM PROGRESSO
+- ✅ Rasterização básica (ScanlineRasterizer, ScanlineRenderer)
+- ✅ Integração Typography -> AGG (GlyphVertexSource)
+- ✅ Renderização de texto para imagem (PPM)
+
+### Próximo Marco:
+**API Pública e Documentação** - Limpar a API e documentar o uso.
+
+---
+
+## 🛠️ Dívida Técnica e TODOs Específicos (Codebase)
+
+### AGG Core
+- [x] `agg_curves.dart`: Implementar `hashCode` (linhas 865, 965).
+- [x] `vertex_source_adapter.dart`: Implementar `getLongHashCode` corretamente.
+
 
 #### Interpreter
-- [ ] `true_type_interpreter.dart`: Implementar `MPS` (Measure Point Size) corretamente.
+- [x] `true_type_interpreter.dart`: Implement `MPS` (Measure Point Size) correctly.
 
 #### Readers
 - [ ] `open_font_reader.dart`: Implementar leitura customizada (TODO na linha 315).
+
+
+continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
+e C:\MyDartProjects\agg\agg-sharp\Typography , tem fontes aqui para testes C:\MyDartProjects\agg\resources\fonts\Satoshi_Complete\Fonts\WEB\fonts e aqui C:\MyDartProjects\agg\resources\fonts tem testes tambem em r-lib/ragg — tende a ser o mais “testado”: tem pasta tests, workflow (.github) e codecov.yml, além de badges de R-CMD-check e cobertura. 
+GitHub
+
+MatterHackers/agg-sharp — bem forte também: além de Tests, tem GuiAutomation (sinal de teste de integração/UI) e TestData. 
+GitHub
+
+andamira/agrega — tem tests/ e já referencia saída dentro de tests/... no exemplo do README, o que costuma acompanhar suíte de testes/integração do projeto. 
+GitHub
+
+savage13/agg — tem tests/ e um script focus_on_itest.sh (cheiro de fluxo de testes de integração). 
+GitHub
+
+gameduell/vectorx — tem tests/, mas não vi (na página principal) sinais tão fortes de coverage/CI quanto ragg. 
+GitHub
+
+pytroll/aggdraw — não aparece uma pasta tests/ no topo, mas existe selftest.py e instrução de “run tests” via esse script (geralmente é uma suíte menor). 
+GitHub
+
+dotMorten/AntiGrainRT, jangko/nimAGG, CWBudde/AggPasMod — na raiz não aparece tests/ (parece mais “código + exemplos”), então provavelmente têm menos cobertura automatizada. 
+GitHub
++2
+GitHub
++2 veja a pasta referencias la tem bastantes testes e arquivos que podem ser copiados para dentro de resources para testes comece a implementar bastantes teste unitarios e de integração C:\MyDartProjects\agg\referencias

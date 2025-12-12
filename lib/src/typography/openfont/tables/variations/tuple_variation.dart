@@ -11,6 +11,10 @@ class TupleVariationHeader {
   TupleRecord? intermediateStartTuple;
   TupleRecord? intermediateEndTuple;
 
+  List<int>? points;
+  List<int>? deltasX;
+  List<int>? deltasY;
+
   void readContent(ByteOrderSwappingBinaryReader reader, int axisCount) {
     variationDataSize = reader.readUInt16();
     tupleIndex = reader.readUInt16();
@@ -104,7 +108,7 @@ class PackedDeltas {
     while (deltasRead < count) {
       int control = reader.readByte();
       int runCount = (control & 0x3F) + 1;
-      
+
       // 0x80: DELTAS_ARE_ZERO
       if ((control & 0x80) != 0) {
         for (int i = 0; i < runCount; i++) {

@@ -144,8 +144,10 @@ class OpenFontReader {
     final minorVersion = reader.readUInt16();
 
     if (KnownFontFiles.isWoff(majorVersion, minorVersion)) {
+      reader.seek(0);
       return WoffReader().read(reader);
     } else if (KnownFontFiles.isWoff2(majorVersion, minorVersion)) {
+      reader.seek(0);
       return Woff2Reader().read(reader);
     } else if (KnownFontFiles.isTtcf(majorVersion, minorVersion)) {
       throw UnimplementedError(
@@ -307,25 +309,26 @@ class OpenFontReader {
     }
 
     if (found is UnreadTableEntry) {
-      // Set header before actual read
+      // Ensure the pending table shares header metadata
       resultTable.header = found.header;
-      
+
+      TableEntry loadedTable;
       if (found.hasCustomContentReader) {
-        // Some tables have custom readers
-        // TODO: implement custom reading
-        throw UnimplementedError('Custom content readers not yet implemented');
+        // Delegate to the custom reader implementation (eg. WOFF2 transforms)
+        loadedTable = found.createTableEntry(reader, resultTable);
+        loadedTable.header ??= found.header;
       } else {
-        // Standard reading
+        // Default path: seek + read from the underlying font stream
         resultTable.loadDataFrom(reader);
+        loadedTable = resultTable;
       }
-      
-      // Replace the unread entry with the read table
-      tables.replaceTable(resultTable);
-      return resultTable;
-    } else {
-      // Table was already read
-      return found as T;
+
+      tables.replaceTable(loadedTable);
+      return loadedTable as T;
     }
+
+    // Table was already materialised earlier
+    return found as T;
   }
 
   Typeface? _readTypefaceFromTables(
