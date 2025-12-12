@@ -9,6 +9,7 @@ import 'package:agg/src/agg/scanline_rasterizer.dart';
 import 'package:agg/src/agg/scanline_renderer.dart';
 import 'package:agg/src/agg/scanline_unpacked8.dart';
 import 'package:agg/src/agg/image/png_encoder.dart';
+import '../test_utils/png_golden.dart';
 
 void main() {
   test('Rounded Rect Rendering Test', () {
@@ -32,6 +33,7 @@ void main() {
     // Draw ellipses
     for (var i = 0; i < 2; i++) {
       final e = Ellipse(mX[i], mY[i], 3.0, 3.0, 16);
+      ras.reset();
       ras.add_path(e);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(54, 54, 54, 255));
     }
@@ -46,14 +48,20 @@ void main() {
     final stroke = Stroke(r);
     stroke.width = 7.0;
     
+    ras.reset();
     ras.add_path(stroke);
     ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
     
     // Save image
     Directory('test/tmp').createSync(recursive: true);
-    PngEncoder.saveImage(buffer, 'test/tmp/rounded_rect.png');
-    
-    // Verify file exists
-    expect(File('test/tmp/rounded_rect.png').existsSync(), isTrue);
+    const outPath = 'test/tmp/rounded_rect.png';
+    PngEncoder.saveImage(buffer, outPath);
+
+    expectPngMatchesGolden(
+      outPath,
+      'resources/rounded_rect.png',
+      perChannelTolerance: 6,
+      maxDifferentPixels: 400,
+    );
   });
 }

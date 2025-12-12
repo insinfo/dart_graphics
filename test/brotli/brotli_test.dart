@@ -5,6 +5,8 @@ import 'package:agg/src/brotli/brotli.dart';
 import 'package:test/test.dart';
 
 void main() {
+  const assetsDir = 'test/brotli/assets';
+
   test('Base Dictionary Words', () {
     final input = [
       0x1b, 0x03, 0x00, 0x00, //
@@ -95,7 +97,7 @@ void main() {
 
   test('Lorem Ipsum', () {
     final output = brotli.decodeToString(
-      File('./test/assets/brotli.br').readAsBytesSync(),
+      File('$assetsDir/brotli.br').readAsBytesSync(),
     );
 
     const loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,'
@@ -111,7 +113,7 @@ void main() {
 
   test('Alice: Convert', () {
     final output = brotli.decodeToString(
-      File('./test/assets/alice.br').readAsBytesSync(),
+      File('$assetsDir/alice.br').readAsBytesSync(),
     );
 
     expect(output, hasLength(152088));
@@ -124,7 +126,7 @@ void main() {
   });
 
   test('Alice: Sink', () async {
-    final output = await brotli.decodeStream(File('./test/assets/alice.br').openRead());
+    final output = await brotli.decodeStream(File('$assetsDir/alice.br').openRead());
 
     expect(output, hasLength(152088));
     expect(
@@ -137,7 +139,7 @@ void main() {
 
   test('Unicode', () {
     final output = brotli.decodeToString(
-      File('./test/assets/unicode.br').readAsBytesSync(),
+      File('$assetsDir/unicode.br').readAsBytesSync(),
       encoding: utf8,
     );
 
@@ -192,22 +194,22 @@ void main() {
 
     for (final file in files) {
       final output = brotli.decode(
-        File('./test/assets/$file.br').readAsBytesSync(),
+        File('$assetsDir/$file.br').readAsBytesSync(),
         // encoding: utf8,
       );
 
-      expect(output, File('./test/assets/$file.txt').readAsBytesSync());
+      expect(output, File('$assetsDir/$file.txt').readAsBytesSync());
     }
   });
 
   test("Quality", () {
     for (var i = 0; i <= 11; i++) {
       final output = brotli.decode(
-        File('./test/assets/mussum_ipsum.$i.br').readAsBytesSync(),
+        File('$assetsDir/mussum_ipsum.$i.br').readAsBytesSync(),
         // encoding: utf8,
       );
 
-      expect(output, File('./test/assets/mussum_ipsum.txt').readAsBytesSync());
+      expect(output, File('$assetsDir/mussum_ipsum.txt').readAsBytesSync());
     }
   });
 }

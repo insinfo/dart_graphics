@@ -10,6 +10,7 @@ import 'package:agg/src/agg/vertex_source/stroke.dart';
 import 'package:agg/src/agg/vertex_source/stroke_math.dart';
 import 'package:agg/src/agg/vertex_source/gsv_text.dart';
 import 'package:agg/src/agg/image/png_encoder.dart';
+import '../test_utils/png_golden.dart';
 
 void main() {
   test('Inner Join Test', () {
@@ -44,6 +45,7 @@ void main() {
       stroke.width = 25.0;
       stroke.innerJoin = joins[i];
       
+      ras.reset();
       ras.add_path(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, black);
     }
@@ -59,21 +61,21 @@ void main() {
       final txtStroke = Stroke(txt);
       txtStroke.width = 1.0;
       
+      ras.reset();
       ras.add_path(txtStroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, black);
     }
     
     // Save image
     Directory('test/tmp').createSync(recursive: true);
-    PngEncoder.saveImage(buffer, 'test/tmp/inner_join.png');
-    
-    // Verify against golden image
-    final goldenFile = File('resources/inner_join.png');
-    if (goldenFile.existsSync()) {
-      final generatedBytes = File('test/tmp/inner_join.png').readAsBytesSync();
-      expect(generatedBytes.length, greaterThan(0));
-    } else {
-      print('Warning: Golden image resources/inner_join.png not found.');
-    }
+    const outPath = 'test/tmp/inner_join.png';
+    PngEncoder.saveImage(buffer, outPath);
+
+    expectPngMatchesGolden(
+      outPath,
+      'resources/inner_join.png',
+      perChannelTolerance: 22,
+      maxDifferentPixels: 800,
+    );
   });
 }

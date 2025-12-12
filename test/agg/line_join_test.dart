@@ -8,7 +8,9 @@ import 'package:agg/src/agg/scanline_unpacked8.dart';
 import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
 import 'package:agg/src/agg/vertex_source/stroke.dart';
 import 'package:agg/src/agg/vertex_source/stroke_math.dart';
+import 'package:agg/src/agg/vertex_source/gsv_text.dart';
 import 'package:agg/src/agg/image/png_encoder.dart';
+import '../test_utils/png_golden.dart';
 
 void main() {
   test('Line Join Test', () {
@@ -40,21 +42,39 @@ void main() {
       stroke.width = 25.0;
       stroke.lineJoin = joins[i];
       
+      ras.reset();
       ras.add_path(stroke);
+      ScanlineRenderer.renderSolid(ras, sl, buffer, black);
+    }
+
+    // Text labels (match agg-rust/tests/t21_line_join.rs)
+    final labels = ['Miter', 'Round', 'Bevel'];
+    final textX = [29.0, 125.0, 225.0];
+    for (var i = 0; i < labels.length; i++) {
+      final txt = GsvText();
+      txt.size(12.0);
+      txt.text(labels[i]);
+      txt.startPoint(textX[i], 90.0);
+      txt.flip(true);
+
+      final txtStroke = Stroke(txt);
+      txtStroke.width = 1.0;
+
+      ras.reset();
+      ras.add_path(txtStroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, black);
     }
     
     // Save image
     Directory('test/tmp').createSync(recursive: true);
-    PngEncoder.saveImage(buffer, 'test/tmp/line_join.png');
-    
-    // Verify against golden image
-    final goldenFile = File('resources/line_join.png');
-    if (goldenFile.existsSync()) {
-      final generatedBytes = File('test/tmp/line_join.png').readAsBytesSync();
-      expect(generatedBytes.length, greaterThan(0));
-    } else {
-      print('Warning: Golden image resources/line_join.png not found.');
-    }
+    const outPath = 'test/tmp/line_join.png';
+    PngEncoder.saveImage(buffer, outPath);
+
+    expectPngMatchesGolden(
+      outPath,
+      'resources/line_join.png',
+      perChannelTolerance: 22,
+      diffOutputPath: 'test/tmp/line_join.diff.png',
+    );
   });
 }
