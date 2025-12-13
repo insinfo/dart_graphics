@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/interfaces/iscanline.dart';
 
 /// Unpacked scanline container with per-pixel covers (u8).

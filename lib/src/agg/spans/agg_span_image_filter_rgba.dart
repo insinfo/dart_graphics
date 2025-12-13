@@ -4,7 +4,7 @@ import 'package:agg/src/agg/image/iimage.dart';
 import 'package:agg/src/agg/primitives/color.dart';
 import 'package:agg/src/agg/primitives/color_f.dart';
 import 'package:agg/src/agg/primitives/i_color_type.dart';
-import 'package:agg/src/agg/raster_buffer_accessors.dart';
+import '../image/raster_buffer_accessors.dart';
 import 'package:agg/src/agg/spans/agg_span_image_filter.dart';
 import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
 import 'package:agg/src/shared/ref_param.dart';

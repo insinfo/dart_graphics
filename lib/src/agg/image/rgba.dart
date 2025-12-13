@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/primitives/color.dart';
 import 'package:agg/src/agg/primitives/color_f.dart';
 

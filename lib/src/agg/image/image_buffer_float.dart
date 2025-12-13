@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/graphics2D.dart';
 import 'package:agg/src/agg/image/blender_rgba_float.dart';
 import 'package:agg/src/agg/image/iimage.dart';

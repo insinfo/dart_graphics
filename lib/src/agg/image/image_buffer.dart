@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/graphics2D.dart';
 import 'package:agg/src/agg/image/blender_rgba.dart';
 import 'package:agg/src/agg/image/iimage.dart';

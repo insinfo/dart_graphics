@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/image/iimage.dart';
 import 'package:agg/src/agg/interfaces/iscanline.dart';
 import 'package:agg/src/agg/primitives/color.dart';

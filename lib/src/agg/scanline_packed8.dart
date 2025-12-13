@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/interfaces/iscanline.dart';
 
 /// General-purpose scanline container with packed spans and covers (u8).

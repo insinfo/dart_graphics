@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:math' as math;
-
 import 'package:agg/src/agg/agg_basics.dart';
 import 'package:agg/src/agg/agg_dda_line.dart';
 import 'package:agg/src/agg/image/iimage.dart';

@@ -1,11 +1,9 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/image/rgba.dart';
 import 'package:agg/src/agg/primitives/color.dart';
 import 'package:agg/src/agg/primitives/color_f.dart';
 import 'package:agg/src/agg/primitives/rectangle_int.dart';
 import 'package:agg/src/vector_math/vector2.dart';
-
 import '../graphics2D.dart';
 
 abstract class IImage {

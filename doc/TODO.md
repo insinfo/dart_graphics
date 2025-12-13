@@ -1,436 +1,672 @@
 # TODO - Porte da Biblioteca AGG e Typography para Dart
 
 ## Status Geral
-**Projeto:** Porte da biblioteca AGG e Typography  (agg-sharp) de C# para Dart  
+**Projeto:** Porte da biblioteca AGG e Typography (agg-sharp) de C# para Dart  
 **Data de Início:** 07 de Novembro de 2025  
-**Status Atual:** Em Progresso - Fase 3 (AGG Core & Interpreter) - 90%
+**Última Atualização:** 13 de Dezembro de 2025  
+**Status Atual:** Em Progresso - Fase 3 (AGG Core & Typography) - ~92%
 
-continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
-e C:\MyDartProjects\agg\agg-sharp\Typography 
+### ✅ Itens Portados Recentemente (13/12/2025):
+- `i_vertex_source_proxy.dart` - Interface para proxies de vertex source
+- `vertex_source_io.dart` - Load/Save de paths para arquivos
+- `text_wrapping.dart` - Quebra de texto (EnglishTextWrapping, BreakAnywhereTextWrapping)
+- `image_graphics_2d.dart` - Contexto gráfico 2D para renderização em imagem
 
-portar os testes relevantes de C:\MyDartProjects\agg\agg-sharp\Tests para dart
-e tambem continue se inspirando nos testes de C:\MyDartProjects\agg\agg-rust\tests e implemente testes ispirados nisso em dart copie as imagens necessaria de C:\MyDartProjects\agg\agg-rust\images para C:\MyDartProjects\agg\resources e continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
-
-use (ripgrep) rg para busca no codigo fonte
-use magick.exe ou compare.exe
-
-mantenha este TODO atualizado C:\MyDartProjects\agg\doc\TODO.md
----
-use dart analyze para verficar se o codigo está correto
-## ✅ Fase 0: Estrutura de Pastas e Utilitários Essenciais - CONCLUÍDO
-
-### Estrutura de Pastas
-- [x] Criada estrutura `lib/src/typography/`
-- [x] Criada estrutura `lib/src/typography/io/`
-- [x] Criada estrutura `lib/src/typography/openfont/`
-- [x] Criada estrutura `lib/src/typography/openfont/tables/`
-- [x] Criada estrutura `lib/src/typography/text_layout/`
-
-### Utilitários Essenciais
-- [x] `ByteOrderSwappingBinaryReader` - `lib/src/typography/io/byte_order_swapping_reader.dart`
-  - Leitura big-endian usando ByteData
-  - Todos os métodos implementados (readUInt16, readInt16, readUInt32, readInt32, readUInt64, readInt64, readDouble, readFloat, readBytes, readTag)
-  - ✅ **Testado e validado**
-
-- [x] `Utils` - `lib/src/typography/openfont/tables/utils.dart`
-  - readF2Dot14 (formato 2.14)
-  - readFixed (formato 16.16)
-  - readUInt24
-  - tagToString
-  - readUInt16Array, readUInt32Array
-  - Classe `Bounds` para bounding boxes
-  - ✅ **Testado e validado**
-
-### Classes Base para Tabelas
-- [x] `TableEntry` - `lib/src/typography/openfont/tables/table_entry.dart`
-  - Classe abstrata base para todas as tabelas
-  - `UnreadTableEntry` para tabelas não lidas
-  - ✅ **Testado e validado**
-
-- [x] `TableHeader` - `lib/src/typography/openfont/tables/table_entry.dart`
-  - Informações do cabeçalho de cada tabela
-  - Tag, checksum, offset, length
-  - ✅ **Testado e validado**
-
-- [x] `TableEntryCollection` - `lib/src/typography/openfont/tables/table_entry.dart`
-  - Coleção de tabelas indexadas por nome
-  - ✅ **Testado e validado**
-
-### Leitores Principais
-- [x] `OpenFontReader` - `lib/src/typography/openfont/open_font_reader.dart`
-  - Versão inicial simplificada
-  - Suporte para preview de fontes
-  - Detecção de TrueType Collection (TTC)
-  - Detecção de WOFF/WOFF2 (não implementado ainda)
-  - ✅ **Estrutura criada e testada**
+### ✅ Itens Portados (14/12/2025 - sessão anterior):
+- `vertex_source_glyph_translator.dart` - Bridge Typography→AGG
+- `agg_color_gray.dart` - Cores grayscale 8/16-bit
+- `quicksort.dart` - QuickSort para células AA
+- `blender_gray.dart` - Blender grayscale (BlenderGray, BlenderGrayFromRed, BlenderGrayClampedMax)
+- `i_vertex_source_extensions.dart` - GetBounds, GetPointAtRatio, GetXAtY, GetCommandHint, TransformAffine
+- `styled_type_face.dart` - TypeFace wrapper com sizing/scaling e underline
+- `type_face_printer.dart` - Renderização de texto como IVertexSource completo
+- `agg_context.dart` - Configuração global e defaults (AggContext, OSType, PlatformConfig)
 
 ---
 
-## ✅ Fase 1: Análise do Arquivo da Fonte - CONCLUÍDA
+## 📋 Instruções de Trabalho
 
-### Tabelas Simples (Leitura Sequencial) - ✅ CONCLUÍDO
-- [x] `Head` - `lib/src/typography/openfont/tables/head.dart`
-  - Tabela 'head' (Font Header)
-  - Informações globais da fonte
-  - UnitsPerEm, bounds, flags, version
-  - ✅ **Implementado e testado** (20 testes passando)
-
-- [x] `MaxProfile` - `lib/src/typography/openfont/tables/maxp.dart`
-  - Tabela 'maxp' (Maximum Profile)
-  - Requisitos de memória da fonte
-  - Suporte para versões 0.5 (CFF) e 1.0 (TrueType)
-  - ✅ **Implementado e testado** (20 testes passando)
-
-- [x] `HorizontalHeader` - `lib/src/typography/openfont/tables/hhea.dart`
-  - Tabela 'hhea' (Horizontal Header)
-  - Informações de layout horizontal
-  - Ascent, descent, lineGap, metrics count
-  - ✅ **Implementado e testado** (20 testes passando)
-
-- [x] `OS2` - `lib/src/typography/openfont/tables/os2.dart`
-  - Tabela 'OS/2' (OS/2 and Windows Metrics)
-  - Suporte para versões 0-5
-  - ✅ **Implementado e testado** (24 testes passando)
-  
-### Tabelas de Métricas
-- [x] `HorizontalMetrics` - `lib/src/typography/openfont/tables/hmtx.dart`
-  - Tabela 'hmtx'
-  - Métricas horizontais de cada glifo
-  - Suporte para fontes proporcionais e monoespaçadas
-  - ✅ **Implementado e testado** (29 testes passando)
-
-### Tabela de Nomes
-- [x] `NameEntry` - `lib/src/typography/openfont/tables/name_entry.dart`
-  - Tabela 'name'
-  - Nomes da fonte em múltiplas codificações
-  - Suporte para UTF-16BE e UTF-8
-  - ✅ **Implementado e testado** (33 testes passando)
-
-### Tabela de Mapeamento de Caracteres
-- [x] `Cmap` - `lib/src/typography/openfont/tables/cmap.dart`
-  - Tabela 'cmap' (Character to Glyph Index Mapping)
-  - CharMapFormat4 (formato mais comum)
-  - CharMapFormat12 (para Unicode completo)
-  - CharMapFormat0 (para fontes simples)
-  - ✅ **Implementado e testado** (37 testes passando)
-
-### Tabelas de Glifo
-- [x] `GlyphLocations` - `lib/src/typography/openfont/tables/loca.dart`
-  - Tabela 'loca' (Index to Location)
-  - Offsets dos glifos
-  - Suporte para versão curta (16-bit) e longa (32-bit)
-  - ✅ **Implementado e testado** (43 testes passando)
-
-- [x] `Glyf` - `lib/src/typography/openfont/tables/glyf.dart`
-  - Tabela 'glyf' (Glyph Data)
-  - Dados dos contornos dos glifos
-  - Glifos simples e compostos
-  - Transformações 2x2 matrix
-  - ✅ **Implementado e testado** (43 testes passando)
-
-- [x] `Glyph` - `lib/src/typography/openfont/glyph.dart`
-  - Representação de um glifo
-  - GlyphPointF com coordenadas e flag onCurve
-  - GlyphClassKind enum
-  - ✅ **Implementado e testado** (43 testes passando)
-
-### Typeface (Objeto Central)
-- [x] `Typeface` - `lib/src/typography/openfont/typeface.dart`
-  - Objeto central que contém todas as tabelas
-  - Interface principal para acesso à fonte
-  - Métricas de fonte (ascender, descender, lineGap)
-  - Acesso a glifos por índice ou codepoint
-  - Utilitários de escala (points → pixels)
-  - ✅ **Implementado e testado** (47 testes passando)
-
-### Tabelas Adicionais (Vertical, Kerning, PostScript)
-- [x] `VerticalHeader` & `VerticalMetrics` - `lib/src/typography/openfont/tables/vhea.dart`, `vmtx.dart`
-  - ✅ Métricas verticais (ascent, descent, advance height)
-  - ✅ Integração com Typeface e OpenFontReader
-
-- [x] `Gasp` - `lib/src/typography/openfont/tables/gasp.dart`
-  - ✅ Grid-fitting and Scan-conversion Procedure (Hinting flags)
-  - ✅ Integração com Typeface e OpenFontReader
-
-- [x] `Kern` - `lib/src/typography/openfont/tables/kern.dart`
-  - ✅ Kerning legado (Format 0)
-  - ✅ Integração com Typeface e OpenFontReader
-
-- [x] `PostTable` - `lib/src/typography/openfont/tables/post.dart`
-  - ✅ Nomes PostScript e mapeamento de glifos
-  - ✅ Suporte a versões 1.0, 2.0, 2.5, 3.0
-  - ✅ Integração com Typeface e OpenFontReader
-
-  - ✅ ItemVariationStore
-  - ⚠️ DeltaSetIndexMap pendente
-
-- [x] `MVar` - `lib/src/typography/openfont/tables/variations/mvar.dart`
-  - ✅ Metrics Variations (Métricas globais)
-  - ✅ ValueRecords e Tags
-
-- [x] `STAT` - `lib/src/typography/openfont/tables/variations/stat.dart`
-  - ✅ Style Attributes (Atributos de estilo)
-  - ✅ AxisValueTables (Format 1, 2, 3, 4)
+```
+- Continue portando C:\MyDartProjects\agg\agg-sharp\agg para Dart
+- Continue portando C:\MyDartProjects\agg\agg-sharp\Typography para Dart
+- Porte testes de C:\MyDartProjects\agg\agg-sharp\Tests para Dart
+- Inspire-se nos testes de C:\MyDartProjects\agg\agg-rust\tests
+- Use fontes de teste em C:\MyDartProjects\agg\resources\fonts
+- Use `dart analyze` para verificar código
+- Use `rg` (ripgrep) para buscar no código fonte
+- Use `magick.exe` ou `compare.exe` para comparação de imagens
+```
 
 ---
 
-##  Fase 2: Motor de Layout de Texto - EM PROGRESSO
+## 📊 Análise Comparativa Detalhada (13/12/2025)
 
-### Estruturas de Dados
-- [x] `GlyphPlan` - `lib/src/typography/text_layout/glyph_plan.dart`
-  - UnscaledGlyphPlan (unidades da fonte)
-  - GlyphPlan (pixels escalados)
-  - GlyphPlanSequence (sequência de glifos)
-  - ✅ **Implementado e testado**
+### AGG Core - Raiz (`agg-sharp/agg/*.cs`)
 
-- [x] `GlyphIndexList` - `lib/src/typography/text_layout/glyph_index_list.dart`
-  - Lista de índices de glifos
-  - Mapeamento para codepoints originais
-  - Suporte para substituição (ligaduras)
-  - ✅ **Implementado e testado**
-
-- [ ] `GlyphPosStream` - `lib/src/typography/text_layout/glyph_pos_stream.dart`
-  - PENDENTE
-
-### Motor Principal
-- [x] `GlyphLayout` - `lib/src/typography/text_layout/glyph_layout.dart`
-  - Conversão texto → codepoints → glifos
-  - Geração de planos de layout
-  - Suporte a surrogate pairs (emoji, etc.)
-  - Escalamento para pixels
-  - ✅ **Versão básica implementada e testada**
-  - ⏳ GSUB/GPOS pendente
-
-### Tabelas de Layout Avançado
-- [x] `GSUB` - `lib/src/typography/openfont/tables/gsub.dart` (Substituição de Glifos)
-  - ✅ Tipos de Lookup 1, 2, 3, 4 implementados
-  - ✅ Ligaduras (fi, fl, ffi, etc.) - **Validado com testes**
-  - ✅ Substituições contextuais (parcial)
-  - ✅ `ScriptList`, `FeatureList`, `CoverageTable`, `ClassDefTable` portados
-
-- [x] `GPOS` - `lib/src/typography/openfont/tables/gpos.dart` (Posicionamento de Glifos)
-  - ✅ Lookup Type 1 (Single Adjustment)
-  - ✅ Lookup Type 2 (Pair Adjustment) - Format 1 & 2
-  - ✅ Lookup Type 4 (Mark-to-Base)
-  - ✅ Lookup Type 5 (Mark-to-Ligature) - **Validado com testes**
-  - ⏳ Lookup Type 3, 6, 7, 8 pendentes
-
-- [x] `GDEF` - `lib/src/typography/openfont/tables/gdef.dart`
-  - ✅ Definições de glifos
-  - ✅ AttachmentList, LigCaretList, MarkGlyphSets
-
-- [x] `BASE` - `lib/src/typography/openfont/tables/base.dart`
-  - ✅ Linhas de base (Baseline)
-  - ✅ Validado com testes
-
-- [x] `JSTF` - `lib/src/typography/openfont/tables/jstf.dart`
-  - ✅ Justificação
-  - ✅ Validado com testes
-
-- [x] `MATH` - `lib/src/typography/openfont/tables/math.dart`
-  - ✅ Layout Matemático
-  - ✅ Validado com testes
-
-- [x] `COLR` & `CPAL` - `lib/src/typography/openfont/tables/colr.dart`, `cpal.dart`
-  - ✅ Fontes Coloridas (Emojis)
-  - ✅ Validado com testes
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| agg_clip_liang_barsky.cs | agg_clip_liang_barsky.dart | ✅ Portado | - |
+| agg_color_gray.cs | agg_color_gray.dart | ✅ Portado | - |
+| agg_dda_line.cs | agg_dda_line.dart | ✅ Portado | - |
+| agg_gamma_functions.cs | agg_gamma_functions.dart | ✅ Portado | - |
+| agg_image_filters.cs | agg_image_filters.dart | ✅ Portado | - |
+| agg_line_aa_basics.cs | line_aa_basics.dart | ✅ Portado | - |
+| agg_math.cs | agg_math.dart | ✅ Portado | - |
+| agg_pattern_filters_rgba.cs | agg_pattern_filters_rgba.dart | ✅ Portado | - |
+| agg_rasterizer_cells_aa.cs | rasterizer_cells_aa.dart | ✅ Portado | - |
+| agg_rasterizer_compound_aa.cs | rasterizer_compound_aa.dart | ✅ Portado | - |
+| agg_rasterizer_outline_aa.cs | rasterizer_outline_aa.dart | ✅ Portado | - |
+| agg_scanline_bin.cs | scanline_bin.dart | ✅ Portado | - |
+| agg_simul_eq.cs | agg_simul_eq.dart | ✅ Portado | - |
+| agg_VertexSequence.cs | vertex_sequence.dart | ✅ Portado | - |
+| DebugLogger.cs | ❌ Não existe | ⚪ Não necessário | Baixa |
+| FloodFiller.cs | flood_fill.dart | ✅ Portado | - |
+| GammaLookUpTable.cs | gamma_lookup_table.dart | ✅ Portado | - |
+| Graphics2D.cs | graphics2D.dart | ⚠️ Parcial | 🟡 Média |
+| ImageLineRenderer.cs | image_line_renderer.dart | ✅ Portado | - |
+| OutlineRenderer.cs | outline_renderer.dart | ✅ Portado | - |
+| quicksort.cs | quicksort.dart | ✅ Portado | - |
+| RasterBufferAccessors.cs | raster_buffer_accessors.dart | ✅ Portado | - |
+| ReferenceEqualityComparer.cs | ❌ Não existe | ⚪ Não necessário | - |
+| ScanlineRasterizer.cs | scanline_rasterizer.dart | ✅ Portado | - |
+| ScanlineRenderer.cs | scanline_renderer.dart | ✅ Portado | - |
+| ShapePath.cs | path_commands.dart | ✅ Portado | - |
+| StringEventArgs.cs | ❌ Não existe | ⚪ Não necessário | - |
+| Util.cs | util.dart | ⚠️ Parcial | 🟡 Média |
+| VectorClipper.cs | vector_clipper.dart | ✅ Portado | - |
 
 ---
 
-## 🚀 Fase 3: AGG Core - EM PROGRESSO
+### AGG Image (`agg-sharp/agg/Image/*.cs`)
 
-### Primitives
-- [x] `IColorType` - `lib/src/agg/primitives/i_color_type.dart`
-- [x] `Color` - `lib/src/agg/primitives/color.dart`
-- [x] `ColorF` - `lib/src/agg/primitives/color_f.dart`
-- [x] `RectangleInt` - `lib/src/agg/primitives/rectangle_int.dart`
-- [x] `RectangleDouble` - `lib/src/agg/primitives/rectangle_double.dart`
-- [x] `Point2D` - `lib/src/agg/primitives/point2d.dart`
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| agg_alpha_mask_u8.cs | alpha_mask.dart | ✅ Portado | - |
+| AlphaMaskAdaptor.cs | alpha_mask_adaptor.dart | ✅ Portado | - |
+| ClippingProxy.cs | image_clipping_proxy.dart | ✅ Portado | - |
+| IImage.cs | iimage.dart | ✅ Portado | - |
+| ImageBuffer.cs | image_buffer.dart | ⚠️ Parcial (~295 vs ~1485 linhas) | 🟡 Média |
+| ImageBufferFloat.cs | image_buffer_float.dart | ⚠️ Parcial (~247 vs ~953 linhas) | 🟡 Média |
+| **ImageGraphics2D.cs** | image_graphics_2d.dart | ✅ Portado | - |
+| ImageProxy.cs | image_proxy.dart | ✅ Portado | - |
+| ImageSequence.cs | image_sequence.dart | ⚠️ Parcial | 🟢 Baixa |
+| **ImageTgaIO.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| RecursiveBlur.cs | recursive_blur.dart | ⚠️ Parcial (~205 vs ~1279 linhas) | 🟡 Média |
+| Transposer.cs | format_transposer.dart | ✅ Portado | - |
 
-### Transform
-- [x] `Affine` - `lib/src/agg/transform/affine.dart`
-- [x] `Perspective` - `lib/src/agg/transform/perspective.dart`
-- [x] `RasterizerScanline` (core + gamma)
-- [x] `RasterizerCompoundAa` - `lib/src/agg/rasterizer_compound_aa.dart`
-- [x] `Scanline` caches (bin/packed/unpacked) + hit-test
-- [x] `VectorClipper` (Liang-Barsky) - `lib/src/agg/vector_clipper.dart`
-- [x] `ClipLiangBarsky` - `lib/src/agg/agg_clip_liang_barsky.dart`
-- [x] `Outline AA`
-  - [x] `line_aa_basics.dart`
-  - [x] `line_aa_vertex_sequence.dart`
-  - [x] `agg_dda_line.dart`
-  - [x] `rasterizer_outline_aa.dart`
-  - [x] `outline_renderer.dart`
-  - [x] `image_line_renderer.dart`
-  - [x] `outline_image_renderer.dart`
-  - [x] `scanline_bin.dart` / `scanline_packed8.dart` / `scanline_unpacked8.dart`
-  - [x] `scanline_hit_test.dart` (utilitário)
+#### O que falta em `ImageGraphics2D.dart` (501 linhas C#):
+- Contexto gráfico 2D especializado para renderização em imagem
+- Implementa `IImageGraphics2D` para operações de desenho
+- Gerencia cache de scanline e rasterização
+- Renderiza vértices, imagens com transformações
 
-### Image
-- [x] `ImageBuffer` (RGBA8888 básico)
-- [x] `Blenders` (RGBA straight alpha inicial)
-
-### Utilities
-- [x] `GammaLookUpTable` - `lib/src/agg/gamma_lookup_table.dart`
-  - Tabela de lookup para correção gamma
-  - Suporte para correção direta e inversa
-  - ✅ **Implementado e testado**
-- [x] `FloodFill` - `lib/src/agg/flood_fill.dart`
-  - ✅ Algoritmo de preenchimento (Flood Fill)
-  - ✅ Suporte a tolerância e regras de preenchimento
-
-### Text Layout (Correções Recentes)
-- [x] `GlyphSetPosition` - Correções de imports e tipos
-- [x] `GlyphSubstitution` - Correções de imports e nomes de métodos
-- [x] `GlyphPosStream` - Remoção de anotações @override incorretas
-- [x] Todos os erros de análise corrigidos (9 issues → 0 issues)
+#### O que falta em `ImageTgaIO.dart` (958 linhas C#):
+- I/O completo para formato TGA (Targa)
+- Suporte 8, 16, 24, 32 bits
+- Compressão RLE
 
 ---
 
-## 📋 Itens Faltantes (Identificados em 26/11/2025)
+### AGG Image Blenders (`agg-sharp/agg/Image/Blenders/*.cs`)
 
-### AGG Core (agg-sharp/agg)
-#### Image
-- [x] `AlphaMaskAdaptor` - **Portado e corrigido**
-- [x] `ClippingProxy` - **Portado e corrigido**
-- [x] `ImageSequence` - **Portado**
-- [x] `RecursiveBlur` - **Portado**
-- [x] `ThresholdFunctions` - **Portado**
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| BlenderBase8888.cs | ❌ (inline) | ⚡ N/A | - |
+| BlenderBaseBGRAFloat.cs | ❌ (inline) | ⚡ N/A | - |
+| BlenderBGRA.cs | blender_bgra.dart | ✅ Portado | - |
+| **BlenderBGRAExactCopy.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| **BlenderBGRAFloat.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| **BlenderBGRAHalfHalf.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| BlenderExtensions.cs | (em interface) | ✅ Portado | - |
+| **BlenderGammaBGRA.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| **BlenderPolyColorPreMultBGRA.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BlenderPreMultBGRA.cs | blender_premult_bgra.dart | ✅ Portado | - |
+| **BlenderPreMultBGRAFloat.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BlenderRGBA.cs | blender_rgba.dart | ✅ Portado | - |
+| Gray.cs | blender_gray.dart | ✅ Portado | - |
+| IRecieveBlenderByte.cs | (em interface) | ✅ Portado | - |
+| IRecieveBlenderFloat.cs | blender_rgba_float.dart | ✅ Portado | - |
+| **rgb.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| rgba.cs | rgba.dart | ⚠️ Parcial | 🟡 Média |
 
-#### Spans
-- [x] `ImageFilter` (Gray, RGB, RGBA) - **Portado e corrigido**
-- [x] `Interpolator` (Linear, Persp) - **Portado**
-- [x] `SubdivAdaptor` - **Portado**
+#### O que falta em `BlenderGammaBGRA.cs` (92 linhas):
+- Blending BGRA com correção gamma
+- Usa GammaLookUpTable para conversões
 
-#### VertexSource
-- [x] `Arc` - **Portado e validado**
-- [x] `Ellipse` - **Portado e validado**
-- [x] `RoundedRect` - **Portado e validado**
-- [x] `Contour` - **Portado**
-- [x] `Stroke` - **Portado**
-- [x] `Gouraud` spans - **Portado**
-
-### Typography (agg-sharp/Typography)
-#### OpenFont Tables
-- [x] `BASE` (Baseline) - **Concluído**
-- [x] `JSTF` (Justification) - **Concluído**
-- [x] `MATH` (Math Layout) - **Concluído**
-- [x] `COLR` & `CPAL` (Color Fonts) - **Concluído**
-- [x] `CFF` (Compact Font Format) - **Concluído**
-  - ✅ Leitura da tabela CFF
-  - ✅ Parser CFF1 (Header, Indexes, DICTs)
-  - ✅ Integração com Typeface e OpenFontReader
-  - ✅ Parser de CharStrings (Type 2)
-  - ✅ Engine de Avaliação (Stack Machine)
-  - ✅ Interface IGlyphTranslator
-- [x] `Bitmap/SVG` fonts (EBLC, EBDT, SVG, etc.) - **Concluído**
-  - ✅ EBLC (Embedded Bitmap Location)
-  - ✅ EBDT (Embedded Bitmap Data)
-  - ✅ CBLC (Color Bitmap Location)
-  - ✅ CBDT (Color Bitmap Data)
-  - ✅ SVG (Scalable Vector Graphics)
-  - ✅ Integração com Typeface e OpenFontReader
-- [x] `Variations` (fvar, gvar, HVAR, MVAR, STAT, VVAR) - **Concluído**
-- [x] `Vertical Metrics` (vhea, vmtx) - **Concluído**
-- [x] `Kerning` (kern - legacy) - **Concluído**
-- [x] `PostScript` (post) - **Concluído**
-
-#### TrueType Interpreter
-- [x] Hinting engine (bytecode interpreter) - **Implementado (Core)**
-  - ✅ Stack, GraphicsState, Zone, InstructionStream
-  - ✅ Opcodes: Arithmetic, Logical, Flow Control, Function Defs
-  - ✅ Opcodes: Move (MIAP, MDAP, etc), Shift (SHP, SHC, etc), Delta, Interpolate (IUP)
-  - ⚠️ `MPS` opcode precisa de implementação correta (tamanho em pontos)
-
-#### WebFont
-- [ ] WOFF Reader
-- [ ] WOFF2 Reader
+#### O que falta em `rgb.cs` (1848 linhas):
+- Operações avançadas RGB
+- Premultiply/demultiply
+- Templates de blenders RGB
 
 ---
 
-## 🎯 Fase 3: Finalização - NÃO INICIADO
+### AGG ThresholdFunctions (`agg-sharp/agg/Image/ThresholdFunctions/*.cs`)
 
-- [ ] Extensões de Escala de Pixels
-- [ ] API Pública (Barrel File) - `lib/typography.dart`
-- [ ] Documentação completa
-- [ ] Testes de integração
-  - ✅ `lion_test.dart`: Renderização de caminhos complexos e transformações (baseado em `lion.rs`)
-  - ✅ `rounded_rect_test.dart`: Renderização de primitivas e stroking (baseado em `rounded_rect.rs`)
-  - ✅ `outline_aa_test.dart`: Renderização de contornos AA (baseado em `outline_aa.rs`) - **Corrigido bug em LineProfileAA para linhas largas**
-  - ✅ `image_buffer_test.dart`: Teste básico de buffer de imagem (baseado em `t01_rendering_buffer.rs`)
-  - ✅ `line_join_test.dart`: Teste de junções de linha (baseado em `t21_line_join.rs`)
-  - ✅ `pixel_formats_test.dart`: Teste de formatos de pixel e manipulação direta (baseado em `t02_pixel_formats.rs`)
-  - ✅ `solar_spectrum_test.dart`: Teste de espectro solar e conversão de comprimento de onda (baseado em `t03_solar_spectrum.rs`)
-  - ✅ Migração de assets para `resources/` para remover dependências externas.
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| IThresholdFunction.cs | threshold_functions.dart | ✅ Portado |
+| AlphaThresholdFunction.cs | threshold_functions.dart | ✅ Portado |
+| HueThresholdFunction.cs | threshold_functions.dart | ✅ Portado |
+| MapOnMaxIntensity.cs | threshold_functions.dart | ✅ Portado |
+| SilhouetteThresholdFunction.cs | threshold_functions.dart | ✅ Portado |
 
 ---
 
-## 📊 Métricas do Projeto
+### AGG Transform (`agg-sharp/agg/Transform/*.cs`)
 
-### Arquivos Portados: 19/50+ (38%)
-Atual: ~26/50 (52%) com rasterização AA, ImageBuffer, accessors e caps AA básicos.
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| Affine.cs | affine.dart | ✅ Portado |
+| Bilinear.cs | bilinear.dart | ✅ Portado |
+| ITransform.cs | i_transform.dart | ✅ Portado |
+| Perspective.cs | perspective.dart | ✅ Portado |
+| Viewport.cs | viewport.dart | ✅ Portado |
 
-**Fase 1 - Análise de Fontes:**
-- ByteOrderSwappingBinaryReader ✅
-- Utils ✅
-- TableEntry ✅
-- TableHeader ✅
-- TableEntryCollection ✅
-- OpenFontReader ✅
-- Head ✅
-- MaxProfile ✅
-- HorizontalHeader ✅
-- OS2Table ✅
-- HorizontalMetrics ✅
-- NameEntry ✅
-- Cmap ✅
-- GlyphLocations ✅
-- Glyf ✅
-- Glyph & GlyphPointF ✅
-- Typeface ✅
+---
 
-**Fase 2 - Layout de Texto:**
-- GlyphPlan ✅
-- GlyphIndexList ✅
-- **GlyphLayout** ✅ (versão básica)
-- **GSUB** ✅ (parcial)
-- ScriptList, FeatureList, CoverageTable, ClassDefTable ✅
+### AGG VertexSource (`agg-sharp/agg/VertexSource/*.cs`)
 
-### Testes: 71/71 passando (100%)
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| agg_curves.cs | agg_curves.dart | ✅ Portado | - |
+| agg_gsv_text.cs | gsv_text.dart | ✅ Portado | - |
+| agg_span_gouraud.cs | span_gouraud.dart | ✅ Portado | - |
+| agg_span_gouraud_rgba.cs | span_gouraud_rgba.dart | ✅ Portado | - |
+| ApplyTransform.cs | apply_transform.dart | ✅ Portado | - |
+| Arc.cs | arc.dart | ✅ Portado | - |
+| ConnectedPaths.cs | connected_paths.dart | ✅ Portado | - |
+| Contour.cs | contour.dart | ✅ Portado | - |
+| ContourGenerator.cs | contour_generator.dart | ✅ Portado | - |
+| Ellipse.cs | ellipse.dart | ✅ Portado | - |
+| FlattenCurve.cs | flatten_curve.dart | ✅ Portado | - |
+| IGenerator.cs | igenerator.dart | ✅ Portado | - |
+| IVertexSource.cs | ivertex_source.dart | ✅ Portado | - |
+| IVertexSourceExtensions.cs | i_vertex_source_extensions.dart | ✅ Portado | - |
+| **IVertexSourceProxy.cs** | i_vertex_source_proxy.dart | ✅ Portado | - |
+| JoinPaths.cs | join_paths.dart | ✅ Portado | - |
+| ReversePath.cs | reverse_path.dart | ✅ Portado | - |
+| RoundedRect.cs | rounded_rect.dart | ✅ Portado | - |
+| Stroke.cs | stroke.dart | ✅ Portado | - |
+| StrokeGenerator.cs | stroke_generator.dart | ✅ Portado | - |
+| StrokeMath.cs | stroke_math.dart | ✅ Portado | - |
+| VertexData.cs | vertex_data.dart | ✅ Portado | - |
+| VertexSourceAdapter.cs | vertex_source_adapter.dart | ✅ Portado | - |
+| VertexSourceExtensionMethods.cs | ❌ Não existe | ⚠️ Parcial | 🟡 Média |
+| **VertexSourceIO.cs** | vertex_source_io.dart | ✅ Portado | - |
+| VertexSourceLegacySupport.cs | vertex_source_legacy_support.dart | ✅ Portado | - |
+| VertexStorage.cs | vertex_storage.dart | ⚠️ Parcial (~156 vs ~1148 linhas) | 🟡 Média |
 
-**Fase 1 - OpenFont Tables (47 testes):**
-- ByteOrderSwappingBinaryReader: 5 testes ✅
-- Utils: 4 testes ✅
-- Bounds: 3 testes ✅
-- Head: 3 testes ✅
-- MaxProfile: 3 testes ✅
-- HorizontalHeader: 2 testes ✅
-- OS2Table: 4 testes ✅
-- HorizontalMetrics: 5 testes ✅
-- NameEntry: 4 testes ✅
-- Cmap: 4 testes ✅
-- GlyphLocations: 2 testes ✅
-- Glyph & GlyphPointF: 4 testes ✅
-- Typeface: 4 testes ✅
+#### O que falta em `IVertexSourceExtensions.dart` (398 linhas):
+- `GetBounds()` - calcula limites do path
+- `GetPositionAt()` - ponto em determinada proporção
+- `GetWeightedCenter()` - centro ponderado
+- `ContainsPoint()` - verifica se contém ponto
+- `PolygonArea()` - área do polígono
+- `Centroid()` - centróide
 
-**Fase 2 - Text Layout (16 testes):**
-- UnscaledGlyphPlan: 2 testes ✅
-- UnscaledGlyphPlanList: 2 testes ✅
-- GlyphPlan: 1 teste ✅
-- GlyphIndexList: 4 testes ✅
-- **GlyphLayout: 7 testes** ✅ (Incluindo Ligaduras e Mark-to-Ligature)
+#### O que falta em `VertexStorage.dart`:
+- `StartNewPath()` - iniciar novo sub-path
+- `AddPath()` - adicionar outro path
+- `transform_all_paths()` - transformar todos paths
+- `flip_x()`, `flip_y()` - espelhamento
+- `arrange_orientations()` - orientação de polígonos
+- `reverse_path()` - reverter path específico
+- `perceive_polygon_orientation()` - detectar orientação
+- `invert_polygon()` - inverter polígono
 
-### Próximos Passos Imediatos
-1. ✅ Finalizar renderer para `RasterizerOutlineAA` (LineRenderer + blend).
-2. ✅ Portar `ScanlineRenderer`/`ImageLineRenderer` e `RasterBufferAccessors` para gerar pixels.
-3. ✅ Portar `ImageBuffer`/blenders e validar saídas das scanlines.
-4. ✅ Avançar GSUB/GPOS integração completa no GlyphLayout (kerning/marks).
-5. ✅ Integrar Typography com AGG Rasterizer (Renderizar glifos na tela/imagem).
+---
+
+### AGG Spans (`agg-sharp/agg/Spans/*.cs`)
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| agg_span_allocator.cs | span_allocator.dart | ✅ Portado | - |
+| agg_span_gradient.cs | span_gradient.dart | ⚠️ Parcial | 🟡 Média |
+| agg_span_image_filter.cs | agg_span_image_filter.dart | ✅ Portado | - |
+| **agg_span_image_filter_gray.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| **agg_span_image_filter_rgb.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| agg_span_image_filter_rgba.cs | agg_span_image_filter_rgba.dart | ⚠️ Parcial | 🟡 Média |
+| agg_span_interpolator_linear.cs | agg_span_interpolator_linear.dart | ✅ Portado | - |
+| agg_span_interpolator_persp.cs | agg_span_interpolator_persp.dart | ✅ Portado | - |
+| agg_span_subdiv_adaptor.cs | agg_span_subdiv_adaptor.dart | ✅ Portado | - |
+
+#### O que falta em `span_gradient.dart`:
+- Interfaces `IGradientFunction` e `IColorFunction`
+- Funções de gradiente:
+  - `gradient_radial_focus` (gradientes com ponto focal)
+  - `gradient_conic` (gradientes côniços/angulares)
+  - `gradient_circle`, `gradient_radial_d`
+  - `gradient_x`, `gradient_y`, `gradient_diamond`
+  - `gradient_xy`, `gradient_sqrt_xy`
+- Adaptadores: `gradient_repeat_adaptor`, `gradient_reflect_adaptor`, `gradient_clamp_adaptor`
+
+---
+
+### AGG Interfaces (`agg-sharp/agg/Interfaces/*.cs`)
+
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| **IAscendable.cs** | ❌ Não existe | ⚪ Baixa prioridade |
+| IColorType.cs | icolor_type.dart | ✅ Portado |
+| IMarkers.cs | imarkers.dart | ✅ Portado |
+| IScanline.cs | iscanline.dart | ✅ Portado |
+| IVertexDest.cs | ivertex_dest.dart | ✅ Portado |
+
+---
+
+### AGG RasterizerScanline (`agg-sharp/agg/RasterizerScanline/*.cs`)
+
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| agg_scanline_p.cs | scanline_packed8.dart | ✅ Portado |
+| agg_scanline_u.cs | scanline_unpacked8.dart | ✅ Portado |
+
+---
+
+### AGG Font (`agg-sharp/agg/Font/*.cs`)
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| LiberationSansBoldFont.cs | ❌ Não existe | ⚪ Baixa | - |
+| LiberationSansFont.cs | ❌ Não existe | ⚪ Baixa | - |
+| StyledTypeFace.cs | styled_type_face.dart | ✅ Portado | - |
+| **TextWrapping.cs** | text_wrapping.dart | ✅ Portado | - |
+| TypeFace.cs | typeface.dart (Typography) | ✅ Portado | - |
+| TypeFacePrinter.cs | type_face_printer.dart | ✅ Portado | - |
+| VertexSourceGlyphTranslator.cs | vertex_source_glyph_translator.dart | ✅ Portado | - |
+
+#### O que falta em `TextWrapping.dart`:
+- Quebra automática de texto
+- Cálculo de largura máxima
+- Suporte a hifenização
+
+---
+
+### AGG Platform (`agg-sharp/agg/Platform/*.cs`)
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| AggContext.cs | agg_context.dart | ✅ Portado | - |
+| FileDialogs/* | ❌ Não existe | ⚪ Baixa | - |
+| Providers/* | ❌ Não existe | ⚪ Baixa | - |
+
+---
+
+### AGG Helpers (`agg-sharp/agg/Helpers/*.cs`)
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| DumpCallStackIfSlow.cs | ❌ Não existe | ⚪ Debug | - |
+| HashGenerator.cs | ❌ Não existe | ⚪ Baixa | - |
+| Parallel.cs | ❌ Não existe | ⚪ Média | - |
+| PluginFinder.cs | ❌ Não existe | ⚪ .NET específico | - |
+| QuickTimer.cs | ❌ Não existe | ⚪ Debug | - |
+| ReportTimer.cs | ❌ Não existe | ⚪ Debug | - |
+| RootedObjectEventHandler.cs | ❌ Não existe | ⚪ .NET específico | - |
+| StatisticsTracker.cs | ❌ Não existe | ⚪ Debug | - |
+| StringHelper.cs | ❌ Não existe | ⚪ Baixa | - |
+| TraceTiming.cs | ❌ Não existe | ⚪ Debug | - |
+
+---
+
+## 📝 Typography - Análise Detalhada
+
+### Typography OpenFont Tables Básicas
+
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| CharacterMap.cs | ❌ (em cmap.dart) | ✅ Integrado |
+| Cmap.cs | cmap.dart | ✅ Portado |
+| Head.cs | head.dart | ✅ Portado |
+| HorizontalHeader.cs | hhea.dart | ✅ Portado |
+| HorizontalMetrics.cs | hmtx.dart | ✅ Portado |
+| MaxProfile.cs | maxp.dart | ✅ Portado |
+| NameEntry.cs | name_entry.dart | ✅ Portado |
+| OS2.cs | os2.dart | ✅ Portado |
+| Post.cs | post.dart | ✅ Portado |
+| TableEntry.cs | table_entry.dart | ✅ Portado |
+| Utils.cs | utils.dart | ✅ Portado |
+
+### Typography OpenFont Tables.AdvancedLayout
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| **AttachmentListTable.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| Base.cs | base.dart | ✅ Portado | - |
+| ClassDefTable.cs | class_def_table.dart | ✅ Portado | - |
+| COLR.cs | colr.dart | ✅ Portado | - |
+| CoverageTable.cs | coverage_table.dart | ✅ Portado | - |
+| CPAL.cs | cpal.dart | ✅ Portado | - |
+| **FeatureInfo.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| FeatureList.cs | feature_list.dart | ✅ Portado | - |
+| GDEF.cs | gdef.dart | ✅ Portado | - |
+| GlyphShapingTableEntry.cs | glyph_shaping_table_entry.dart | ✅ Portado | - |
+| GPOS.cs | gpos.dart | ✅ Portado | - |
+| **GPOS.Others.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| GSUB.cs | gsub.dart | ✅ Portado | - |
+| IGlyphIndexList.cs | i_glyph_index_list.dart | ✅ Portado | - |
+| JustificationTable.cs | jstf.dart | ✅ Portado | - |
+| **LigatureCaretListTable.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| MathTable.cs | math.dart | ✅ Portado | - |
+| **ScriptLang.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| ScriptList.cs | script_list.dart | ✅ Portado | - |
+| ScriptTable.cs | script_table.dart | ✅ Portado | - |
+
+### Typography OpenFont Tables.TrueType
+
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| Cvt_Programs.cs | cvt.dart, fpgm.dart, prep.dart | ✅ Portado (dividido) |
+| Gasp.cs | gasp.dart | ✅ Portado |
+| Glyf.cs | glyf.dart | ✅ Portado |
+| GlyphLocations.cs | loca.dart | ✅ Portado |
+
+### Typography OpenFont Tables.BitmapAndSvgFonts
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| **BitmapFontGlyphSource.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BitmapFontsCommon.cs | bitmap/bitmap_common.dart | ✅ Portado | - |
+| CBDT.cs | cbdt.dart | ✅ Portado | - |
+| CBLC.cs | cblc.dart | ✅ Portado | - |
+| EBDT.cs | ebdt.dart | ✅ Portado | - |
+| EBLC.cs | eblc.dart | ✅ Portado | - |
+| **EBSC.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| SvgTable.cs | svg_table.dart | ✅ Portado | - |
+
+### Typography OpenFont Tables.CFF
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| CFF.cs | cff/cff_parser.dart | ✅ Portado | - |
+| CffEvaluationEngine.cs | cff/cff_evaluation_engine.dart | ✅ Portado | - |
+| CFFTable.cs | cff/cff_table.dart | ✅ Portado | - |
+| Type2CharStringParser.cs | cff/type2_charstring_parser.dart | ✅ Portado | - |
+| **Type2InstructionCompacter.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+
+### Typography OpenFont Tables.Others
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| **HorizontalDeviceMetrics.cs** | ❌ Não existe | **❌ FALTA** (HDMX) | 🟢 Baixa |
+| Kern.cs | kern.dart | ✅ Portado | - |
+| **LinearThreashold.cs** | ❌ Não existe | **❌ FALTA** (LTSH) | 🟢 Baixa |
+| **Merge.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| **Meta.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| STAT.cs | variations/stat.dart | ✅ Portado | - |
+| **VerticalDeviceMetrics.cs** | ❌ Não existe | **❌ FALTA** (VDMX) | 🟢 Baixa |
+| VerticalMetrics.cs | vmtx.dart | ✅ Portado | - |
+| VerticalMetricsHeader.cs | vhea.dart | ✅ Portado | - |
+
+### Typography OpenFont Tables.Variations
+
+| Arquivo C# | Arquivo Dart | Status | Prioridade |
+|------------|--------------|--------|------------|
+| **AVar.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| Common.ItemVariationStore.cs | variations/item_variation_store.dart | ✅ Portado | - |
+| Common.TupleVariationStore.cs | variations/tuple_variation.dart | ✅ Portado | - |
+| **CVar.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| FVar.cs | variations/fvar.dart | ✅ Portado | - |
+| GVar.cs | variations/gvar.dart | ✅ Portado | - |
+| HVar.cs | variations/hvar.dart | ✅ Portado | - |
+| MVar.cs | variations/mvar.dart | ✅ Portado | - |
+| VVar.cs | variations/vvar.dart | ✅ Portado | - |
+
+### Typography TrueType Interpreter
+
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| TrueTypeInterpreter.cs | true_type_interpreter.dart | ✅ Portado |
+| InvalidFontException.cs | exceptions.dart | ✅ Portado |
+
+**Extras em Dart:** execution_stack.dart, graphics_state.dart, instruction_stream.dart, opcodes.dart, zone.dart
+
+### Typography WebFont
+
+| Arquivo C# | Arquivo Dart | Status |
+|------------|--------------|--------|
+| Woff2Reader.cs | woff2_reader.dart | ✅ Portado |
+| WoffReader.cs | woff_reader.dart | ✅ Portado |
+
+**Extras em Dart:** woff2_utils.dart
+
+### Typography GlyphLayout
+
+| Arquivo C# | Arquivo Dart | Status | O que falta |
+|------------|--------------|--------|-------------|
+| GlyphIndexList.cs | glyph_index_list.dart | ✅ Portado | - |
+| GlyphLayout.cs | glyph_layout.dart | ⚠️ Parcial | `NotFoundGlyphCallback`, `GenerateGlyphPlan` iterator |
+| GlyphPosition.cs | glyph_set_position.dart | ✅ Portado | - |
+| GlyphSubstitution.cs | glyph_substitution.dart | ⚠️ Parcial | `GetAssociatedGlyphIndex()` extension |
+| MeasureStringBox.cs | (em pixel_scale_extensions.dart) | ✅ Portado | - |
+| PixelScaleLayoutExtensions.cs | pixel_scale_extensions.dart | ⚠️ Parcial | Debug methods |
+| UserCharToGlyphIndexMap.cs | user_char_to_glyph_index_map.dart | ✅ Portado | - |
+
+### Typography OpenFont Raiz
+
+| Arquivo C# | Arquivo Dart | Status | O que falta |
+|------------|--------------|--------|-------------|
+| Typeface.cs | typeface.dart | ⚠️ Parcial (~65%) | `ReadSvgContent`, `ReadBitmapContent`, `ReadCff1GlyphData`, `ReadCff2GlyphData`, `HasMathTable`, extensions |
+| Glyph.cs | glyph.dart | ⚠️ Parcial (~80%) | Bounds atualizáveis para transformações, MathGlyphInfo |
+| Geometry.cs | ❌ Não existe | **❌ FALTA** | Interface `IGeometry` |
+| IGlyphTranslator.cs | i_glyph_translator.dart | ⚠️ Parcial (~25%) | `GlyphTranslatorToPath` (~350 linhas) |
+| Bounds.cs | (em utils.dart) | ✅ Portado | - |
+| OpenFontReader.cs | open_font_reader.dart | ✅ Portado | - |
+
+---
+
+## 📊 Testes - Análise Comparativa
+
+### Testes C# (`agg-sharp/Tests/Agg.Tests/Agg`)
+
+| Arquivo C# | Método de Teste | Status Dart |
+|------------|-----------------|-------------|
+| FontTests.cs | `DrawStringWithCarriageReturn` | ❌ Não existe |
+| FontTests.cs | `TextWrapingTests` | ❌ Não existe |
+| ImageTests.cs | `ColorToFromHtml` | ✅ `primitives_test.dart` |
+| ImageTests.cs | `ClearImageBuffer` | ✅ `image_buffer_test.dart` |
+| ImageTests.cs | `ImageFindInImage` | ✅ `image_buffer_test.dart` |
+| IVertexSourceTests.cs | `CharacterBoundsAreCorrectForTestData` | ❌ Não existe |
+| IVertexSourceTests.cs | `SimpleSquareOnePolygon` | ⚠️ Parcial |
+| IVertexSourceTests.cs | `MoveToCreatesNewPolygons` | ❌ Não existe |
+| IVertexSourceTests.cs | `SquareWithEllipseTwoPolygons` | ❌ Não existe |
+| IVertexSourceTests.cs | `PathDFromSvgParse` | ✅ `svg_parser_test.dart` |
+| IVertexSourceTests.cs | `ThreeShapesThreePolygons` | ❌ Não existe |
+| SimpleTests.cs | `JsonSerializeDeserialize` | ❌ Não existe |
+| SimpleTests.cs | `ParseDoubleDoesNotFail` | ❌ Não existe |
+| SimpleTests.cs | `HashCodeConsistent` | ❌ Não existe |
+
+### Testes C# (`agg-sharp/Tests/Agg.Tests/Other`)
+
+| Arquivo C# | Método de Teste | Status Dart |
+|------------|-----------------|-------------|
+| AffineTests.cs | `InverseWorksCorrectly` | ❌ Não existe |
+| AffineTests.cs | `TranslateWorksCorrectly` | ❌ Não existe |
+| AggDrawingTests.cs | `DrawCircle` | ⚠️ Parcial em graphics2d_test.dart |
+| AggDrawingTests.cs | `DrawCurve3` | ❌ Não existe |
+| AggDrawingTests.cs | `DrawCurve4` | ❌ Não existe |
+| AggDrawingTests.cs | `DrawText` | ❌ Não existe |
+| AggDrawingTests.cs | `DrawRoundedRect` | ⚠️ Parcial em rounded_rect_test.dart |
+| ClipperTests.cs | `SimplifyClosedPolygon` | ❌ Não existe |
+| TesselatorTests.cs | (múltiplos casos) | ❌ Não existe |
+| Vector2Tests.cs | `ArithmaticOperations` | ❌ Não existe |
+| Vector2Tests.cs | `LengthAndNormalize` | ❌ Não existe |
+| Vector2Tests.cs | `PositionAlongPolygon` | ❌ Não existe |
+| Vector2Tests.cs | `ScalarMultAndDivide` | ❌ Não existe |
+| Vector2Tests.cs | `Cross2Vs3Equivalence` | ❌ Não existe |
+| Vector2Tests.cs | `DotProductTest` | ❌ Não existe |
+| Vector2Tests.cs | `LengthAndDistance` | ❌ Não existe |
+| Vector3Tests.cs | `ArithmaticOperations` | ❌ Não existe |
+| Vector3Tests.cs | `ScalarMultiply` | ❌ Não existe |
+| Vector3Tests.cs | `ScalarDivision` | ❌ Não existe |
+| Vector3Tests.cs | `DotProduct` | ❌ Não existe |
+| Vector3Tests.cs | `Cross` | ❌ Não existe |
+| Vector3Tests.cs | `Normalize` | ❌ Não existe |
+| VectorMathTests.cs | `EasingFunctions` | ❌ Não existe |
+| VectorMathTests.cs | `AngleCalculations` | ❌ Não existe |
+| VectorMathTests.cs | `DistanceFromLineSegment` | ❌ Não existe |
+| VectorMathTests.cs | `WorldView` (10+ testes) | ❌ Não existe |
+
+### Testes Rust (`agg-rust/tests`)
+
+| Arquivo Rust | Status Dart | Prioridade |
+|--------------|-------------|------------|
+| aa_test.rs | ✅ aa_test.dart | - |
+| component_rendering_*.rs | ✅ component_rendering_test.dart | - |
+| lion.rs, lion_cw.rs, lion_cw_aa.rs | ✅ lion_test.dart | - |
+| lion_outline.rs, lion_outline_width1.rs | ✅ lion_test.dart | - |
+| outline.rs, outline_aa.rs | ✅ outline_aa_test.dart | - |
+| rasterizers.rs, rasterizers2.rs | ✅ rasterizers_test.dart | - |
+| rounded_rect.rs | ✅ rounded_rect_test.dart | - |
+| t00_example.rs | ✅ (coberto) | - |
+| t01_rendering_buffer.rs | ✅ (coberto) | - |
+| t02_pixel_formats.rs | ✅ pixel_formats_test.dart | - |
+| t03/04/05_solar_spectrum*.rs | ✅ solar_spectrum_test.dart | - |
+| t21_line_join.rs | ✅ line_join_test.dart | - |
+| t22_inner_join.rs | ✅ inner_join_test.dart | - |
+| **t23_font.rs** | ❌ Não existe | 🟡 Média |
+| **lion_cw_aa_srgba.rs** | ❌ Não existe (Srgba8) | 🟡 Média |
+| **lion_png.rs** | ⚠️ Parcial | 🟢 Baixa |
+| alpha_mask.rs, alpha_mask2.rs | ⚪ Vazios em Rust | - |
+| circles.rs | ⚪ Vazio em Rust | - |
+| conv_dash_marker.rs | ⚪ Vazio em Rust | - |
+| conv_stroke.rs | ⚪ Vazio em Rust | - |
+| freetype_test.rs | ⚪ Vazio em Rust | - |
+| gouraud.rs | ⚪ Vazio em Rust (✅ Dart tem) | - |
+| image1.rs, image_alpha.rs | ⚪ Vazios em Rust | - |
+| image_filters.rs, image_transforms.rs | ⚪ Vazios em Rust | - |
+| pattern_fill.rs | ⚪ Vazio em Rust | - |
+| polymorphic_renderer.rs | ⚪ Vazio em Rust | - |
+| raster_text.rs | ⚪ Vazio em Rust | - |
+| simple_blur.rs | ⚪ Vazio em Rust (✅ Dart tem) | - |
+| trans_curve1.rs, trans_curve2.rs | ⚪ Vazios em Rust | - |
+
+---
+
+## 🎯 Prioridades de Implementação
+
+### 🔴 Alta Prioridade (Core Rendering/Typography)
+
+1. **`VertexSourceGlyphTranslator.dart`** - Bridge Typography→AGG
+2. **`TypeFacePrinter.dart`** - Renderização de texto
+3. **`StyledTypeFace.dart`** - Escalonamento de fontes
+4. **`AggContext.dart`** - Configurações globais
+5. **`ImageGraphics2D.dart`** - Contexto gráfico 2D
+6. **`ShapePath.dart`** - Comandos e flags de path
+7. **`IVertexSourceExtensions.dart`** - GetBounds, ContainsPoint, etc.
+8. **`quicksort.dart`** - QuickSort para células AA
+9. **`agg_color_gray.dart`** - Cor grayscale 8-bit
+10. **`Gray.cs` (blender)** - Blender grayscale
+
+### 🟡 Média Prioridade (Features Importantes)
+
+11. **`GlyphTranslatorToPath`** em IGlyphTranslator
+12. **`BlenderGammaBGRA.dart`** - Correção gamma
+13. **`span_gradient.dart`** completar (radial_focus, conic, etc.)
+14. **`span_image_filter_rgb.dart`** - Filtros RGB 24-bit
+15. **`span_image_filter_gray.dart`** - Filtros grayscale
+16. **`TextWrapping.dart`** - Quebra de texto
+17. **`ImageTgaIO.dart`** - Formato TGA
+18. **`VertexStorage.dart`** completar métodos
+19. **`AVar.dart`, `CVar.dart`** - Tabelas de variação
+20. **`GPOS.Others.dart`** - Extensões GPOS
+21. **Testes Affine** - Transformações
+
+### 🟢 Baixa Prioridade (Nice to Have)
+
+22. **`BlenderBGRAExactCopy.dart`**
+23. **`BlenderBGRAFloat.dart`**
+24. **`BlenderBGRAHalfHalf.dart`**
+25. **`BlenderPreMultBGRAFloat.dart`**
+26. **`BlenderPolyColorPreMultBGRA.dart`**
+27. **`rgb.dart`** (operações RGB avançadas)
+28. **`Type2InstructionCompacter.dart`**
+29. **`EBSC.dart`** (Embedded Bitmap Scaling)
+30. **`HDMX.dart`**, **`VDMX.dart`**, **`LTSH.dart`**
+31. **Testes Tesselator**
+32. **Testes WorldView/Frustum**
+
+---
+
+## 📈 Estatísticas de Progresso
+
+### AGG Core
+| Categoria | Total C# | Portados | Parciais | Faltando |
+|-----------|----------|----------|----------|----------|
+| Raiz | 29 | 21 (72%) | 2 (7%) | 4 (14%) + 2 N/A |
+| Image | 12 | 6 (50%) | 4 (33%) | 2 (17%) |
+| Image/Blenders | 17 | 6 (35%) | 1 (6%) | 8 (47%) + 2 N/A |
+| Image/ThresholdFunctions | 5 | 5 (100%) | 0 | 0 |
+| Transform | 5 | 5 (100%) | 0 | 0 |
+| VertexSource | 26 | 19 (73%) | 2 (8%) | 5 (19%) |
+| Spans | 9 | 4 (44%) | 3 (33%) | 2 (22%) |
+| Interfaces | 5 | 4 (80%) | 0 | 1 (20%) |
+| RasterizerScanline | 2 | 2 (100%) | 0 | 0 |
+| Font | 7 | 1 (14%) | 0 | 4 (57%) + 2 N/A |
+| Platform | ~10 | 0 | 0 | 1 core + rest N/A |
+| Helpers | 10 | 0 | 0 | 0 (N/A) |
+| **TOTAL AGG** | **~137** | **~73 (53%)** | **~12 (9%)** | **~27 (20%)** + ~25 N/A |
+
+### Typography
+| Categoria | Total C# | Portados | Parciais | Faltando |
+|-----------|----------|----------|----------|----------|
+| Tables (Básicas) | 13 | 10 (77%) | 0 | 3 (23%) |
+| Tables.AdvancedLayout | 20 | 14 (70%) | 0 | 6 (30%) |
+| Tables.TrueType | 4 | 4 (100%) | 0 | 0 |
+| Tables.BitmapAndSvgFonts | 8 | 6 (75%) | 0 | 2 (25%) |
+| Tables.CFF | 5 | 4 (80%) | 0 | 1 (20%) |
+| Tables.Others | 9 | 4 (44%) | 0 | 5 (56%) |
+| Tables.Variations | 9 | 7 (78%) | 0 | 2 (22%) |
+| TrueTypeInterpreter | 2 | 2 (100%) | 0 | 0 |
+| WebFont | 2 | 2 (100%) | 0 | 0 |
+| GlyphLayout | 7 | 4 (57%) | 3 (43%) | 0 |
+| OpenFont (raiz) | 6 | 2 (33%) | 3 (50%) | 1 (17%) |
+| **TOTAL Typography** | **~85** | **~59 (69%)** | **~6 (7%)** | **~20 (24%)** |
+
+### Testes
+| Categoria | Total C# | Portados | Parciais | Faltando |
+|-----------|----------|----------|----------|----------|
+| Agg.Tests/Agg | 11 | 3 (27%) | 2 (18%) | 6 (55%) |
+| Agg.Tests/Other | 30+ | 0 | 2 (7%) | 28+ (93%) |
+| Agg.Tests/VectorMath | 18 | 0 | 0 | 18 (100%) |
+| agg-rust/tests | 34 | 24 (71%) | 0 | 10 (29%) |
+| **TOTAL Testes** | **~93** | **~27 (29%)** | **~4 (4%)** | **~62 (67%)** |
+
+---
+
+## ✅ Marcos Concluídos
+
+### Fase 0: Estrutura - CONCLUÍDO ✅
+- Estrutura de pastas criada
+- Utilitários essenciais portados
+
+### Fase 1: Análise de Fontes - CONCLUÍDO ✅
+- Todas tabelas fundamentais TrueType/OpenType
+- Leitura de glifos simples e compostos
+- Mapeamento Unicode→glifos
+- Métricas horizontais completas
+- Objeto Typeface central
+
+### Fase 2: Layout de Texto - 90% ✅
+- GlyphPlan, GlyphIndexList
+- Motor GlyphLayout básico
+- Suporte surrogate pairs (emoji)
+- GSUB (ligaduras) - validado
+- GPOS (kerning/marks) - validado
+
+### Fase 3: AGG Core - 75% 🔄
+- Rasterização básica funcional
+- ScanlineRasterizer, ScanlineRenderer
+- Integração Typography→AGG (parcial)
+- Renderização básica de texto
 
 ---
 
 ## 🐛 Problemas Conhecidos
-Nenhum no momento.
+
+1. **MPS opcode** no TrueType Interpreter precisa de implementação correta (tamanho em pontos)
+2. **Bounds não atualizáveis** em Glyph para transformações
+3. **NotFoundGlyphCallback** não implementado em GlyphLayout
 
 ---
 
@@ -440,302 +676,16 @@ Nenhum no momento.
 - **ref/out parameters**: Convertidos para retorno de objetos/records
 - **struct → class**: Todas as structs C# viram classes Dart
 - **unsafe code**: Substituído por Uint8List e ByteData
-- **BinaryReader**: Substituído por ByteOrderSwappingBinaryReader customizado
+- **BinaryReader**: Substituído por ByteOrderSwappingBinaryReader
+- **yield return**: Mapeado para sync*/async*
 
 ### Decisões de Design
-- Usar `int` para todos os tipos numéricos (Dart não diferencia uint/int em tempo de compilação)
-- Usar `ByteData` com `Endian.big` para leitura big-endian
-- Manter nomes de campos em camelCase (convenção Dart)
-- Manter estrutura de pastas similar ao original
+- `int` para todos tipos numéricos
+- `ByteData` com `Endian.big` para leitura big-endian
+- Nomes em camelCase (convenção Dart)
+- Estrutura de pastas similar ao original
 
 ---
 
-**Última Atualização:** 26 de Novembro de 2025 - 14:00  
+**Última Atualização:** 13 de Dezembro de 2025  
 **Responsável:** insinfo
-
-**Últimas Alterações:**
-- ✅ Verificação e validação de componentes Core do AGG: `VectorClipper`, `ClipLiangBarsky`, `RasterizerCompoundAa`, `OutlineRenderer`, `ImageLineRenderer`, `ScanlineRenderer`, `ScanlineRasterizer`.
-- ✅ Implementação do algoritmo `FloodFill`.
-- ✅ Portadas tabelas de variações: fvar, gvar, HVAR, MVAR, STAT, VVAR.
-- ✅ Integradas tabelas de variações no Typeface e OpenFontReader.
-- ✅ Portadas tabelas de métricas verticais: vhea, vmtx.
-- ✅ Portadas tabelas legadas e auxiliares: gasp, kern, post.
-- ✅ Integradas novas tabelas no Typeface e OpenFontReader.
-- ✅ Portadas tabelas de layout avançado: MATH, COLR, CPAL.
-- ✅ Integradas tabelas MATH, COLR, CPAL no Typeface e OpenFontReader.
-- ✅ Corrigidos warnings do linter (variáveis não usadas, imports).
-- ✅ Corrigidos 122 erros de compilação em `VertexSource`, `ITransform`, `Image`.
-- ✅ Corrigidos 30 warnings (imports não usados, variáveis não usadas).
-- ✅ Corrigidos testes falhando em `vertex_source_test.dart` (tratamento de comando Stop).
-- ✅ Corrigidos testes falhando em `graphics2d_test.dart` (renderização de Arc/Circle).
-- ✅ Atualizado teste `lookup_flag_test.dart` para refletir comportamento correto de GPOS (subtração de advance).
-- ✅ Refatoração de `Arc`, `Ellipse`, `RoundedRect` para nova API `VertexSource`.
-- ✅ Atualização de `ImageClippingProxy`, `AlphaMaskAdaptor`, `SpanImageFilter`.
-
----
-
-## 🎉 Marcos Importantes
-
-### ✅ Fase 1: Análise do Arquivo da Fonte - CONCLUÍDA!
-- ✅ Todas as tabelas fundamentais de fontes TrueType/OpenType
-- ✅ Leitura completa de glifos simples e compostos
-- ✅ Mapeamento de caracteres Unicode para glifos
-- ✅ Métricas horizontais completas
-- ✅ Objeto Typeface central integrando tudo
-- ✅ 47 testes unitários com 100% passando
-
-### ✅ Fase 2: Motor de Layout de Texto - CONCLUÍDA (Versão Inicial)
-- ✅ Estruturas de dados básicas (GlyphPlan, GlyphIndexList)
-- ✅ Motor GlyphLayout básico funcional
-- ✅ Suporte a texto simples e emoji (surrogate pairs)
-- ✅ Escalamento de fontes para pixels
-- ✅ 16 testes unitários com 100% passando
-- ✅ GSUB (ligaduras) - VALIDADO
-- ✅ GPOS (kerning/marks) - VALIDADO
-
-### 🔄 Fase 3: AGG Core & Integração - EM PROGRESSO
-- ✅ Rasterização básica (ScanlineRasterizer, ScanlineRenderer)
-- ✅ Integração Typography -> AGG (GlyphVertexSource)
-- ✅ Renderização de texto para imagem (PPM)
-
-### Próximo Marco:
-**API Pública e Documentação** - Limpar a API e documentar o uso.
-
----
-
-## 🛠️ Dívida Técnica e TODOs Específicos (Codebase)
-
-### AGG Core
-#### OpenFont Tables
-- [x] `BASE` (Baseline) - **Concluído**
-- [x] `JSTF` (Justification) - **Concluído**
-- [x] `MATH` (Math Layout) - **Concluído**
-- [x] `COLR` & `CPAL` (Color Fonts) - **Concluído**
-- [x] `CFF` (Compact Font Format) - **Concluído**
-  - ✅ Leitura da tabela CFF
-  - ✅ Parser CFF1 (Header, Indexes, DICTs)
-  - ✅ Integração com Typeface e OpenFontReader
-  - ✅ Parser de CharStrings (Type 2)
-  - ✅ Engine de Avaliação (Stack Machine)
-  - ✅ Interface IGlyphTranslator
-- [x] `Bitmap/SVG` fonts (EBLC, EBDT, SVG, etc.) - **Concluído**
-  - ✅ EBLC (Embedded Bitmap Location)
-  - ✅ EBDT (Embedded Bitmap Data)
-  - ✅ CBLC (Color Bitmap Location)
-  - ✅ CBDT (Color Bitmap Data)
-  - ✅ SVG (Scalable Vector Graphics)
-  - ✅ Integração com Typeface e OpenFontReader
-- [x] `Variations` (fvar, gvar, HVAR, MVAR, STAT, VVAR) - **Concluído**
-- [x] `Vertical Metrics` (vhea, vmtx) - **Concluído**
-- [x] `Kerning` (kern - legacy) - **Concluído**
-- [x] `PostScript` (post) - **Concluído**
-
-#### TrueType Interpreter
-- [x] Hinting engine (bytecode interpreter) - **Implementado (Core)**
-  - ✅ Stack, GraphicsState, Zone, InstructionStream
-  - ✅ Opcodes: Arithmetic, Logical, Flow Control, Function Defs
-  - ✅ Opcodes: Move (MIAP, MDAP, etc), Shift (SHP, SHC, etc), Delta, Interpolate (IUP)
-  - ⚠️ `MPS` opcode precisa de implementação correta (tamanho em pontos)
-
-#### WebFont
-- [ ] WOFF Reader
-- [ ] WOFF2 Reader
-
----
-
-## 🎯 Fase 3: Finalização - NÃO INICIADO
-
-- [ ] Extensões de Escala de Pixels
-- [ ] API Pública (Barrel File) - `lib/typography.dart`
-- [ ] Documentação completa
-- [ ] Testes de integração
-  - ✅ `lion_test.dart`: Renderização de caminhos complexos e transformações (baseado em `lion.rs`)
-  - ✅ `rounded_rect_test.dart`: Renderização de primitivas e stroking (baseado em `rounded_rect.rs`)
-  - ✅ `outline_aa_test.dart`: Renderização de contornos AA (baseado em `outline_aa.rs`) - **Corrigido bug em LineProfileAA para linhas largas**
-  - ✅ `image_buffer_test.dart`: Teste básico de buffer de imagem (baseado em `t01_rendering_buffer.rs`)
-  - ✅ `line_join_test.dart`: Teste de junções de linha (baseado em `t21_line_join.rs`)
-  - ✅ `pixel_formats_test.dart`: Teste de formatos de pixel e manipulação direta (baseado em `t02_pixel_formats.rs`)
-  - ✅ `solar_spectrum_test.dart`: Teste de espectro solar e conversão de comprimento de onda (baseado em `t03_solar_spectrum.rs`)
-  - ✅ Migração de assets para `resources/` para remover dependências externas.
-
----
-
-## 📊 Métricas do Projeto
-
-### Arquivos Portados: 19/50+ (38%)
-Atual: ~26/50 (52%) com rasterização AA, ImageBuffer, accessors e caps AA básicos.
-
-**Fase 1 - Análise de Fontes:**
-- ByteOrderSwappingBinaryReader ✅
-- Utils ✅
-- TableEntry ✅
-- TableHeader ✅
-- TableEntryCollection ✅
-- OpenFontReader ✅
-- Head ✅
-- MaxProfile ✅
-- HorizontalHeader ✅
-- OS2Table ✅
-- HorizontalMetrics ✅
-- NameEntry ✅
-- Cmap ✅
-- GlyphLocations ✅
-- Glyf ✅
-- Glyph & GlyphPointF ✅
-- Typeface ✅
-
-**Fase 2 - Layout de Texto:**
-- GlyphPlan ✅
-- GlyphIndexList ✅
-- **GlyphLayout** ✅ (versão básica)
-- **GSUB** ✅ (parcial)
-- ScriptList, FeatureList, CoverageTable, ClassDefTable ✅
-
-### Testes: 71/71 passando (100%)
-
-**Fase 1 - OpenFont Tables (47 testes):**
-- ByteOrderSwappingBinaryReader: 5 testes ✅
-- Utils: 4 testes ✅
-- Bounds: 3 testes ✅
-- Head: 3 testes ✅
-- MaxProfile: 3 testes ✅
-- HorizontalHeader: 2 testes ✅
-- OS2Table: 4 testes ✅
-- HorizontalMetrics: 5 testes ✅
-- NameEntry: 4 testes ✅
-- Cmap: 4 testes ✅
-- GlyphLocations: 2 testes ✅
-- Glyph & GlyphPointF: 4 testes ✅
-- Typeface: 4 testes ✅
-
-**Fase 2 - Text Layout (16 testes):**
-- UnscaledGlyphPlan: 2 testes ✅
-- UnscaledGlyphPlanList: 2 testes ✅
-- GlyphPlan: 1 teste ✅
-- GlyphIndexList: 4 testes ✅
-- **GlyphLayout: 7 testes** ✅ (Incluindo Ligaduras e Mark-to-Ligature)
-
-### Próximos Passos Imediatos
-1. ✅ Finalizar renderer para `RasterizerOutlineAA` (LineRenderer + blend).
-2. ✅ Portar `ScanlineRenderer`/`ImageLineRenderer` e `RasterBufferAccessors` para gerar pixels.
-3. ✅ Portar `ImageBuffer`/blenders e validar saídas das scanlines.
-4. ✅ Avançar GSUB/GPOS integração completa no GlyphLayout (kerning/marks).
-5. ✅ Integrar Typography com AGG Rasterizer (Renderizar glifos na tela/imagem).
-
----
-
-## 🐛 Problemas Conhecidos
-Nenhum no momento.
-
----
-
-## 📝 Notas Técnicas
-
-### Diferenças C# → Dart
-- **ref/out parameters**: Convertidos para retorno de objetos/records
-- **struct → class**: Todas as structs C# viram classes Dart
-- **unsafe code**: Substituído por Uint8List e ByteData
-- **BinaryReader**: Substituído por ByteOrderSwappingBinaryReader customizado
-
-### Decisões de Design
-- Usar `int` para todos os tipos numéricos (Dart não diferencia uint/int em tempo de compilação)
-- Usar `ByteData` com `Endian.big` para leitura big-endian
-- Manter nomes de campos em camelCase (convenção Dart)
-- Manter estrutura de pastas similar ao original
-
----
-
-**Última Atualização:** 26 de Novembro de 2025 - 14:00  
-**Responsável:** insinfo
-
-**Últimas Alterações:**
-- ✅ Verificação e validação de componentes Core do AGG: `VectorClipper`, `ClipLiangBarsky`, `RasterizerCompoundAa`, `OutlineRenderer`, `ImageLineRenderer`, `ScanlineRenderer`, `ScanlineRasterizer`.
-- ✅ Implementação do algoritmo `FloodFill`.
-- ✅ Portadas tabelas de variações: fvar, gvar, HVAR, MVAR, STAT, VVAR.
-- ✅ Integradas tabelas de variações no Typeface e OpenFontReader.
-- ✅ Portadas tabelas de métricas verticais: vhea, vmtx.
-- ✅ Portadas tabelas legadas e auxiliares: gasp, kern, post.
-- ✅ Integradas novas tabelas no Typeface e OpenFontReader.
-- ✅ Portadas tabelas de layout avançado: MATH, COLR, CPAL.
-- ✅ Integradas tabelas MATH, COLR, CPAL no Typeface e OpenFontReader.
-- ✅ Corrigidos warnings do linter (variáveis não usadas, imports).
-- ✅ Corrigidos 122 erros de compilação em `VertexSource`, `ITransform`, `Image`.
-- ✅ Corrigidos 30 warnings (imports não usados, variáveis não usadas).
-- ✅ Corrigidos testes falhando em `vertex_source_test.dart` (tratamento de comando Stop).
-- ✅ Corrigidos testes falhando em `graphics2d_test.dart` (renderização de Arc/Circle).
-- ✅ Atualizado teste `lookup_flag_test.dart` para refletir comportamento correto de GPOS (subtração de advance).
-- ✅ Refatoração de `Arc`, `Ellipse`, `RoundedRect` para nova API `VertexSource`.
-- ✅ Atualização de `ImageClippingProxy`, `AlphaMaskAdaptor`, `SpanImageFilter`.
-
----
-
-## 🎉 Marcos Importantes
-
-### ✅ Fase 1: Análise do Arquivo da Fonte - CONCLUÍDA!
-- ✅ Todas as tabelas fundamentais de fontes TrueType/OpenType
-- ✅ Leitura completa de glifos simples e compostos
-- ✅ Mapeamento de caracteres Unicode para glifos
-- ✅ Métricas horizontais completas
-- ✅ Objeto Typeface central integrando tudo
-- ✅ 47 testes unitários com 100% passando
-
-### ✅ Fase 2: Motor de Layout de Texto - CONCLUÍDA (Versão Inicial)
-- ✅ Estruturas de dados básicas (GlyphPlan, GlyphIndexList)
-- ✅ Motor GlyphLayout básico funcional
-- ✅ Suporte a texto simples e emoji (surrogate pairs)
-- ✅ Escalamento de fontes para pixels
-- ✅ 16 testes unitários com 100% passando
-- ✅ GSUB (ligaduras) - VALIDADO
-- ✅ GPOS (kerning/marks) - VALIDADO
-
-### 🔄 Fase 3: AGG Core & Integração - EM PROGRESSO
-- ✅ Rasterização básica (ScanlineRasterizer, ScanlineRenderer)
-- ✅ Integração Typography -> AGG (GlyphVertexSource)
-- ✅ Renderização de texto para imagem (PPM)
-
-### Próximo Marco:
-**API Pública e Documentação** - Limpar a API e documentar o uso.
-
----
-
-## 🛠️ Dívida Técnica e TODOs Específicos (Codebase)
-
-### AGG Core
-- [x] `agg_curves.dart`: Implementar `hashCode` (linhas 865, 965).
-- [x] `vertex_source_adapter.dart`: Implementar `getLongHashCode` corretamente.
-
-
-#### Interpreter
-- [x] `true_type_interpreter.dart`: Implement `MPS` (Measure Point Size) correctly.
-
-#### Readers
-- [ ] `open_font_reader.dart`: Implementar leitura customizada (TODO na linha 315).
-
-
-continue portando o C:\MyDartProjects\agg\agg-sharp\agg para dart e validando rasterização
-e C:\MyDartProjects\agg\agg-sharp\Typography , tem fontes aqui para testes C:\MyDartProjects\agg\resources\fonts\Satoshi_Complete\Fonts\WEB\fonts e aqui C:\MyDartProjects\agg\resources\fonts tem testes tambem em r-lib/ragg — tende a ser o mais “testado”: tem pasta tests, workflow (.github) e codecov.yml, além de badges de R-CMD-check e cobertura. 
-GitHub
-
-MatterHackers/agg-sharp — bem forte também: além de Tests, tem GuiAutomation (sinal de teste de integração/UI) e TestData. 
-GitHub
-
-andamira/agrega — tem tests/ e já referencia saída dentro de tests/... no exemplo do README, o que costuma acompanhar suíte de testes/integração do projeto. 
-GitHub
-
-savage13/agg — tem tests/ e um script focus_on_itest.sh (cheiro de fluxo de testes de integração). 
-GitHub
-
-gameduell/vectorx — tem tests/, mas não vi (na página principal) sinais tão fortes de coverage/CI quanto ragg. 
-GitHub
-
-pytroll/aggdraw — não aparece uma pasta tests/ no topo, mas existe selftest.py e instrução de “run tests” via esse script (geralmente é uma suíte menor). 
-GitHub
-
-dotMorten/AntiGrainRT, jangko/nimAGG, CWBudde/AggPasMod — na raiz não aparece tests/ (parece mais “código + exemplos”), então provavelmente têm menos cobertura automatizada. 
-GitHub
-+2
-GitHub
-+2 veja a pasta referencias la tem bastantes testes e arquivos que podem ser copiados para dentro de resources para testes comece a implementar bastantes teste unitarios e de integração C:\MyDartProjects\agg\referencias
-
-analize o codigo fonte original minuciosamente em C# C:\MyDartProjects\agg\agg-sharp\agg e 
-C:\MyDartProjects\agg\agg-sharp\Typography e os testes relevantes em C:\MyDartProjects\agg\agg-sharp\Tests\Agg.Tests\Agg   C:\MyDartProjects\agg\agg-sharp\Tests\Agg.Tests\Agg.VectorMath C:\MyDartProjects\agg\agg-sharp\Tests\Agg.Tests\Other e os testes relevantes em C:\MyDartProjects\agg\agg-rust\tests e atualize C:\MyDartProjects\agg\doc\TODO.md com tudo que esta faltando portar e implementar

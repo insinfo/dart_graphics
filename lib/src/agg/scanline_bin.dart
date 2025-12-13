@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/interfaces/iscanline.dart';
 
 /// Binary scanline cache (no cover values) mirroring AGG scanline_bin.

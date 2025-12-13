@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:agg/src/agg/interfaces/iscanline.dart';
 
 /// Simple scanline cache that only checks whether an x coordinate was hit.
