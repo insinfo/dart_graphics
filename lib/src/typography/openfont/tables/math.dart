@@ -1,5 +1,3 @@
-// MIT, 2018-present, WinterDev
-// Ported to Dart by insinfo, 2025
 
 import '../../io/byte_order_swapping_reader.dart';
 import 'coverage_table.dart';

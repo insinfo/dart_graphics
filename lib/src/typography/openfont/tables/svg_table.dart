@@ -1,5 +1,4 @@
-// Apache2, 2017-present, WinterDev
-// Ported to Dart by insinfo, 2025
+
 
 import 'dart:convert';
 import 'dart:typed_data';

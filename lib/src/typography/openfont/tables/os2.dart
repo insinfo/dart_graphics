@@ -1,5 +1,4 @@
-// Apache2, 2016-present, WinterDev
-// Ported to Dart by insinfo
+
 
 import 'dart:typed_data';
 import '../../../typography/io/byte_order_swapping_reader.dart';

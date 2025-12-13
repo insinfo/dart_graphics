@@ -1,5 +1,4 @@
-// MIT, 2016-present, WinterDev
-// Ported to Dart by insinfo, 2025
+
 import '../openfont/tables/i_glyph_index_list.dart';
 import 'user_char_to_glyph_index_map.dart';
 

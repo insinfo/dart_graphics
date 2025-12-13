@@ -1,5 +1,6 @@
 import '../../../typography/io/byte_order_swapping_reader.dart';
 import '../glyph.dart';
+import 'class_def_table.dart';
 import 'coverage_table.dart';
 import 'gdef.dart';
 import 'glyph_shaping_table_entry.dart';
@@ -153,7 +154,8 @@ class LookupTable {
       case 4:
         return _readLookupType4(reader, subTableStartAt);
       // case 5: return _readLookupType5(reader, subTableStartAt);
-      // case 6: return _readLookupType6(reader, subTableStartAt);
+      case 6:
+        return _readLookupType6(reader, subTableStartAt);
       // case 7: return _readLookupType7(reader, subTableStartAt);
       // case 8: return _readLookupType8(reader, subTableStartAt);
     }
@@ -314,6 +316,101 @@ class LookupTable {
         }
       default:
         throw UnsupportedError("LookupType 4 Format $format not supported");
+    }
+  }
+
+  // LookupType 6: Chaining Contextual Substitution Subtable
+  LookupSubTable _readLookupType6(
+      ByteOrderSwappingBinaryReader reader, int subTableStartAt) {
+    reader.seek(subTableStartAt);
+    int format = reader.readUInt16();
+    switch (format) {
+      case 1:
+        {
+          // Format 1: Simple Chaining Context Glyph Substitution
+          int coverageOffset = reader.readUInt16();
+          int chainSubRuleSetCount = reader.readUInt16();
+          List<int> chainSubRuleSetOffsets =
+              Utils.readUInt16Array(reader, chainSubRuleSetCount);
+
+          List<ChainSubRuleSetTable?> subRuleSets =
+              List<ChainSubRuleSetTable?>.generate(chainSubRuleSetCount, (n) {
+            if (chainSubRuleSetOffsets[n] == 0) return null;
+            return ChainSubRuleSetTable.createFrom(
+                reader, subTableStartAt + chainSubRuleSetOffsets[n]);
+          });
+
+          CoverageTable coverageTable = CoverageTable.createFrom(
+              reader, subTableStartAt + coverageOffset);
+          return LkSubTableT6Fmt1(coverageTable, subRuleSets);
+        }
+      case 2:
+        {
+          // Format 2: Class-based Chaining Context Glyph Substitution
+          int coverageOffset = reader.readUInt16();
+          int backtrackClassDefOffset = reader.readUInt16();
+          int inputClassDefOffset = reader.readUInt16();
+          int lookaheadClassDefOffset = reader.readUInt16();
+          int chainSubClassSetCount = reader.readUInt16();
+          List<int> chainSubClassSetOffsets =
+              Utils.readUInt16Array(reader, chainSubClassSetCount);
+
+          ClassDefTable backtrackClassDef = ClassDefTable.createFrom(
+              reader, subTableStartAt + backtrackClassDefOffset);
+          ClassDefTable inputClassDef = ClassDefTable.createFrom(
+              reader, subTableStartAt + inputClassDefOffset);
+          ClassDefTable lookaheadClassDef = ClassDefTable.createFrom(
+              reader, subTableStartAt + lookaheadClassDefOffset);
+
+          List<ChainSubClassSet?> chainSubClassSets =
+              List<ChainSubClassSet?>.generate(chainSubClassSetCount, (n) {
+            if (chainSubClassSetOffsets[n] == 0) return null;
+            return ChainSubClassSet.createFrom(
+                reader, subTableStartAt + chainSubClassSetOffsets[n]);
+          });
+
+          CoverageTable coverageTable = CoverageTable.createFrom(
+              reader, subTableStartAt + coverageOffset);
+          return LkSubTableT6Fmt2(coverageTable, backtrackClassDef,
+              inputClassDef, lookaheadClassDef, chainSubClassSets);
+        }
+      case 3:
+        {
+          // Format 3: Coverage-based Chaining Context Glyph Substitution
+          int backtrackGlyphCount = reader.readUInt16();
+          List<int> backtrackCoverageOffsets =
+              Utils.readUInt16Array(reader, backtrackGlyphCount);
+          int inputGlyphCount = reader.readUInt16();
+          List<int> inputCoverageOffsets =
+              Utils.readUInt16Array(reader, inputGlyphCount);
+          int lookaheadGlyphCount = reader.readUInt16();
+          List<int> lookaheadCoverageOffsets =
+              Utils.readUInt16Array(reader, lookaheadGlyphCount);
+          int substCount = reader.readUInt16();
+          List<SubstLookupRecord> substLookupRecords =
+              SubstLookupRecord.readRecords(reader, substCount);
+
+          List<CoverageTable> backtrackCoverages =
+              List<CoverageTable>.generate(backtrackGlyphCount, (i) {
+            return CoverageTable.createFrom(
+                reader, subTableStartAt + backtrackCoverageOffsets[i]);
+          });
+          List<CoverageTable> inputCoverages =
+              List<CoverageTable>.generate(inputGlyphCount, (i) {
+            return CoverageTable.createFrom(
+                reader, subTableStartAt + inputCoverageOffsets[i]);
+          });
+          List<CoverageTable> lookaheadCoverages =
+              List<CoverageTable>.generate(lookaheadGlyphCount, (i) {
+            return CoverageTable.createFrom(
+                reader, subTableStartAt + lookaheadCoverageOffsets[i]);
+          });
+
+          return LkSubTableT6Fmt3(backtrackCoverages, inputCoverages,
+              lookaheadCoverages, substLookupRecords);
+        }
+      default:
+        return UnImplementedLookupSubTable("GSUB Lookup Type 6 Format $format");
     }
   }
 }
@@ -520,5 +617,363 @@ class LigatureTable {
   @override
   String toString() {
     return "output:$glyphId,{${componentGlyphs.join(',')}}";
+  }
+}
+
+// --- LookupType 6: Chaining Contextual Substitution ---
+
+/// SubstLookupRecord specifies a position in the input sequence and a lookup
+/// to apply at that position.
+class SubstLookupRecord {
+  final int sequenceIndex;
+  final int lookupListIndex;
+  SubstLookupRecord(this.sequenceIndex, this.lookupListIndex);
+
+  static List<SubstLookupRecord> readRecords(
+      ByteOrderSwappingBinaryReader reader, int count) {
+    return List<SubstLookupRecord>.generate(count, (_) {
+      return SubstLookupRecord(reader.readUInt16(), reader.readUInt16());
+    });
+  }
+}
+
+/// ChainSubRuleSubTable: Context definition for a single rule in Format 1
+class ChainSubRuleSubTable {
+  final List<int> backtrackGlyphs;
+  final List<int> inputGlyphs;
+  final List<int> lookaheadGlyphs;
+  final List<SubstLookupRecord> substLookupRecords;
+
+  ChainSubRuleSubTable(this.backtrackGlyphs, this.inputGlyphs,
+      this.lookaheadGlyphs, this.substLookupRecords);
+
+  static ChainSubRuleSubTable createFrom(
+      ByteOrderSwappingBinaryReader reader, int beginAt) {
+    reader.seek(beginAt);
+    int backtrackCount = reader.readUInt16();
+    List<int> backtrackGlyphs = Utils.readUInt16Array(reader, backtrackCount);
+    int inputCount = reader.readUInt16();
+    // Input starts with second glyph, so -1
+    List<int> inputGlyphs = Utils.readUInt16Array(reader, inputCount - 1);
+    int lookaheadCount = reader.readUInt16();
+    List<int> lookaheadGlyphs = Utils.readUInt16Array(reader, lookaheadCount);
+    int substCount = reader.readUInt16();
+    List<SubstLookupRecord> substRecords =
+        SubstLookupRecord.readRecords(reader, substCount);
+    return ChainSubRuleSubTable(
+        backtrackGlyphs, inputGlyphs, lookaheadGlyphs, substRecords);
+  }
+}
+
+/// ChainSubRuleSetTable: All contexts beginning with the same glyph
+class ChainSubRuleSetTable {
+  final List<ChainSubRuleSubTable> chainSubRuleSubTables;
+
+  ChainSubRuleSetTable(this.chainSubRuleSubTables);
+
+  static ChainSubRuleSetTable createFrom(
+      ByteOrderSwappingBinaryReader reader, int beginAt) {
+    reader.seek(beginAt);
+    int subRuleCount = reader.readUInt16();
+    List<int> subRuleOffsets = Utils.readUInt16Array(reader, subRuleCount);
+    List<ChainSubRuleSubTable> chainSubRuleTables =
+        List<ChainSubRuleSubTable>.generate(subRuleCount, (i) {
+      return ChainSubRuleSubTable.createFrom(
+          reader, beginAt + subRuleOffsets[i]);
+    });
+    return ChainSubRuleSetTable(chainSubRuleTables);
+  }
+}
+
+/// ChainSubClassRuleTable: Chaining context definition for one class (Format 2)
+class ChainSubClassRuleTable {
+  final List<int> backtrackClassIds;
+  final List<int> inputClassIds;
+  final List<int> lookaheadClassIds;
+  final List<SubstLookupRecord> substLookupRecords;
+
+  ChainSubClassRuleTable(this.backtrackClassIds, this.inputClassIds,
+      this.lookaheadClassIds, this.substLookupRecords);
+
+  static ChainSubClassRuleTable createFrom(
+      ByteOrderSwappingBinaryReader reader, int beginAt) {
+    reader.seek(beginAt);
+    int backtrackCount = reader.readUInt16();
+    List<int> backtrackClassIds = Utils.readUInt16Array(reader, backtrackCount);
+    int inputCount = reader.readUInt16();
+    // Input starts with second class, so -1
+    List<int> inputClassIds = Utils.readUInt16Array(reader, inputCount - 1);
+    int lookaheadCount = reader.readUInt16();
+    List<int> lookaheadClassIds = Utils.readUInt16Array(reader, lookaheadCount);
+    int substCount = reader.readUInt16();
+    List<SubstLookupRecord> substRecords =
+        SubstLookupRecord.readRecords(reader, substCount);
+    return ChainSubClassRuleTable(
+        backtrackClassIds, inputClassIds, lookaheadClassIds, substRecords);
+  }
+}
+
+/// ChainSubClassSet: Set of chaining context class rules
+class ChainSubClassSet {
+  final List<ChainSubClassRuleTable> subClassRuleTables;
+
+  ChainSubClassSet(this.subClassRuleTables);
+
+  static ChainSubClassSet? createFrom(
+      ByteOrderSwappingBinaryReader reader, int beginAt) {
+    if (beginAt == 0) return null; // Null offset
+    reader.seek(beginAt);
+    int count = reader.readUInt16();
+    List<int> offsets = Utils.readUInt16Array(reader, count);
+    List<ChainSubClassRuleTable> rules =
+        List<ChainSubClassRuleTable>.generate(count, (i) {
+      return ChainSubClassRuleTable.createFrom(reader, beginAt + offsets[i]);
+    });
+    return ChainSubClassSet(rules);
+  }
+}
+
+/// LkSubTableT6Fmt1: Chaining Context Substitution Format 1 (Simple Glyph Context)
+class LkSubTableT6Fmt1 extends LookupSubTable {
+  final CoverageTable coverageTable;
+  final List<ChainSubRuleSetTable?> subRuleSets;
+
+  LkSubTableT6Fmt1(this.coverageTable, this.subRuleSets);
+
+  @override
+  bool doSubstitutionAt(IGlyphIndexList glyphIndices, int pos, int len) {
+    int glyphIndex = glyphIndices[pos];
+    int coverageIndex = coverageTable.findPosition(glyphIndex);
+    if (coverageIndex < 0) return false;
+
+    ChainSubRuleSetTable? ruleSet = subRuleSets[coverageIndex];
+    if (ruleSet == null) return false;
+
+    for (ChainSubRuleSubTable rule in ruleSet.chainSubRuleSubTables) {
+      // Check backtrack sequence (in reverse order)
+      bool match = true;
+      for (int i = 0; i < rule.backtrackGlyphs.length; i++) {
+        int checkPos = pos - 1 - i;
+        if (checkPos < 0 || glyphIndices[checkPos] != rule.backtrackGlyphs[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (!match) continue;
+
+      // Check input sequence (starting from second glyph)
+      for (int i = 0; i < rule.inputGlyphs.length; i++) {
+        int checkPos = pos + 1 + i;
+        if (checkPos >= pos + len ||
+            glyphIndices[checkPos] != rule.inputGlyphs[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (!match) continue;
+
+      // Check lookahead sequence
+      int inputLength = 1 + rule.inputGlyphs.length;
+      for (int i = 0; i < rule.lookaheadGlyphs.length; i++) {
+        int checkPos = pos + inputLength + i;
+        if (checkPos >= glyphIndices.count ||
+            glyphIndices[checkPos] != rule.lookaheadGlyphs[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (!match) continue;
+
+      // Match found! Apply substitutions
+      bool hasChanged = false;
+      for (SubstLookupRecord record in rule.substLookupRecords) {
+        LookupTable lookup = ownerGSub!.lookupList[record.lookupListIndex];
+        if (lookup.doSubstitutionAt(glyphIndices, pos + record.sequenceIndex,
+            len - record.sequenceIndex)) {
+          hasChanged = true;
+        }
+      }
+      return hasChanged;
+    }
+    return false;
+  }
+
+  @override
+  void collectAssociatedSubstitutionGlyphs(List<int> outputAssocGlyphs) {
+    for (ChainSubRuleSetTable? ruleSet in subRuleSets) {
+      if (ruleSet == null) continue;
+      for (ChainSubRuleSubTable rule in ruleSet.chainSubRuleSubTables) {
+        for (SubstLookupRecord record in rule.substLookupRecords) {
+          LookupTable lookup = ownerGSub!.lookupList[record.lookupListIndex];
+          lookup.collectAssociatedSubstitutionGlyph(outputAssocGlyphs);
+        }
+      }
+    }
+  }
+}
+
+/// LkSubTableT6Fmt2: Chaining Context Substitution Format 2 (Class-based)
+class LkSubTableT6Fmt2 extends LookupSubTable {
+  final CoverageTable coverageTable;
+  final ClassDefTable backtrackClassDef;
+  final ClassDefTable inputClassDef;
+  final ClassDefTable lookaheadClassDef;
+  final List<ChainSubClassSet?> chainSubClassSets;
+
+  LkSubTableT6Fmt2(this.coverageTable, this.backtrackClassDef,
+      this.inputClassDef, this.lookaheadClassDef, this.chainSubClassSets);
+
+  @override
+  bool doSubstitutionAt(IGlyphIndexList glyphIndices, int pos, int len) {
+    int glyphIndex = glyphIndices[pos];
+    int coverageIndex = coverageTable.findPosition(glyphIndex);
+    if (coverageIndex < 0) return false;
+
+    int classId = inputClassDef.getClassValue(glyphIndex);
+    if (classId < 0 || classId >= chainSubClassSets.length) return false;
+
+    ChainSubClassSet? classSet = chainSubClassSets[classId];
+    if (classSet == null) return false;
+
+    for (ChainSubClassRuleTable rule in classSet.subClassRuleTables) {
+      // Check backtrack sequence (in reverse order)
+      bool match = true;
+      for (int i = 0; i < rule.backtrackClassIds.length; i++) {
+        int checkPos = pos - 1 - i;
+        if (checkPos < 0) {
+          match = false;
+          break;
+        }
+        int gid = glyphIndices[checkPos];
+        int cls = backtrackClassDef.getClassValue(gid);
+        if (cls != rule.backtrackClassIds[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (!match) continue;
+
+      // Check input sequence (starting from second glyph)
+      for (int i = 0; i < rule.inputClassIds.length; i++) {
+        int checkPos = pos + 1 + i;
+        if (checkPos >= pos + len) {
+          match = false;
+          break;
+        }
+        int gid = glyphIndices[checkPos];
+        int cls = inputClassDef.getClassValue(gid);
+        if (cls != rule.inputClassIds[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (!match) continue;
+
+      // Check lookahead sequence
+      int inputLength = 1 + rule.inputClassIds.length;
+      for (int i = 0; i < rule.lookaheadClassIds.length; i++) {
+        int checkPos = pos + inputLength + i;
+        if (checkPos >= glyphIndices.count) {
+          match = false;
+          break;
+        }
+        int gid = glyphIndices[checkPos];
+        int cls = lookaheadClassDef.getClassValue(gid);
+        if (cls != rule.lookaheadClassIds[i]) {
+          match = false;
+          break;
+        }
+      }
+      if (!match) continue;
+
+      // Match found! Apply substitutions
+      bool hasChanged = false;
+      for (SubstLookupRecord record in rule.substLookupRecords) {
+        LookupTable lookup = ownerGSub!.lookupList[record.lookupListIndex];
+        if (lookup.doSubstitutionAt(glyphIndices, pos + record.sequenceIndex,
+            len - record.sequenceIndex)) {
+          hasChanged = true;
+        }
+      }
+      return hasChanged;
+    }
+    return false;
+  }
+
+  @override
+  void collectAssociatedSubstitutionGlyphs(List<int> outputAssocGlyphs) {
+    for (ChainSubClassSet? classSet in chainSubClassSets) {
+      if (classSet == null) continue;
+      for (ChainSubClassRuleTable rule in classSet.subClassRuleTables) {
+        for (SubstLookupRecord record in rule.substLookupRecords) {
+          LookupTable lookup = ownerGSub!.lookupList[record.lookupListIndex];
+          lookup.collectAssociatedSubstitutionGlyph(outputAssocGlyphs);
+        }
+      }
+    }
+  }
+}
+
+/// LkSubTableT6Fmt3: Chaining Context Substitution Format 3 (Coverage-based)
+class LkSubTableT6Fmt3 extends LookupSubTable {
+  final List<CoverageTable> backtrackCoverages;
+  final List<CoverageTable> inputCoverages;
+  final List<CoverageTable> lookaheadCoverages;
+  final List<SubstLookupRecord> substLookupRecords;
+
+  LkSubTableT6Fmt3(this.backtrackCoverages, this.inputCoverages,
+      this.lookaheadCoverages, this.substLookupRecords);
+
+  @override
+  bool doSubstitutionAt(IGlyphIndexList glyphIndices, int pos, int len) {
+    int inputLength = inputCoverages.length;
+
+    // Check that there are enough context glyphs
+    if (pos < backtrackCoverages.length ||
+        inputLength + lookaheadCoverages.length > len) {
+      return false;
+    }
+
+    // Check input coverages
+    for (int i = 0; i < inputCoverages.length; i++) {
+      if (inputCoverages[i].findPosition(glyphIndices[pos + i]) < 0) {
+        return false;
+      }
+    }
+
+    // Check backtrack coverages (in reverse order)
+    for (int i = 0; i < backtrackCoverages.length; i++) {
+      if (backtrackCoverages[i].findPosition(glyphIndices[pos - 1 - i]) < 0) {
+        return false;
+      }
+    }
+
+    // Check lookahead coverages
+    for (int i = 0; i < lookaheadCoverages.length; i++) {
+      if (lookaheadCoverages[i]
+              .findPosition(glyphIndices[pos + inputLength + i]) <
+          0) {
+        return false;
+      }
+    }
+
+    // Match found! Apply substitutions
+    bool hasChanged = false;
+    for (SubstLookupRecord record in substLookupRecords) {
+      LookupTable lookup = ownerGSub!.lookupList[record.lookupListIndex];
+      if (lookup.doSubstitutionAt(glyphIndices, pos + record.sequenceIndex,
+          len - record.sequenceIndex)) {
+        hasChanged = true;
+      }
+    }
+    return hasChanged;
+  }
+
+  @override
+  void collectAssociatedSubstitutionGlyphs(List<int> outputAssocGlyphs) {
+    for (SubstLookupRecord record in substLookupRecords) {
+      LookupTable lookup = ownerGSub!.lookupList[record.lookupListIndex];
+      lookup.collectAssociatedSubstitutionGlyph(outputAssocGlyphs);
+    }
   }
 }

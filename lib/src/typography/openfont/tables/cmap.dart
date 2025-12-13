@@ -1,6 +1,4 @@
-// Apache2, 2017-present, WinterDev
-// Apache2, 2014-2016, Samuel Carlsson, WinterDev
-// Ported to Dart by insinfo
+
 
 import '../../../typography/io/byte_order_swapping_reader.dart';
 import '../../../typography/openfont/tables/table_entry.dart';
@@ -21,7 +19,8 @@ class Cmap extends TableEntry {
 
   /// Find glyph index from given codepoint
   /// Returns glyph index (0 for unmapped characters)
-  int getGlyphIndex(int codepoint, int nextCodepoint, {bool? skipNextCodepoint}) {
+  int getGlyphIndex(int codepoint, int nextCodepoint,
+      {bool? skipNextCodepoint}) {
     // Character codes that do not correspond to any glyph should map to 0
     skipNextCodepoint = false;
 
@@ -88,6 +87,8 @@ class Cmap extends TableEntry {
         return _readFormat0(reader);
       case 4:
         return _readFormat4(reader);
+      case 6:
+        return _readFormat6(reader);
       case 12:
         return _readFormat12(reader);
       default:
@@ -117,7 +118,8 @@ class Cmap extends TableEntry {
     final length = reader.readUInt16();
     // length includes the format field (2 bytes) already read in _readCharacterMap
     // and the length field (2 bytes) we just read
-    final tableStart = reader.position - 4; // -4 for format + length already read
+    final tableStart =
+        reader.position - 4; // -4 for format + length already read
     final tableEnd = tableStart + length;
 
     reader.readUInt16(); // language
@@ -137,8 +139,8 @@ class Cmap extends TableEntry {
 
     final remainingLen = tableEnd - reader.position;
     final glyphIdArrayLen = remainingLen ~/ 2;
-    final glyphIdArray = glyphIdArrayLen > 0 
-        ? Utils.readUInt16Array(reader, glyphIdArrayLen) 
+    final glyphIdArray = glyphIdArrayLen > 0
+        ? Utils.readUInt16Array(reader, glyphIdArrayLen)
         : <int>[];
 
     return CharMapFormat4(
@@ -148,6 +150,18 @@ class Cmap extends TableEntry {
       idRangeOffset: idRangeOffset,
       glyphIdArray: glyphIdArray,
     );
+  }
+
+  /// Format 6: Trimmed table mapping
+  /// A simple format for sparse character maps where most codes fall in a
+  /// contiguous range.
+  CharMapFormat6 _readFormat6(ByteOrderSwappingBinaryReader reader) {
+    reader.readUInt16(); // length
+    reader.readUInt16(); // language
+    final firstCode = reader.readUInt16();
+    final entryCount = reader.readUInt16();
+    final glyphIdArray = Utils.readUInt16Array(reader, entryCount);
+    return CharMapFormat6(firstCode, glyphIdArray);
   }
 
   CharMapFormat12 _readFormat12(ByteOrderSwappingBinaryReader reader) {
@@ -187,6 +201,36 @@ class NullCharMap extends CharacterMap {
   int getGlyphIndex(int codepoint) => 0;
 }
 
+/// Character Map Format 6: Trimmed table mapping
+/// A simple format for sparse character maps where codes fall in a contiguous range.
+class CharMapFormat6 extends CharacterMap {
+  final int _startCode;
+  final List<int> _glyphIdArray;
+
+  CharMapFormat6(this._startCode, this._glyphIdArray);
+
+  @override
+  int getGlyphIndex(int codepoint) {
+    // The firstCode and entryCount values specify a subrange (beginning at firstCode,
+    // length = entryCount) within the range of possible character codes.
+    // Codes outside of this subrange are mapped to glyph index 0.
+    final index = codepoint - _startCode;
+    if (index >= 0 && index < _glyphIdArray.length) {
+      return _glyphIdArray[index];
+    }
+    return 0;
+  }
+
+  @override
+  void collectUnicode(List<int> unicodes) {
+    for (var i = 0; i < _glyphIdArray.length; i++) {
+      if (_glyphIdArray[i] != 0) {
+        unicodes.add(_startCode + i);
+      }
+    }
+  }
+}
+
 /// Character Map Format 4 (most common format)
 class CharMapFormat4 extends CharacterMap {
   final List<int> startCode;
@@ -213,7 +257,9 @@ class CharMapFormat4 extends CharacterMap {
           return (codepoint + idDelta[i]) & 0xFFFF;
         } else {
           // Index into glyphIdArray
-          final offset = idRangeOffset[i] ~/ 2 + (codepoint - startCode[i]) - (startCode.length - i);
+          final offset = idRangeOffset[i] ~/ 2 +
+              (codepoint - startCode[i]) -
+              (startCode.length - i);
           if (offset >= 0 && offset < glyphIdArray.length) {
             final glyphId = glyphIdArray[offset];
             if (glyphId != 0) {

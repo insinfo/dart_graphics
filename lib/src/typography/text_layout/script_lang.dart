@@ -1,4 +1,4 @@
-/// Minimal representation of a script/lang tag used during glyph layout.
+/// TODO Minimal representation of a script/lang tag used during glyph layout.
 /// This mirrors the ScriptLang data used in the C# implementation.
 class ScriptLang {
   /// Human readable name (e.g., "Latin").

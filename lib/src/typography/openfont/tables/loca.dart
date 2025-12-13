@@ -1,6 +1,4 @@
-// MIT, 2018-present, WinterDev
-// Apache2, 2014-2016, Samuel Carlsson, WinterDev
-// Ported to Dart by insinfo, 2025
+
 // https://www.microsoft.com/typography/otspec/loca.htm
 
 import '../../io/byte_order_swapping_reader.dart';

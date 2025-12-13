@@ -1,6 +1,7 @@
 import '../../../typography/io/byte_order_swapping_reader.dart';
 import 'table_entry.dart';
 import 'utils.dart';
+import 'variations/item_variation_store.dart';
 
 /// BASE - Baseline Table
 ///
@@ -15,6 +16,7 @@ class BASE extends TableEntry {
 
   AxisTable? horizontalAxis;
   AxisTable? verticalAxis;
+  ItemVariationStore? itemVarStore;
 
   @override
   void readContentFrom(ByteOrderSwappingBinaryReader reader) {
@@ -43,7 +45,9 @@ class BASE extends TableEntry {
     }
 
     if (itemVarStoreOffset > 0) {
-      Utils.warnUnimplemented('BASE ItemVarStore not yet implemented');
+      reader.seek(tableStartAt + itemVarStoreOffset);
+      itemVarStore = ItemVariationStore();
+      itemVarStore!.readContent(reader);
     }
   }
 

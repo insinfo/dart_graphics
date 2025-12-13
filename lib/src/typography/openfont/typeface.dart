@@ -1,6 +1,4 @@
-// MIT, 2016-present, WinterDev
-// Apache2, 2014-2016, Samuel Carlsson, WinterDev
-// Ported to Dart by insinfo, 2025
+
 
 import 'dart:typed_data';
 

@@ -1,5 +1,4 @@
-// MIT, 2019-present, WinterDev
-// Ported to Dart by insinfo, 2025
+
 
 import '../../io/byte_order_swapping_reader.dart';
 import 'eblc.dart';

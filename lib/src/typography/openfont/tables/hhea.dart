@@ -1,6 +1,4 @@
-// Apache2, 2017-present, WinterDev
-// Apache2, 2014-2016, Samuel Carlsson, WinterDev
-// Ported to Dart by insinfo
+
 
 import '../../../typography/io/byte_order_swapping_reader.dart';
 import '../../../typography/openfont/tables/table_entry.dart';

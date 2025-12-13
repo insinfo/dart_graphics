@@ -1,5 +1,4 @@
-// MIT, 2016-present, WinterDev
-// Ported to Dart by insinfo, 2025
+
 
 /// Represents an unscaled glyph plan with positioning information
 /// 

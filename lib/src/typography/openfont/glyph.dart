@@ -1,6 +1,3 @@
-// Apache2, 2017-present, WinterDev
-// Apache2, 2014-2016, Samuel Carlsson, WinterDev
-// Ported to Dart by insinfo, 2025
 
 import 'tables/utils.dart';
 

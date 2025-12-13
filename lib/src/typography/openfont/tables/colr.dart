@@ -1,5 +1,4 @@
-// Copyright © 2017-present Sam Hocevar <sam@hocevar.net>
-// Ported to Dart by insinfo, 2025
+
 
 import '../../io/byte_order_swapping_reader.dart';
 import 'table_entry.dart';

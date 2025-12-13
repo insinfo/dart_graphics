@@ -4,15 +4,21 @@
 **Projeto:** Porte da biblioteca AGG e Typography (agg-sharp) de C# para Dart  
 **Data de Início:** 07 de Novembro de 2025  
 **Última Atualização:** 13 de Dezembro de 2025  
-**Status Atual:** Em Progresso - Fase 3 (AGG Core & Typography) - ~92%
+**Status Atual:** Em Progresso - Fase 3 (AGG Core & Typography) - ~93%
 
-### ✅ Itens Portados Recentemente (13/12/2025):
+### ✅ Itens Portados Recentemente (13/12/2025 - sessão atual):
+- `blender_bgra_float.dart` - Blender float BGRA e BlenderPreMultBgraFloat
+- `blender_gamma_bgra.dart` - Blender com correção gamma (BlenderGammaBgra, BlenderGammaRgba)
+- `agg_span_image_filter_gray.dart` - Filtros de imagem grayscale (NN, Bilinear, Clip, Generic, 2x2)
+- `agg_span_image_filter_rgb.dart` - Filtros de imagem RGB (NN, Bilinear, Clip, Generic, Resample)
+
+### ✅ Itens Portados (13/12/2025 - sessão anterior):
 - `i_vertex_source_proxy.dart` - Interface para proxies de vertex source
 - `vertex_source_io.dart` - Load/Save de paths para arquivos
 - `text_wrapping.dart` - Quebra de texto (EnglishTextWrapping, BreakAnywhereTextWrapping)
 - `image_graphics_2d.dart` - Contexto gráfico 2D para renderização em imagem
 
-### ✅ Itens Portados (14/12/2025 - sessão anterior):
+### ✅ Itens Portados (14/12/2025 - sessões anteriores):
 - `vertex_source_glyph_translator.dart` - Bridge Typography→AGG
 - `agg_color_gray.dart` - Cores grayscale 8/16-bit
 - `quicksort.dart` - QuickSort para células AA
@@ -115,23 +121,19 @@
 | BlenderBaseBGRAFloat.cs | ❌ (inline) | ⚡ N/A | - |
 | BlenderBGRA.cs | blender_bgra.dart | ✅ Portado | - |
 | **BlenderBGRAExactCopy.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
-| **BlenderBGRAFloat.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BlenderBGRAFloat.cs | blender_bgra_float.dart | ✅ Portado | - |
 | **BlenderBGRAHalfHalf.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
 | BlenderExtensions.cs | (em interface) | ✅ Portado | - |
-| **BlenderGammaBGRA.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BlenderGammaBGRA.cs | blender_gamma_bgra.dart | ✅ Portado | - |
 | **BlenderPolyColorPreMultBGRA.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
 | BlenderPreMultBGRA.cs | blender_premult_bgra.dart | ✅ Portado | - |
-| **BlenderPreMultBGRAFloat.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BlenderPreMultBGRAFloat.cs | blender_bgra_float.dart | ✅ Portado | - |
 | BlenderRGBA.cs | blender_rgba.dart | ✅ Portado | - |
 | Gray.cs | blender_gray.dart | ✅ Portado | - |
 | IRecieveBlenderByte.cs | (em interface) | ✅ Portado | - |
 | IRecieveBlenderFloat.cs | blender_rgba_float.dart | ✅ Portado | - |
 | **rgb.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
 | rgba.cs | rgba.dart | ⚠️ Parcial | 🟡 Média |
-
-#### O que falta em `BlenderGammaBGRA.cs` (92 linhas):
-- Blending BGRA com correção gamma
-- Usa GammaLookUpTable para conversões
 
 #### O que falta em `rgb.cs` (1848 linhas):
 - Operações avançadas RGB
@@ -223,8 +225,8 @@
 | agg_span_allocator.cs | span_allocator.dart | ✅ Portado | - |
 | agg_span_gradient.cs | span_gradient.dart | ⚠️ Parcial | 🟡 Média |
 | agg_span_image_filter.cs | agg_span_image_filter.dart | ✅ Portado | - |
-| **agg_span_image_filter_gray.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
-| **agg_span_image_filter_rgb.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| agg_span_image_filter_gray.cs | agg_span_image_filter_gray.dart | ✅ Portado | - |
+| agg_span_image_filter_rgb.cs | agg_span_image_filter_rgb.dart | ✅ Portado | - |
 | agg_span_image_filter_rgba.cs | agg_span_image_filter_rgba.dart | ⚠️ Parcial | 🟡 Média |
 | agg_span_interpolator_linear.cs | agg_span_interpolator_linear.dart | ✅ Portado | - |
 | agg_span_interpolator_persp.cs | agg_span_interpolator_persp.dart | ✅ Portado | - |
@@ -287,7 +289,7 @@
 | Arquivo C# | Arquivo Dart | Status | Prioridade |
 |------------|--------------|--------|------------|
 | AggContext.cs | agg_context.dart | ✅ Portado | - |
-| FileDialogs/* | ❌ Não existe | ⚪ Baixa | - |
+| FileDialogs/* | ❌ Não existe | ⚪ Não ira ser Portando | - |
 | Providers/* | ❌ Não existe | ⚪ Baixa | - |
 
 ---

@@ -4,6 +4,7 @@ import 'class_def_table.dart';
 import 'coverage_table.dart';
 import 'table_entry.dart';
 import 'utils.dart';
+import 'variations/item_variation_store.dart';
 
 /// Glyph Definition (GDEF) table.
 ///
@@ -21,6 +22,7 @@ class GDEF extends TableEntry {
   LigCaretList? ligCaretList;
   ClassDefTable? markAttachmentClassDef;
   MarkGlyphSetsTable? markGlyphSetsTable;
+  ItemVariationStore? itemVarStore;
 
   @override
   void readContentFrom(ByteOrderSwappingBinaryReader reader) {
@@ -71,7 +73,9 @@ class GDEF extends TableEntry {
             reader, tableStart + markGlyphSetsDefOffset);
 
     if (itemVarStoreOffset != 0) {
-      Utils.warnUnimplemented('GDEF ItemVarStore not yet implemented');
+      reader.seek(tableStart + itemVarStoreOffset);
+      itemVarStore = ItemVariationStore();
+      itemVarStore!.readContent(reader);
     }
   }
 

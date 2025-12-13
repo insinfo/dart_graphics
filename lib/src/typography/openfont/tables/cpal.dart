@@ -1,5 +1,4 @@
-// Copyright © 2017-present Sam Hocevar <sam@hocevar.net>, WinterDev
-// Ported to Dart by insinfo, 2025
+
 
 import 'dart:typed_data';
 import '../../io/byte_order_swapping_reader.dart';
