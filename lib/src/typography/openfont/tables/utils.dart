@@ -14,10 +14,10 @@ class Utils {
   }
 
   /// Read float in 16.16 format (Fixed)
-  /// This is a fixed-point format with 16 bits for the integer part
+  /// This is a signed fixed-point format with 16 bits for the integer part
   /// and 16 bits for the fractional part
   static double readFixed(ByteOrderSwappingBinaryReader reader) {
-    return reader.readUInt32() / (1 << 16); // Format 16.16
+    return reader.readInt32() / (1 << 16); // Format 16.16 (signed)
   }
 
   /// Read a 24-bit unsigned integer
