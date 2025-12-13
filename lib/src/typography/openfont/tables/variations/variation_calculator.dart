@@ -1,7 +1,3 @@
-// MIT, 2019-present, WinterDev
-// Ported to Dart by insinfo, 2025
-
-import 'dart:math' as math;
 import 'item_variation_store.dart';
 import 'tuple_variation.dart';
 import 'gvar.dart';
