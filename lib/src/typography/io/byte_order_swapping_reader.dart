@@ -41,6 +41,9 @@ class ByteOrderSwappingBinaryReader {
     return value;
   }
 
+  /// Read an unsigned 8-bit integer (same as readByte)
+  int readUInt8() => readByte();
+
   /// Read a signed 8-bit integer
   int readSByte() {
     final value = _byteData.getInt8(_position);
@@ -102,6 +105,29 @@ class ByteOrderSwappingBinaryReader {
     final value = _byteData.getFloat32(_position, Endian.big);
     _position += 4;
     return value;
+  }
+
+  /// Read an unsigned 24-bit integer (big-endian)
+  int readUInt24() {
+    final b0 = _byteData.getUint8(_position);
+    final b1 = _byteData.getUint8(_position + 1);
+    final b2 = _byteData.getUint8(_position + 2);
+    _position += 3;
+    return (b0 << 16) | (b1 << 8) | b2;
+  }
+
+  /// Read a Fixed 16.16 value (signed)
+  double readFixed() {
+    final value = _byteData.getInt32(_position, Endian.big);
+    _position += 4;
+    return value / 65536.0;
+  }
+
+  /// Read a F2DOT14 value (2.14 fixed-point, signed)
+  double readF2Dot14() {
+    final value = _byteData.getInt16(_position, Endian.big);
+    _position += 2;
+    return value / 16384.0;
   }
 
   /// Read a specific number of bytes
