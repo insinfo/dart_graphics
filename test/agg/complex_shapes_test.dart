@@ -318,17 +318,20 @@ void main() {
     });
 
     test('Small circles AA', () {
-      final buffer = ImageBuffer(300, 100);
+      final buffer = ImageBuffer(200, 200);
       _clearBuffer(buffer, Color(255, 255, 255, 255));
 
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      // Very small circles to test AA quality
-      for (var i = 0; i < 10; i++) {
-        final ellipse = Ellipse(30.0 + i * 28, 50, 3.0 + i * 1.5, 3.0 + i * 1.5);
-        ras.add_path(ellipse);
-        ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
+      // Various small circle sizes (matching Cairo golden)
+      for (var i = 0; i < 5; i++) {
+        for (var j = 0; j < 5; j++) {
+          final radius = (i + 1) * 2.0;
+          final ellipse = Ellipse(20.0 + i * 40, 20.0 + j * 40, radius, radius);
+          ras.add_path(ellipse);
+          ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
+        }
       }
 
       PngEncoder.saveImage(buffer, 'test/tmp/aa_small_circles.png');

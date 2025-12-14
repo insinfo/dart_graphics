@@ -1,11 +1,17 @@
+import 'flatten_curve.dart';
 import 'ivertex_source.dart';
 import 'stroke_generator.dart';
 import 'stroke_math.dart';
 import 'vertex_source_adapter.dart';
 
 class Stroke extends VertexSourceAdapter {
+  /// Creates a stroke converter that converts paths with curves to stroked outlines.
+  /// 
+  /// The input [vertexSource] is automatically wrapped in [FlattenCurve] to convert
+  /// any bezier curves (curve3/curve4) to line segments before stroking.
+  /// This matches the behavior expected when using paths with curve commands.
   Stroke(IVertexSource vertexSource, [double inWidth = 1])
-      : super(vertexSource, StrokeGenerator()) {
+      : super(FlattenCurve(vertexSource), StrokeGenerator()) {
     width = inWidth;
   }
 

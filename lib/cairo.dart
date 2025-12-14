@@ -44,7 +44,7 @@
 /// ## Requirements
 /// 
 /// The Cairo native library must be installed:
-/// - **Windows**: `libcairo-2.dll` or `cairo.dll` in PATH or current directory
+/// - **Windows**: `libcairo-2.dll` `cairo-2.dll` in PATH or current directory
 /// - **Linux**: `libcairo.so.2` (install via `apt install libcairo2`)
 /// - **macOS**: `libcairo.dylib` (install via `brew install cairo`)
 library cairo;
@@ -52,3 +52,4 @@ library cairo;
 export 'src/cairo/cairo.dart';
 export 'src/cairo/cairo_pattern.dart';
 export 'src/cairo/cairo_svg.dart';
+export 'src/cairo/cairo_types.dart';

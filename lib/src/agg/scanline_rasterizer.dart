@@ -8,6 +8,7 @@ import 'package:agg/src/agg/interfaces/iscanline.dart';
 import 'package:agg/src/agg/primitives/rectangle_double.dart';
 import 'package:agg/src/agg/rasterizer_cells_aa.dart';
 import 'package:agg/src/agg/vector_clipper.dart';
+import 'package:agg/src/agg/vertex_source/flatten_curve.dart';
 import 'package:agg/src/agg/vertex_source/ivertex_source.dart';
 import 'package:agg/src/agg/vertex_source/path_commands.dart';
 
@@ -125,13 +126,18 @@ class ScanlineRasterizer implements IRasterizer {
   void add_path(IVertexSource vs) {
     final x = RefParam(0.0);
     final y = RefParam(0.0);
-    vs.rewind();
+    
+    // Wrap the vertex source in FlattenCurve to convert any bezier curves
+    // to line segments before rasterization
+    final flattened = FlattenCurve(vs);
+    flattened.rewind();
+    
     if (_outline.sorted()) {
       reset();
     }
 
     while (true) {
-      final cmd = vs.vertex(x, y);
+      final cmd = flattened.vertex(x, y);
       if (ShapePath.isStop(cmd)) break;
       _addVertex(cmd, x.value, y.value);
     }

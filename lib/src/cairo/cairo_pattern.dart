@@ -1,29 +1,14 @@
 /// Cairo Pattern support (gradients, solid colors, surface patterns)
-library cairo_pattern;
+
 
 import 'dart:ffi' as ffi;
 
 import 'generated/ffi.dart';
-import 'cairo.dart';
+import 'cairo_types.dart';
+import 'cairo_load.dart';
 
-/// Global Cairo library instance (reused from cairo.dart)
-late final CairoBindings _cairo = _loadCairoPattern();
-
-CairoBindings _loadCairoPattern() {
-  // Load via the same mechanism as cairo.dart
-  // This is a workaround - in production you'd share the instance
-  return CairoBindings(ffi.DynamicLibrary.open(_getCairoLibName()));
-}
-
-String _getCairoLibName() {
-  if (ffi.Abi.current() == ffi.Abi.windowsX64) {
-    return 'libcairo-2.dll';
-  } else if (ffi.Abi.current() == ffi.Abi.linuxX64) {
-    return 'libcairo.so.2';
-  } else {
-    return 'libcairo.dylib';
-  }
-}
+/// Global Cairo library instance (shared with cairo.dart)
+final CairoBindings _cairo = loadCairo();
 
 /// Base class for Cairo patterns
 abstract class CairoPattern {
@@ -203,9 +188,9 @@ class SurfacePattern extends CairoPattern {
   
   SurfacePattern._(this._ptr);
   
-  /// Create a pattern from a surface
-  factory SurfacePattern.fromSurface(CairoSurface surface) {
-    final ptr = _cairo.cairo_pattern_create_for_surface(surface.pointer);
+  /// Create a pattern from a surface pointer
+  factory SurfacePattern.fromPointer(ffi.Pointer<cairo_surface_t> surfacePtr) {
+    final ptr = _cairo.cairo_pattern_create_for_surface(surfacePtr);
     return SurfacePattern._(ptr);
   }
   
@@ -215,48 +200,5 @@ class SurfacePattern extends CairoPattern {
       _cairo.cairo_pattern_destroy(_ptr);
       _disposed = true;
     }
-  }
-}
-
-/// Extension to apply patterns to CairoCanvas
-extension CairoCanvasPatternExtension on CairoCanvas {
-  /// Set a pattern as the source
-  CairoCanvas setSource(CairoPattern pattern) {
-    // We need to access the raw cairo functions
-    // This is a workaround - in production you'd expose this properly
-    _cairo.cairo_set_source(pointer, pattern.pointer);
-    return this;
-  }
-  
-  /// Draw with a linear gradient
-  CairoCanvas withLinearGradient(
-    double x0, double y0, double x1, double y1,
-    List<(double offset, CairoColor color)> stops,
-    void Function(CairoCanvas canvas) draw,
-  ) {
-    final gradient = LinearGradient(x0, y0, x1, y1);
-    for (final (offset, color) in stops) {
-      gradient.addColorStop(offset, color);
-    }
-    setSource(gradient);
-    draw(this);
-    gradient.dispose();
-    return this;
-  }
-  
-  /// Draw with a radial gradient
-  CairoCanvas withRadialGradient(
-    double cx, double cy, double innerRadius, double outerRadius,
-    List<(double offset, CairoColor color)> stops,
-    void Function(CairoCanvas canvas) draw,
-  ) {
-    final gradient = RadialGradient.centered(cx, cy, innerRadius, outerRadius);
-    for (final (offset, color) in stops) {
-      gradient.addColorStop(offset, color);
-    }
-    setSource(gradient);
-    draw(this);
-    gradient.dispose();
-    return this;
   }
 }

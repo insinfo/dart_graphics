@@ -1,0 +1,196 @@
+# dart run ffigen --config ffigen_freetype.yaml
+
+name: FreeTypeBindings
+description: Bindings to FreeType Library for Dart.
+output: 'lib/src/freetype/generated/freetype_ffi.dart'
+llvm-path:
+  - 'C:/LLVM'
+
+headers:
+  entry-points:
+    - 'C:/MyDartProjects/agg/referencias/libs/include/freetype/freetype.h'
+
+compiler-opts:
+  # FreeType includes
+  - '-IC:/MyDartProjects/agg/referencias/libs/include'
+  - '-IC:/MyDartProjects/agg/referencias/libs/include/freetype'
+  
+  # MSVC
+  - '-IC:/Progra~1/MICROS~4/2022/Community/VC/Tools/MSVC/14.41.34120/include'
+
+  # Windows SDK / UCRT
+  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/ucrt'
+  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/shared'
+  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/um'
+  
+  # Supressão de warnings
+  - '-Wno-everything'
+
+preamble: |
+  // ignore_for_file: camel_case_types, non_constant_identifier_names, unused_element
+  // ignore_for_file: constant_identifier_names, public_member_api_docs
+  // ignore_for_file: unused_field, lines_longer_than_80_chars
+
+functions:
+  include:
+    # Library initialization
+    - FT_Init_FreeType
+    - FT_Done_FreeType
+    
+    # Face creation/destruction
+    - FT_New_Face
+    - FT_New_Memory_Face
+    - FT_Done_Face
+    - FT_Reference_Face
+    
+    # Face properties
+    - FT_Set_Char_Size
+    - FT_Set_Pixel_Sizes
+    - FT_Select_Size
+    - FT_Request_Size
+    
+    # Character mapping
+    - FT_Get_Char_Index
+    - FT_Get_First_Char
+    - FT_Get_Next_Char
+    - FT_Select_Charmap
+    - FT_Set_Charmap
+    
+    # Glyph loading
+    - FT_Load_Glyph
+    - FT_Load_Char
+    - FT_Get_Glyph
+    - FT_Render_Glyph
+    
+    # Glyph operations
+    - FT_Glyph_Copy
+    - FT_Glyph_Transform
+    - FT_Glyph_Get_CBox
+    - FT_Glyph_To_Bitmap
+    - FT_Done_Glyph
+    
+    # Kerning
+    - FT_Get_Kerning
+    - FT_Get_Track_Kerning
+    
+    # Font metrics
+    - FT_Get_Name_Index
+    - FT_Get_Glyph_Name
+    - FT_Get_Postscript_Name
+    - FT_Get_FSType_Flags
+    
+    # Outline operations
+    - FT_Outline_New
+    - FT_Outline_Done
+    - FT_Outline_Copy
+    - FT_Outline_Transform
+    - FT_Outline_Translate
+    - FT_Outline_Embolden
+    - FT_Outline_Get_CBox
+    - FT_Outline_Get_BBox
+    - FT_Outline_Reverse
+    
+    # Version
+    - FT_Library_Version
+
+structs:
+  include:
+    - FT_LibraryRec_
+    - FT_FaceRec_
+    - FT_GlyphSlotRec_
+    - FT_Size_Metrics_
+    - FT_SizeRec_
+    - FT_Glyph_Metrics_
+    - FT_Outline_
+    - FT_Vector_
+    - FT_BBox_
+    - FT_Bitmap_
+    - FT_CharMapRec_
+    - FT_GlyphRec_
+    - FT_BitmapGlyphRec_
+    - FT_OutlineGlyphRec_
+    - FT_Size_RequestRec_
+    - FT_Matrix_
+
+enums:
+  include:
+    - FT_Encoding_
+    - FT_Render_Mode_
+    - FT_Kerning_Mode_
+    - FT_Glyph_Format_
+    - FT_Size_Request_Type_
+
+typedefs:
+  include:
+    - FT_Library
+    - FT_Face
+    - FT_Size
+    - FT_GlyphSlot
+    - FT_CharMap
+    - FT_Glyph
+    - FT_BitmapGlyph
+    - FT_OutlineGlyph
+    - FT_Encoding
+    - FT_Error
+    - FT_Int
+    - FT_UInt
+    - FT_Long
+    - FT_ULong
+    - FT_Short
+    - FT_UShort
+    - FT_Fixed
+    - FT_Pos
+    - FT_F26Dot6
+
+macros:
+  include:
+    - FREETYPE_MAJOR
+    - FREETYPE_MINOR
+    - FREETYPE_PATCH
+    - FT_LOAD_DEFAULT
+    - FT_LOAD_NO_SCALE
+    - FT_LOAD_NO_HINTING
+    - FT_LOAD_RENDER
+    - FT_LOAD_NO_BITMAP
+    - FT_LOAD_VERTICAL_LAYOUT
+    - FT_LOAD_FORCE_AUTOHINT
+    - FT_LOAD_CROP_BITMAP
+    - FT_LOAD_PEDANTIC
+    - FT_LOAD_NO_RECURSE
+    - FT_LOAD_IGNORE_TRANSFORM
+    - FT_LOAD_MONOCHROME
+    - FT_LOAD_LINEAR_DESIGN
+    - FT_LOAD_NO_AUTOHINT
+    - FT_LOAD_COLOR
+    - FT_LOAD_COMPUTE_METRICS
+    - FT_LOAD_BITMAP_METRICS_ONLY
+    - FT_FACE_FLAG_SCALABLE
+    - FT_FACE_FLAG_FIXED_SIZES
+    - FT_FACE_FLAG_FIXED_WIDTH
+    - FT_FACE_FLAG_SFNT
+    - FT_FACE_FLAG_HORIZONTAL
+    - FT_FACE_FLAG_VERTICAL
+    - FT_FACE_FLAG_KERNING
+    - FT_FACE_FLAG_FAST_GLYPHS
+    - FT_FACE_FLAG_MULTIPLE_MASTERS
+    - FT_FACE_FLAG_GLYPH_NAMES
+    - FT_FACE_FLAG_EXTERNAL_STREAM
+    - FT_FACE_FLAG_HINTER
+    - FT_FACE_FLAG_CID_KEYED
+    - FT_FACE_FLAG_TRICKY
+    - FT_FACE_FLAG_COLOR
+    - FT_FACE_FLAG_VARIATION
+    - FT_FACE_FLAG_SVG
+    - FT_FACE_FLAG_SBIX
+    - FT_FACE_FLAG_SBIX_OVERLAY
+
+unions:
+  include: []
+
+globals:
+  include: []
+
+unnamed-enums:
+  include: []
+
+silence-enum-warning: true

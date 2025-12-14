@@ -2,10 +2,11 @@
 /// 
 /// This module provides basic SVG path parsing and rendering capabilities.
 /// For complex SVGs, consider using a dedicated SVG library.
-library cairo_svg;
+
 
 import 'dart:math' as math;
 import 'cairo.dart';
+import 'cairo_types.dart';
 
 /// SVG path command types
 enum SvgPathCommandType {
