@@ -1,6 +1,7 @@
 
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import '../../io/byte_order_swapping_reader.dart';
 import 'table_entry.dart';
@@ -57,15 +58,13 @@ class SvgTable extends TableEntry {
         ..svgDocLength = reader.readUInt32();
     });
 
-    // TODO: review lazy load
+    // Load all SVG documents
     for (int i = 0; i < numEntries; ++i) {
       // read data
       SvgDocumentEntry entry = _entries![i];
 
-      if (entry.endGlyphID - entry.startGlyphID > 0) {
-        // TODO review here again
-        throw UnsupportedError("Ranges not supported yet");
-      }
+      // SVG entries can cover a range of glyphs that share the same SVG document
+      // This is common for ligatures or variant glyphs
 
       reader.seek(svgDocIndexStartAt + entry.svgDocOffset);
 
@@ -75,13 +74,23 @@ class SvgTable extends TableEntry {
 
       //
       Uint8List svgData = reader.readBytes(entry.svgDocLength);
-      entry.svgBuffer = svgData;
       if (svgData.isNotEmpty && svgData[0] == '<'.codeUnitAt(0)) {
-        // should be plain-text
-      } else {
-        // TODO: gzip-encoded
+        // Plain-text SVG
+        entry.svgBuffer = svgData;
+        entry.compressed = false;
+      } else if (svgData.length >= 2 && svgData[0] == 0x1f && svgData[1] == 0x8b) {
+        // gzip-encoded SVG (magic bytes 0x1f 0x8b)
         entry.compressed = true;
-        // decompress...
+        try {
+          entry.svgBuffer = Uint8List.fromList(gzip.decode(svgData));
+        } catch (e) {
+          // If decompression fails, store raw data
+          entry.svgBuffer = svgData;
+        }
+      } else {
+        // Unknown format, store as-is
+        entry.svgBuffer = svgData;
+        entry.compressed = false;
       }
     }
   }

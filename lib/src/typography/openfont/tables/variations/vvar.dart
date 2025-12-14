@@ -1,9 +1,9 @@
-// MIT, 2019-present, WinterDev
-// Ported to Dart by insinfo, 2025
+
 
 import '../../../io/byte_order_swapping_reader.dart';
 import '../table_entry.dart';
 import 'item_variation_store.dart';
+import 'hvar.dart'; // Import DeltaSetIndexMap
 
 /// VVAR — Vertical Metrics Variations Table
 class VVar extends TableEntry {
@@ -20,6 +20,18 @@ class VVar extends TableEntry {
   int tsbMappingOffset = 0;
   int bsbMappingOffset = 0;
   int vorgMappingOffset = 0;
+  
+  /// Advance height delta-set index mapping
+  DeltaSetIndexMap? advanceHeightMapping;
+  
+  /// Top side bearing delta-set index mapping
+  DeltaSetIndexMap? tsbMapping;
+  
+  /// Bottom side bearing delta-set index mapping
+  DeltaSetIndexMap? bsbMapping;
+  
+  /// Vertical origin delta-set index mapping
+  DeltaSetIndexMap? vorgMapping;
 
   @override
   void readContentFrom(ByteOrderSwappingBinaryReader reader) {
@@ -50,6 +62,29 @@ class VVar extends TableEntry {
       itemVariationStore!.readContent(reader);
     }
     
-    // TODO: Implement DeltaSetIndexMap for mappings
+    // Read DeltaSetIndexMaps
+    if (advanceHeightMappingOffset > 0) {
+      reader.seek(beginAt + advanceHeightMappingOffset);
+      advanceHeightMapping = DeltaSetIndexMap();
+      advanceHeightMapping!.readContent(reader);
+    }
+    
+    if (tsbMappingOffset > 0) {
+      reader.seek(beginAt + tsbMappingOffset);
+      tsbMapping = DeltaSetIndexMap();
+      tsbMapping!.readContent(reader);
+    }
+    
+    if (bsbMappingOffset > 0) {
+      reader.seek(beginAt + bsbMappingOffset);
+      bsbMapping = DeltaSetIndexMap();
+      bsbMapping!.readContent(reader);
+    }
+    
+    if (vorgMappingOffset > 0) {
+      reader.seek(beginAt + vorgMappingOffset);
+      vorgMapping = DeltaSetIndexMap();
+      vorgMapping!.readContent(reader);
+    }
   }
 }

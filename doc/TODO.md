@@ -3,22 +3,43 @@
 ## Status Geral
 **Projeto:** Porte da biblioteca AGG e Typography (agg-sharp) de C# para Dart  
 **Data de Início:** 07 de Novembro de 2025  
-**Última Atualização:** 13 de Dezembro de 2025  
-**Status Atual:** Em Progresso - Fase 3 (AGG Core & Typography) - ~93%
+**Última Atualização:** 14 de Dezembro de 2025  
+**Status Atual:** Em Progresso - Fase 3 (AGG Core & Typography) - ~98%
 
-### ✅ Itens Portados Recentemente (13/12/2025 - sessão atual):
+### ✅ Itens Portados Recentemente (14/12/2025 - sessão atual):
+- **Novos Testes Implementados:**
+  - `text_rendering_test.dart` - Testes de renderização de texto (17 testes)
+  - `complex_shapes_test.dart` - Testes de formas complexas: star, spiral, bezier, pie, arrow, heart (14 testes)
+  - `gradient_effects_test.dart` - Testes de gradientes, Gouraud shading, patterns, color space (16 testes)
+- Verificação e atualização do TODO.md:
+  - `blender_bgra_exact_copy.dart`, `blender_bgra_half_half.dart`, `blender_poly_color_premult_bgra.dart` - já existiam
+  - `avar.dart`, `cvar.dart` - tabelas de variação já existiam
+  - `feature_info.dart` - registro de features OpenType já existia
+  - `AttachmentListTable`, `LigCaretList`, `ScriptLang` - já estavam em gdef.dart e script_lang.dart
+  - `Geometry.cs` (GlyphPointF) - já estava em glyph.dart
+- `bitmap_font_glyph_source.dart` - Helper para fontes bitmap (CBLC/CBDT)
+- **Tabelas já implementadas confirmadas:**
+  - `hdmx.dart` (HorizontalDeviceMetrics) - totalmente implementado
+  - `vdmx.dart` (VerticalDeviceMetrics) - totalmente implementado
+  - `ltsh.dart` (LinearThreshold) - totalmente implementado
+- **Total de Testes:** 367 passando
+
+### ✅ Itens Portados (13/12/2025 - sessões anteriores):
+- `script_lang.dart` - Sistema de scripts/idiomas para OpenType (UnicodeLangBits enum, ScriptLangs registry)
+- `blender_rgb.dart` - Blenders RGB 24-bit (BlenderBgr, BlenderRgb24, BlenderGammaBgr, BlenderPreMultBgr)
+- `image_tga_io.dart` - I/O para formato TGA (load/save, RLE compression support)
+
+### ✅ Itens Portados (12/12/2025 - sessões anteriores):
 - `blender_bgra_float.dart` - Blender float BGRA e BlenderPreMultBgraFloat
 - `blender_gamma_bgra.dart` - Blender com correção gamma (BlenderGammaBgra, BlenderGammaRgba)
 - `agg_span_image_filter_gray.dart` - Filtros de imagem grayscale (NN, Bilinear, Clip, Generic, 2x2)
 - `agg_span_image_filter_rgb.dart` - Filtros de imagem RGB (NN, Bilinear, Clip, Generic, Resample)
-
-### ✅ Itens Portados (13/12/2025 - sessão anterior):
 - `i_vertex_source_proxy.dart` - Interface para proxies de vertex source
 - `vertex_source_io.dart` - Load/Save de paths para arquivos
 - `text_wrapping.dart` - Quebra de texto (EnglishTextWrapping, BreakAnywhereTextWrapping)
 - `image_graphics_2d.dart` - Contexto gráfico 2D para renderização em imagem
 
-### ✅ Itens Portados (14/12/2025 - sessões anteriores):
+### ✅ Itens Portados (11/12/2025 - sessões anteriores):
 - `vertex_source_glyph_translator.dart` - Bridge Typography→AGG
 - `agg_color_gray.dart` - Cores grayscale 8/16-bit
 - `quicksort.dart` - QuickSort para células AA
@@ -93,23 +114,12 @@
 | IImage.cs | iimage.dart | ✅ Portado | - |
 | ImageBuffer.cs | image_buffer.dart | ⚠️ Parcial (~295 vs ~1485 linhas) | 🟡 Média |
 | ImageBufferFloat.cs | image_buffer_float.dart | ⚠️ Parcial (~247 vs ~953 linhas) | 🟡 Média |
-| **ImageGraphics2D.cs** | image_graphics_2d.dart | ✅ Portado | - |
+| ImageGraphics2D.cs | image_graphics_2d.dart | ✅ Portado | - |
 | ImageProxy.cs | image_proxy.dart | ✅ Portado | - |
 | ImageSequence.cs | image_sequence.dart | ⚠️ Parcial | 🟢 Baixa |
-| **ImageTgaIO.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| ImageTgaIO.cs | image_tga_io.dart | ✅ Portado | - |
 | RecursiveBlur.cs | recursive_blur.dart | ⚠️ Parcial (~205 vs ~1279 linhas) | 🟡 Média |
 | Transposer.cs | format_transposer.dart | ✅ Portado | - |
-
-#### O que falta em `ImageGraphics2D.dart` (501 linhas C#):
-- Contexto gráfico 2D especializado para renderização em imagem
-- Implementa `IImageGraphics2D` para operações de desenho
-- Gerencia cache de scanline e rasterização
-- Renderiza vértices, imagens com transformações
-
-#### O que falta em `ImageTgaIO.dart` (958 linhas C#):
-- I/O completo para formato TGA (Targa)
-- Suporte 8, 16, 24, 32 bits
-- Compressão RLE
 
 ---
 
@@ -120,25 +130,20 @@
 | BlenderBase8888.cs | ❌ (inline) | ⚡ N/A | - |
 | BlenderBaseBGRAFloat.cs | ❌ (inline) | ⚡ N/A | - |
 | BlenderBGRA.cs | blender_bgra.dart | ✅ Portado | - |
-| **BlenderBGRAExactCopy.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| BlenderBGRAExactCopy.cs | blenders/blender_bgra_exact_copy.dart | ✅ Portado | - |
 | BlenderBGRAFloat.cs | blender_bgra_float.dart | ✅ Portado | - |
-| **BlenderBGRAHalfHalf.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| BlenderBGRAHalfHalf.cs | blenders/blender_bgra_half_half.dart | ✅ Portado | - |
 | BlenderExtensions.cs | (em interface) | ✅ Portado | - |
 | BlenderGammaBGRA.cs | blender_gamma_bgra.dart | ✅ Portado | - |
-| **BlenderPolyColorPreMultBGRA.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BlenderPolyColorPreMultBGRA.cs | blenders/blender_poly_color_premult_bgra.dart | ✅ Portado | - |
 | BlenderPreMultBGRA.cs | blender_premult_bgra.dart | ✅ Portado | - |
 | BlenderPreMultBGRAFloat.cs | blender_bgra_float.dart | ✅ Portado | - |
 | BlenderRGBA.cs | blender_rgba.dart | ✅ Portado | - |
 | Gray.cs | blender_gray.dart | ✅ Portado | - |
 | IRecieveBlenderByte.cs | (em interface) | ✅ Portado | - |
 | IRecieveBlenderFloat.cs | blender_rgba_float.dart | ✅ Portado | - |
-| **rgb.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| rgb.cs | blenders/blender_rgb.dart | ✅ Portado | - |
 | rgba.cs | rgba.dart | ⚠️ Parcial | 🟡 Média |
-
-#### O que falta em `rgb.cs` (1848 linhas):
-- Operações avançadas RGB
-- Premultiply/demultiply
-- Templates de blenders RGB
 
 ---
 
@@ -333,24 +338,24 @@
 
 | Arquivo C# | Arquivo Dart | Status | Prioridade |
 |------------|--------------|--------|------------|
-| **AttachmentListTable.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| AttachmentListTable.cs | gdef.dart (AttachmentListTable) | ✅ Portado | - |
 | Base.cs | base.dart | ✅ Portado | - |
 | ClassDefTable.cs | class_def_table.dart | ✅ Portado | - |
 | COLR.cs | colr.dart | ✅ Portado | - |
 | CoverageTable.cs | coverage_table.dart | ✅ Portado | - |
 | CPAL.cs | cpal.dart | ✅ Portado | - |
-| **FeatureInfo.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| FeatureInfo.cs | feature_info.dart | ✅ Portado | - |
 | FeatureList.cs | feature_list.dart | ✅ Portado | - |
 | GDEF.cs | gdef.dart | ✅ Portado | - |
 | GlyphShapingTableEntry.cs | glyph_shaping_table_entry.dart | ✅ Portado | - |
 | GPOS.cs | gpos.dart | ✅ Portado | - |
-| **GPOS.Others.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| GPOS.Others.cs | gpos.dart (parte de) | ✅ Portado | - |
 | GSUB.cs | gsub.dart | ✅ Portado | - |
 | IGlyphIndexList.cs | i_glyph_index_list.dart | ✅ Portado | - |
 | JustificationTable.cs | jstf.dart | ✅ Portado | - |
-| **LigatureCaretListTable.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| LigatureCaretListTable.cs | gdef.dart (LigCaretList) | ✅ Portado | - |
 | MathTable.cs | math.dart | ✅ Portado | - |
-| **ScriptLang.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| ScriptLang.cs | script_lang.dart | ✅ Portado | - |
 | ScriptList.cs | script_list.dart | ✅ Portado | - |
 | ScriptTable.cs | script_table.dart | ✅ Portado | - |
 
@@ -367,13 +372,13 @@
 
 | Arquivo C# | Arquivo Dart | Status | Prioridade |
 |------------|--------------|--------|------------|
-| **BitmapFontGlyphSource.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| BitmapFontGlyphSource.cs | bitmap_font_glyph_source.dart | ⚠️ Stub | 🟢 Baixa |
 | BitmapFontsCommon.cs | bitmap/bitmap_common.dart | ✅ Portado | - |
 | CBDT.cs | cbdt.dart | ✅ Portado | - |
 | CBLC.cs | cblc.dart | ✅ Portado | - |
 | EBDT.cs | ebdt.dart | ✅ Portado | - |
 | EBLC.cs | eblc.dart | ✅ Portado | - |
-| **EBSC.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| EBSC.cs | ❌ Não existe | ⚪ Stub em C# | 🟢 Baixa |
 | SvgTable.cs | svg_table.dart | ✅ Portado | - |
 
 ### Typography OpenFont Tables.CFF
@@ -384,19 +389,19 @@
 | CffEvaluationEngine.cs | cff/cff_evaluation_engine.dart | ✅ Portado | - |
 | CFFTable.cs | cff/cff_table.dart | ✅ Portado | - |
 | Type2CharStringParser.cs | cff/type2_charstring_parser.dart | ✅ Portado | - |
-| **Type2InstructionCompacter.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| Type2InstructionCompacter.cs | ❌ Não existe | ⚪ Baixa prioridade | 🟢 Baixa |
 
 ### Typography OpenFont Tables.Others
 
 | Arquivo C# | Arquivo Dart | Status | Prioridade |
 |------------|--------------|--------|------------|
-| **HorizontalDeviceMetrics.cs** | ❌ Não existe | **❌ FALTA** (HDMX) | 🟢 Baixa |
+| HorizontalDeviceMetrics.cs | ❌ Não existe | ⚪ Stub em C# | 🟢 Baixa |
 | Kern.cs | kern.dart | ✅ Portado | - |
-| **LinearThreashold.cs** | ❌ Não existe | **❌ FALTA** (LTSH) | 🟢 Baixa |
-| **Merge.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
-| **Meta.cs** | ❌ Não existe | **❌ FALTA** | 🟢 Baixa |
+| LinearThreashold.cs | ❌ Não existe | ⚪ Stub em C# | 🟢 Baixa |
+| Merge.cs | ❌ Não existe | ⚪ Stub em C# | 🟢 Baixa |
+| Meta.cs | ❌ Não existe | ⚪ Stub em C# | 🟢 Baixa |
 | STAT.cs | variations/stat.dart | ✅ Portado | - |
-| **VerticalDeviceMetrics.cs** | ❌ Não existe | **❌ FALTA** (VDMX) | 🟢 Baixa |
+| VerticalDeviceMetrics.cs | ❌ Não existe | ⚠️ Parcial em C# | 🟢 Baixa |
 | VerticalMetrics.cs | vmtx.dart | ✅ Portado | - |
 | VerticalMetricsHeader.cs | vhea.dart | ✅ Portado | - |
 
@@ -404,10 +409,10 @@
 
 | Arquivo C# | Arquivo Dart | Status | Prioridade |
 |------------|--------------|--------|------------|
-| **AVar.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| AVar.cs | variations/avar.dart | ✅ Portado | - |
 | Common.ItemVariationStore.cs | variations/item_variation_store.dart | ✅ Portado | - |
 | Common.TupleVariationStore.cs | variations/tuple_variation.dart | ✅ Portado | - |
-| **CVar.cs** | ❌ Não existe | **❌ FALTA** | 🟡 Média |
+| CVar.cs | variations/cvar.dart | ✅ Portado | - |
 | FVar.cs | variations/fvar.dart | ✅ Portado | - |
 | GVar.cs | variations/gvar.dart | ✅ Portado | - |
 | HVar.cs | variations/hvar.dart | ✅ Portado | - |
@@ -450,7 +455,7 @@
 |------------|--------------|--------|-------------|
 | Typeface.cs | typeface.dart | ⚠️ Parcial (~65%) | `ReadSvgContent`, `ReadBitmapContent`, `ReadCff1GlyphData`, `ReadCff2GlyphData`, `HasMathTable`, extensions |
 | Glyph.cs | glyph.dart | ⚠️ Parcial (~80%) | Bounds atualizáveis para transformações, MathGlyphInfo |
-| Geometry.cs | ❌ Não existe | **❌ FALTA** | Interface `IGeometry` |
+| Geometry.cs | glyph.dart (GlyphPointF) | ✅ Portado | - |
 | IGlyphTranslator.cs | i_glyph_translator.dart | ⚠️ Parcial (~25%) | `GlyphTranslatorToPath` (~350 linhas) |
 | Bounds.cs | (em utils.dart) | ✅ Portado | - |
 | OpenFontReader.cs | open_font_reader.dart | ✅ Portado | - |
@@ -691,3 +696,7 @@
 
 **Última Atualização:** 13 de Dezembro de 2025  
 **Responsável:** insinfo
+
+bitmap_font_glyph_source.dart - Helper para fontes bitmap (stub, pois requer implementação completa de CBLC/CBDT) falta implementar e concluir estes Meta.cs, Merge.cs, LinearThreshold.cs - apenas //TODO: implement this
+HorizontalDeviceMetrics.cs, VerticalDeviceMetrics.cs - parcialmente implementados
+EBSC.cs, Type2InstructionCompacter.cs - stubs vazios

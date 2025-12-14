@@ -1,5 +1,3 @@
-// MIT, 2019-present, WinterDev
-// Ported to Dart by insinfo, 2025
 
 import '../../../io/byte_order_swapping_reader.dart';
 import '../utils.dart';
@@ -79,14 +77,13 @@ class VariationRegion {
   }
 
   List<double> getRegionCoords() {
-    // TODO: check this implementation
-    // In C# it returns float[]
-    // But what does it return? Start, Peak, End for each axis?
-    // The C# code just returns the array of VariationAxis structs? No.
-    // Wait, the C# code for VariationRegion doesn't have GetRegionCoords.
-    // Ah, I might have misread the C# code or it was in a different place.
-    // Let's stick to the data structure.
-    return [];
+    // Returns flat list of coordinates: [start0, peak0, end0, start1, peak1, end1, ...]
+    if (regionAxes == null) return [];
+    final result = <double>[];
+    for (final axis in regionAxes!) {
+      result.addAll([axis.startCoord, axis.peakCoord, axis.endCoord]);
+    }
+    return result;
   }
 }
 

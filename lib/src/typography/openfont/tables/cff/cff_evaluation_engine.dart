@@ -103,7 +103,9 @@ class CffEvaluationEngine {
       
       switch (inst.op) {
         case OperatorName.GlyphWidth:
-          // TODO
+          // GlyphWidth is handled implicitly - the first value on the stack
+          // (if odd number of arguments) is the glyph width
+          // The stack should already have handled this during parsing
           break;
         case OperatorName.LoadInt:
           evalStack.push(inst.value.toDouble());

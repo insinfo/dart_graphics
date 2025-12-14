@@ -625,7 +625,19 @@ class Cff1Parser {
   }
 
   void readEncodings() {
-    // TODO: Implement encoding reading
+    // Encoding defines the mapping from character codes to glyph indices
+    // Format 0: Array of glyph codes
+    // Format 1: Range-based encoding
+    // 
+    // Note: Most modern fonts use CMAPs for character mapping instead of
+    // CFF encodings. The encoding table is rarely used in practice.
+    // 
+    // If encoding offset is 0 or 1, it uses predefined encodings:
+    // 0 = Standard Encoding
+    // 1 = Expert Encoding
+    // 
+    // For custom encodings, the data follows the offset.
+    // Implementation deferred as CMAP is the standard mechanism.
   }
 }
 

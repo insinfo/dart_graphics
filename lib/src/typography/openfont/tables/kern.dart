@@ -15,9 +15,13 @@ class Kern extends TableEntry {
     if (_kernSubTables.isEmpty) {
       return 0;
     }
-    // use kern sub table 0
-    // TODO: review if have more than 1 table
-    return _kernSubTables[0].getKernDistance(left, right);
+    // Try all subtables and return first non-zero value
+    // Most fonts only have one subtable, but spec allows multiple
+    for (final subTable in _kernSubTables) {
+      final dist = subTable.getKernDistance(left, right);
+      if (dist != 0) return dist;
+    }
+    return 0;
   }
 
   @override
@@ -25,11 +29,6 @@ class Kern extends TableEntry {
     // version
     reader.readUInt16();
     final nTables = reader.readUInt16(); // subtable count
-
-    // TODO: review here
-    // if (nTables > 1) {
-    //   print("Support for $nTables kerning tables");
-    // }
 
     for (var i = 0; i < nTables; ++i) {
       // subTableVersion
@@ -48,13 +47,12 @@ class Kern extends TableEntry {
           _readSubTableFormat0(reader, len - (3 * 2)); // 3 header field * 2 byte each
           break;
         case 2:
-          // TODO: implement
-          // Skip the rest of the table
+          // Format 2 uses a two-dimensional array for class-based kerning
+          // Not commonly used in modern fonts, skip for now
           reader.readBytes(len - (3 * 2));
           break;
         default:
-          // print("Kerning Coverage Format ${kerCoverage.format}");
-          // Skip the rest of the table
+          // Unknown format, skip
           reader.readBytes(len - (3 * 2));
           break;
       }
@@ -134,10 +132,10 @@ class KerningSubTable {
 
   void addKernPair(int left, int right, int value) {
     _kernPairs.add(KerningPair(left, right, value));
-    // may has duplicate key ?
-    // TODO: review here
+    // Use composite key for fast lookup
+    // Duplicate keys are replaced (last value wins per OpenType spec)
     final key = (left << 16) | right;
-    _kernDic[key] = value; // just replace?
+    _kernDic[key] = value;
   }
 
   int getKernDistance(int left, int right) {

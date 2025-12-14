@@ -141,9 +141,22 @@ class StyledTypeFace {
 
   /// Gets the advance width for a character with kerning in pixels.
   double getAdvanceForCharacterWithKerning(int codePoint, int nextCodePoint) {
-    // Basic advance without kerning for now
-    // TODO: Add kerning support from KERN/GPOS tables
-    return getAdvanceForCharacter(codePoint);
+    final baseAdvance = getAdvanceForCharacter(codePoint);
+    
+    // Try to get kerning from KERN table
+    final kernTable = typeFace.kernTable;
+    if (kernTable != null) {
+      final leftGlyph = typeFace.getGlyphIndex(codePoint);
+      final rightGlyph = typeFace.getGlyphIndex(nextCodePoint);
+      final kernValue = kernTable.getKerningDistance(leftGlyph, rightGlyph);
+      if (kernValue != 0) {
+        return baseAdvance + (kernValue * _currentEmScaling);
+      }
+    }
+    
+    // GPOS kerning is handled at a higher level by GlyphLayout
+    // so we only use KERN table here for simple cases
+    return baseAdvance;
   }
 
   /// Gets the advance for a character in a string context.

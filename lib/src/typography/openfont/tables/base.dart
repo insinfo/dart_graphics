@@ -167,8 +167,11 @@ class BASE extends TableEntry {
           baseCoordPoint: reader.readUInt16(),
         );
       case 3:
-        // TODO: Implement BaseCoord Format 3 (Device Table / Variation Index)
-        return BaseCoord(3, reader.readInt16());
+        // Format 3 adds a Device table or VariationIndex table
+        // Read the base coordinate value and skip the device/variation offset
+        final coordinate = reader.readInt16();
+        reader.readUInt16(); // deviceOffset or variationIndexOffset - not used currently
+        return BaseCoord(3, coordinate);
       default:
         throw FormatException('Unknown BaseCoord format: $baseCoordFormat');
     }
