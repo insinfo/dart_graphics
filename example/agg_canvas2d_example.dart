@@ -1,23 +1,20 @@
-/// Skia Canvas 2D Example
+/// AGG Canvas 2D Example
 ///
-/// This example demonstrates the HTML5-style Canvas 2D API for Skia.
+/// This example demonstrates the HTML5-style Canvas 2D API for AGG.
 /// It shows how to create a canvas, draw shapes, and save the result as PNG.
 ///
-/// This example is aligned with the AGG and Cairo examples to show
+/// This example is aligned with the Cairo and Skia examples to show
 /// the same visual output.
 
 import 'dart:math' as math;
-import 'package:agg/skia_canvas.dart';
+import 'package:agg/src/agg/canvas/canvas.dart';
 
 void main() {
-  print('Skia Canvas 2D API Example');
+  print('AGG Canvas 2D API Example');
   print('=' * 40);
 
-  // Initialize Skia
-  final skia = Skia();
-
   // Create a canvas
-  final canvas = Canvas(skia, 800, 600);
+  final canvas = AggHtmlCanvas(800, 600);
   final ctx = canvas.getContext('2d');
 
   // Clear with white background
@@ -104,11 +101,11 @@ void main() {
   ctx.fill();
 
   // ========================
-  // 5. Drawing Star
+  // 5. Drawing Star with Path2D
   // ========================
   print('5. Drawing star...');
 
-  ctx.beginPath();
+  final star = AggPath2D();
   final starCenterX = 100.0;
   final starCenterY = 420.0;
   final outerRadius = 50.0;
@@ -121,15 +118,15 @@ void main() {
     final y = starCenterY + radius * math.sin(angle);
 
     if (i == 0) {
-      ctx.moveTo(x, y);
+      star.moveTo(x, y);
     } else {
-      ctx.lineTo(x, y);
+      star.lineTo(x, y);
     }
   }
-  ctx.closePath();
+  star.closePath();
 
   ctx.fillStyle = '#9B59B6'; // Purple
-  ctx.fill();
+  ctx.fill(star);
 
   // ========================
   // 6. Bezier Curves
@@ -149,27 +146,11 @@ void main() {
   // ========================
   print('7. Drawing rounded rectangle...');
 
-  // Draw rounded rectangle manually
-  final rx = 400.0;
-  final ry = 350.0;
-  final rw = 120.0;
-  final rh = 80.0;
-  final rr = 15.0;
-  
-  ctx.beginPath();
-  ctx.moveTo(rx + rr, ry);
-  ctx.lineTo(rx + rw - rr, ry);
-  ctx.arc(rx + rw - rr, ry + rr, rr, -math.pi / 2, 0);
-  ctx.lineTo(rx + rw, ry + rh - rr);
-  ctx.arc(rx + rw - rr, ry + rh - rr, rr, 0, math.pi / 2);
-  ctx.lineTo(rx + rr, ry + rh);
-  ctx.arc(rx + rr, ry + rh - rr, rr, math.pi / 2, math.pi);
-  ctx.lineTo(rx, ry + rr);
-  ctx.arc(rx + rr, ry + rr, rr, math.pi, 3 * math.pi / 2);
-  ctx.closePath();
+  final roundRect = AggPath2D();
+  roundRect.roundRect(400, 350, 120, 80, [15]);
   
   ctx.fillStyle = '#FF9800'; // Orange
-  ctx.fill();
+  ctx.fill(roundRect);
 
   // ========================
   // 8. Dashed Line
@@ -203,13 +184,13 @@ void main() {
   print('\n' + '=' * 40);
   print('Saving canvas...');
 
-  canvas.savePng('skia_canvas2d_example.png');
+  final outputPath = 'test/tmp/agg_canvas2d_example.png';
+  canvas.saveAs(outputPath);
 
-  print('Example completed! Check skia_canvas2d_example.png');
+  print('Example completed! Check `$outputPath');
   print('\nCanvas info:');
   print('  Size: `${canvas.width} x `${canvas.height}');
 
   // Clean up
-  ctx.dispose();
   canvas.dispose();
 }

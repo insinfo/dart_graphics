@@ -211,6 +211,186 @@ class Skia {
     return SkiaFont._(this, handle);
   }
 
+  // ==================== Shader Creation ====================
+
+  /// Create a linear gradient shader
+  /// [points] array of 2 points: start and end
+  /// [colors] array of ARGB color values
+  /// [positions] optional array of color stop positions (0-1), or null for even distribution
+  /// [tileMode] how to tile the gradient (clamp, repeat, mirror, decal)
+  ffi.Pointer<ffi.Void> createLinearGradientShader(
+    List<SKPoint> points,
+    List<int> colors,
+    List<double>? positions, {
+    int tileMode = 0, // 0 = clamp
+  }) {
+    if (points.length < 2) {
+      throw ArgumentError('Linear gradient requires at least 2 points');
+    }
+    if (colors.length < 2) {
+      throw ArgumentError('Gradient requires at least 2 colors');
+    }
+    
+    // Allocate points array (2 points, each with x,y floats)
+    final pointsPtr = ffi_alloc.calloc<ffi.Float>(4);
+    pointsPtr[0] = points[0].x;
+    pointsPtr[1] = points[0].y;
+    pointsPtr[2] = points[1].x;
+    pointsPtr[3] = points[1].y;
+    
+    // Allocate colors array
+    final colorsPtr = ffi_alloc.calloc<ffi.Uint32>(colors.length);
+    for (int i = 0; i < colors.length; i++) {
+      colorsPtr[i] = colors[i];
+    }
+    
+    // Allocate positions array
+    ffi.Pointer<ffi.Float> posPtr = ffi.nullptr.cast();
+    if (positions != null && positions.length == colors.length) {
+      posPtr = ffi_alloc.calloc<ffi.Float>(positions.length);
+      for (int i = 0; i < positions.length; i++) {
+        posPtr[i] = positions[i];
+      }
+    }
+    
+    try {
+      return _bindings.sk_shader_new_linear_gradient(
+        pointsPtr.cast(),
+        colorsPtr,
+        posPtr,
+        colors.length,
+        tileMode,
+        ffi.nullptr, // no local matrix
+      );
+    } finally {
+      ffi_alloc.calloc.free(pointsPtr);
+      ffi_alloc.calloc.free(colorsPtr);
+      if (posPtr != ffi.nullptr.cast()) {
+        ffi_alloc.calloc.free(posPtr);
+      }
+    }
+  }
+  
+  /// Create a radial gradient shader
+  /// [center] center point of the gradient
+  /// [radius] radius of the gradient
+  /// [colors] array of ARGB color values
+  /// [positions] optional array of color stop positions (0-1)
+  ffi.Pointer<ffi.Void> createRadialGradientShader(
+    SKPoint center,
+    double radius,
+    List<int> colors,
+    List<double>? positions, {
+    int tileMode = 0,
+  }) {
+    if (colors.length < 2) {
+      throw ArgumentError('Gradient requires at least 2 colors');
+    }
+    
+    // Allocate center point
+    final centerPtr = ffi_alloc.calloc<ffi.Float>(2);
+    centerPtr[0] = center.x;
+    centerPtr[1] = center.y;
+    
+    // Allocate colors array
+    final colorsPtr = ffi_alloc.calloc<ffi.Uint32>(colors.length);
+    for (int i = 0; i < colors.length; i++) {
+      colorsPtr[i] = colors[i];
+    }
+    
+    // Allocate positions array
+    ffi.Pointer<ffi.Float> posPtr = ffi.nullptr.cast();
+    if (positions != null && positions.length == colors.length) {
+      posPtr = ffi_alloc.calloc<ffi.Float>(positions.length);
+      for (int i = 0; i < positions.length; i++) {
+        posPtr[i] = positions[i];
+      }
+    }
+    
+    try {
+      return _bindings.sk_shader_new_radial_gradient(
+        centerPtr.cast(),
+        radius,
+        colorsPtr,
+        posPtr,
+        colors.length,
+        tileMode,
+        ffi.nullptr,
+      );
+    } finally {
+      ffi_alloc.calloc.free(centerPtr);
+      ffi_alloc.calloc.free(colorsPtr);
+      if (posPtr != ffi.nullptr.cast()) {
+        ffi_alloc.calloc.free(posPtr);
+      }
+    }
+  }
+  
+  /// Create a sweep (conic) gradient shader
+  /// [center] center point of the gradient
+  /// [colors] array of ARGB color values
+  /// [positions] optional array of color stop positions (0-1)
+  /// [startAngle] starting angle in degrees
+  /// [endAngle] ending angle in degrees
+  ffi.Pointer<ffi.Void> createSweepGradientShader(
+    SKPoint center,
+    List<int> colors,
+    List<double>? positions, {
+    double startAngle = 0,
+    double endAngle = 360,
+    int tileMode = 0,
+  }) {
+    if (colors.length < 2) {
+      throw ArgumentError('Gradient requires at least 2 colors');
+    }
+    
+    // Allocate center point
+    final centerPtr = ffi_alloc.calloc<ffi.Float>(2);
+    centerPtr[0] = center.x;
+    centerPtr[1] = center.y;
+    
+    // Allocate colors array
+    final colorsPtr = ffi_alloc.calloc<ffi.Uint32>(colors.length);
+    for (int i = 0; i < colors.length; i++) {
+      colorsPtr[i] = colors[i];
+    }
+    
+    // Allocate positions array
+    ffi.Pointer<ffi.Float> posPtr = ffi.nullptr.cast();
+    if (positions != null && positions.length == colors.length) {
+      posPtr = ffi_alloc.calloc<ffi.Float>(positions.length);
+      for (int i = 0; i < positions.length; i++) {
+        posPtr[i] = positions[i];
+      }
+    }
+    
+    try {
+      return _bindings.sk_shader_new_sweep_gradient(
+        centerPtr.cast(),
+        colorsPtr,
+        posPtr,
+        colors.length,
+        tileMode,
+        startAngle,
+        endAngle,
+        ffi.nullptr,
+      );
+    } finally {
+      ffi_alloc.calloc.free(centerPtr);
+      ffi_alloc.calloc.free(colorsPtr);
+      if (posPtr != ffi.nullptr.cast()) {
+        ffi_alloc.calloc.free(posPtr);
+      }
+    }
+  }
+  
+  /// Delete a shader
+  void deleteShader(ffi.Pointer<ffi.Void> shader) {
+    if (shader != ffi.nullptr) {
+      _bindings.sk_shader_unref(shader);
+    }
+  }
+
   // ==================== Typeface Creation ====================
 
   /// Load a typeface from a font file
@@ -233,6 +413,48 @@ class Skia {
     final handle = _bindings.sk_typeface_create_default();
     if (handle == ffi.nullptr) return null;
     return SkiaTypeface._(this, handle);
+  }
+
+  /// Create a typeface from a font family name
+  /// 
+  /// [familyName] - The font family name (e.g., "Arial", "Times New Roman")
+  /// [weight] - Font weight (100-900, 400 is normal, 700 is bold)
+  /// [width] - Font width (1-9, 5 is normal)  
+  /// [slant] - Font slant (0 = upright, 1 = italic, 2 = oblique)
+  SkiaTypeface? createTypefaceFromFamilyName(String familyName, {
+    int weight = 400,
+    int width = 5,
+    int slant = 0,
+  }) {
+    // Create font style
+    final styleHandle = _bindings.sk_fontstyle_new(weight, width, slant);
+    if (styleHandle == ffi.nullptr) return null;
+    
+    final familyPtr = familyName.toNativeUtf8(allocator: ffi_alloc.calloc);
+    try {
+      // Get the default font manager
+      final fontMgr = _bindings.sk_fontmgr_ref_default();
+      if (fontMgr == ffi.nullptr) {
+        _bindings.sk_fontstyle_delete(styleHandle);
+        return null;
+      }
+      
+      // Match the family and style
+      final handle = _bindings.sk_fontmgr_match_family_style(
+        fontMgr,
+        familyPtr.cast(),
+        styleHandle,
+      );
+      
+      // Clean up
+      _bindings.sk_fontstyle_delete(styleHandle);
+      _bindings.sk_fontmgr_unref(fontMgr);
+      
+      if (handle == ffi.nullptr) return null;
+      return SkiaTypeface._(this, handle);
+    } finally {
+      ffi_alloc.calloc.free(familyPtr);
+    }
   }
 
   // ==================== Path Creation ====================
@@ -299,6 +521,21 @@ final class _SKImageInfoNative extends ffi.Struct {
 
   @ffi.Int32()
   external int alphaType;
+}
+
+/// Native struct for SKPngEncoderOptions
+final class _SKPngEncoderOptions extends ffi.Struct {
+  @ffi.Int32()
+  external int fFilterFlags;  // SKPngEncoderFilterFlags
+  
+  @ffi.Int32()
+  external int fZLibLevel;
+  
+  external ffi.Pointer<ffi.Void> fComments;
+  
+  external ffi.Pointer<ffi.Void> fICCProfile;
+  
+  external ffi.Pointer<ffi.Void> fICCProfileDescription;
 }
 
 /// Internal alpha type enum
@@ -469,6 +706,35 @@ class SkiaCanvas {
     _bindings.sk_canvas_reset_matrix(_handle);
   }
 
+  /// Concatenate a 3x3 matrix with the current canvas transformation
+  /// [matrix] should be a list of 9 floats in row-major order:
+  /// [scaleX, skewX, transX, skewY, scaleY, transY, persp0, persp1, persp2]
+  void concat(List<double> matrix) {
+    _checkDisposed();
+    if (matrix.length != 9) {
+      throw ArgumentError('Matrix must have exactly 9 elements');
+    }
+    final nativeMatrix = ffi_alloc.calloc<ffi.Float>(9);
+    try {
+      for (int i = 0; i < 9; i++) {
+        nativeMatrix[i] = matrix[i];
+      }
+      _bindings.sk_canvas_concat(_handle, nativeMatrix.cast());
+    } finally {
+      ffi_alloc.calloc.free(nativeMatrix);
+    }
+  }
+
+  /// Concatenate a 2D affine transform [a, b, c, d, e, f] with the current transformation
+  /// This converts the 2D transform to a 3x3 matrix
+  void concat2D(double a, double b, double c, double d, double e, double f) {
+    // Convert 2D affine transform to 3x3 matrix (row-major)
+    // | a  c  e |
+    // | b  d  f |
+    // | 0  0  1 |
+    concat([a, c, e, b, d, f, 0, 0, 1]);
+  }
+
   // ==================== Drawing ====================
 
   /// Fill the canvas with the given paint
@@ -588,6 +854,39 @@ class SkiaCanvas {
       );
     } finally {
       ffi_alloc.calloc.free(textBytes);
+    }
+  }
+
+  /// Draw an image at the specified position
+  void drawImage(SkiaImage image, double x, double y, SkiaPaint paint) {
+    _checkDisposed();
+    _bindings.sk_canvas_draw_image(
+      _handle,
+      image._handle,
+      x,
+      y,
+      ffi.nullptr, // sampling options
+      paint._handle,
+    );
+  }
+
+  /// Draw an image with source and destination rectangles
+  void drawImageRect(SkiaImage image, SKRect srcRect, SKRect dstRect, SkiaPaint paint) {
+    _checkDisposed();
+    final src = _allocSKRect(srcRect);
+    final dst = _allocSKRect(dstRect);
+    try {
+      _bindings.sk_canvas_draw_image_rect(
+        _handle,
+        image._handle,
+        src,
+        dst,
+        ffi.nullptr, // sampling options
+        paint._handle,
+      );
+    } finally {
+      _freeSKRect(src);
+      _freeSKRect(dst);
     }
   }
 
@@ -755,6 +1054,45 @@ class SkiaPaint {
   set blendMode(BlendMode value) {
     _checkDisposed();
     _bindings.sk_paint_set_blendmode(_handle, value.index);
+  }
+
+  /// Sets a dash path effect on this paint
+  void setDashPathEffect(List<double> intervals, double phase) {
+    _checkDisposed();
+    if (intervals.isEmpty || intervals.length % 2 != 0) {
+      // Clear the path effect if intervals are invalid
+      _bindings.sk_paint_set_path_effect(_handle, ffi.nullptr);
+      return;
+    }
+    
+    final nativeIntervals = ffi_alloc.calloc<ffi.Float>(intervals.length);
+    try {
+      for (int i = 0; i < intervals.length; i++) {
+        nativeIntervals[i] = intervals[i];
+      }
+      final effect = _bindings.sk_path_effect_create_dash(nativeIntervals, intervals.length, phase);
+      _bindings.sk_paint_set_path_effect(_handle, effect);
+    } finally {
+      ffi_alloc.calloc.free(nativeIntervals);
+    }
+  }
+  
+  /// Clears any path effect on this paint
+  void clearPathEffect() {
+    _checkDisposed();
+    _bindings.sk_paint_set_path_effect(_handle, ffi.nullptr);
+  }
+  
+  /// Sets a shader on this paint
+  void setShader(ffi.Pointer<ffi.Void> shader) {
+    _checkDisposed();
+    _bindings.sk_paint_set_shader(_handle, shader);
+  }
+  
+  /// Clears any shader on this paint
+  void clearShader() {
+    _checkDisposed();
+    _bindings.sk_paint_set_shader(_handle, ffi.nullptr);
   }
 
   void dispose() {
@@ -1062,6 +1400,42 @@ class SkiaPath {
     _checkDisposed();
     _bindings.sk_path_set_filltype(_handle, value.index);
   }
+  
+  /// Check if a point is inside this path
+  bool contains(double x, double y) {
+    _checkDisposed();
+    return _bindings.sk_path_contains(_handle, x, y);
+  }
+
+  /// Add another path to this path
+  /// [mode] - 0 = append, 1 = extend
+  void addPath(SkiaPath other, [int mode = 0]) {
+    _checkDisposed();
+    _bindings.sk_path_add_path(_handle, other._handle, ffi.Pointer.fromAddress(mode));
+  }
+
+  /// Add another path to this path with offset
+  void addPathOffset(SkiaPath other, double dx, double dy, [int mode = 0]) {
+    _checkDisposed();
+    _bindings.sk_path_add_path_offset(_handle, other._handle, dx, dy, ffi.Pointer.fromAddress(mode));
+  }
+
+  /// Add arc to path using control points and radius (HTML5 Canvas style)
+  void arcTo(double x1, double y1, double x2, double y2, double radius) {
+    _checkDisposed();
+    _bindings.sk_path_arc_to_with_points(_handle, x1, y1, x2, y2, radius);
+  }
+
+  /// Add arc to path using SVG-style parameters
+  /// [rx], [ry] - radii
+  /// [xAxisRotate] - rotation in degrees
+  /// [largeArc] - 0 = small, 1 = large
+  /// [sweep] - 0 = CCW, 1 = CW
+  /// [x], [y] - end point
+  void arcToSvg(double rx, double ry, double xAxisRotate, int largeArc, int sweep, double x, double y) {
+    _checkDisposed();
+    _bindings.sk_path_arc_to(_handle, rx, ry, xAxisRotate, largeArc, sweep, x, y);
+  }
 
   /// Parse an SVG path string and add commands to this path
   /// Returns true if parsing succeeded
@@ -1314,61 +1688,61 @@ class SkiaImage {
   }
 
   Uint8List? _encodeToBytes(_EncoderFormat format, {int quality = 90}) {
-    // Create pixmap from image
-    final pixmap = _bindings.sk_pixmap_new();
-    if (pixmap == ffi.nullptr) return null;
+    // Use sk_pixmap_new_with_params and sk_image_read_pixels_into_pixmap
+    // for a cleaner approach
+    final w = width;
+    final h = height;
+    final rowBytes = w * 4;
+    final totalBytes = rowBytes * h;
+    
+    // Allocate pixel buffer
+    final pixels = ffi_alloc.calloc<ffi.Uint8>(totalBytes);
+    if (pixels == ffi.nullptr) return null;
+    
+    // Allocate and configure image info struct
+    final info = ffi_alloc.calloc<_SKImageInfoNative>();
+    if (info == ffi.nullptr) {
+      ffi_alloc.calloc.free(pixels);
+      return null;
+    }
     
     try {
-      // Try to peek pixels from image
-      if (!_bindings.sk_image_peek_pixels(_handle, pixmap)) {
-        // Image doesn't have direct pixel access, need to read pixels
-        final w = width;
-        final h = height;
-        final rowBytes = w * 4;
-        final totalBytes = rowBytes * h;
-        
-        final pixels = ffi_alloc.calloc<ffi.Uint8>(totalBytes);
-        if (pixels == ffi.nullptr) return null;
-        
-        try {
-          final info = ffi_alloc.calloc<_SKImageInfoNative>();
-          try {
-            info.ref.width = w;
-            info.ref.height = h;
-            info.ref.colorType = SKColorType.rgba8888.index;
-            info.ref.alphaType = _SKAlphaType.premul.index;
-            info.ref.colorspace = ffi.nullptr;
-            
-            if (!_bindings.sk_image_read_pixels(
-              _handle,
-              info.cast<ffi.Void>(),
-              pixels.cast<ffi.Void>(),
-              ffi.Pointer.fromAddress(rowBytes),
-              0, 0, 0,
-            )) {
-              return null;
-            }
-            
-            // Reset pixmap with our data
-            _bindings.sk_pixmap_reset_with_params(
-              pixmap,
-              info.cast<ffi.Void>(),
-              pixels.cast<ffi.Void>(),
-              ffi.Pointer.fromAddress(rowBytes),
-            );
-            
-            return _encodePixmapToBytes(pixmap, format, quality);
-          } finally {
-            ffi_alloc.calloc.free(info);
-          }
-        } finally {
-          ffi_alloc.calloc.free(pixels);
-        }
+      info.ref.colorspace = ffi.nullptr;
+      info.ref.width = w;
+      info.ref.height = h;
+      info.ref.colorType = SKColorType.rgba8888.index;
+      info.ref.alphaType = _SKAlphaType.premul.index;
+      
+      // Create pixmap with our buffer
+      final pixmap = _bindings.sk_pixmap_new_with_params(
+        info.cast<ffi.Void>(),
+        pixels.cast<ffi.Void>(),
+        ffi.Pointer.fromAddress(rowBytes),
+      );
+      
+      if (pixmap == ffi.nullptr) {
+        return null;
       }
       
-      return _encodePixmapToBytes(pixmap, format, quality);
+      try {
+        // Read image pixels directly into the pixmap
+        // SKImageCachingHint: 0 = Allow, 1 = Disallow
+        if (!_bindings.sk_image_read_pixels_into_pixmap(
+          _handle,
+          pixmap,
+          0, 0, // srcX, srcY
+          0, // cachingHint = Allow
+        )) {
+          return null;
+        }
+        
+        return _encodePixmapToBytes(pixmap, format, quality);
+      } finally {
+        _bindings.sk_pixmap_destructor(pixmap);
+      }
     } finally {
-      _bindings.sk_pixmap_destructor(pixmap);
+      ffi_alloc.calloc.free(info);
+      ffi_alloc.calloc.free(pixels);
     }
   }
 
@@ -1381,7 +1755,25 @@ class SkiaImage {
       bool success;
       switch (format) {
         case _EncoderFormat.png:
-          success = _bindings.sk_pngencoder_encode(memStream, pixmap, ffi.nullptr);
+          // Allocate and configure PNG encoder options
+          final pngOptions = ffi_alloc.calloc<_SKPngEncoderOptions>();
+          try {
+            // FilterFlags: All = 0xF8 (248) is the default for PNG encoding
+            pngOptions.ref.fFilterFlags = 248;
+            // ZLib compression level (0-9), 6 is default
+            pngOptions.ref.fZLibLevel = 6;
+            pngOptions.ref.fComments = ffi.nullptr;
+            pngOptions.ref.fICCProfile = ffi.nullptr;
+            pngOptions.ref.fICCProfileDescription = ffi.nullptr;
+            
+            success = _bindings.sk_pngencoder_encode(
+              memStream, 
+              pixmap, 
+              pngOptions.cast<ffi.Void>(),
+            );
+          } finally {
+            ffi_alloc.calloc.free(pngOptions);
+          }
           break;
         case _EncoderFormat.jpeg:
           success = _bindings.sk_jpegencoder_encode(memStream, pixmap, ffi.nullptr);
@@ -1390,6 +1782,7 @@ class SkiaImage {
           success = _bindings.sk_webpencoder_encode(memStream, pixmap, ffi.nullptr);
           break;
       }
+
       
       if (!success) return null;
       
@@ -1457,6 +1850,37 @@ class SkiaBitmap {
   SKColor getPixel(int x, int y) {
     _checkDisposed();
     return SKColor(_bindings.sk_bitmap_get_pixel_color(_handle, x, y));
+  }
+
+  /// Get direct access to pixel data
+  /// Returns a Uint8List view of the pixel data, or null if unavailable
+  Uint8List? getPixels() {
+    _checkDisposed();
+    final lengthPtr = ffi_alloc.calloc<ffi.IntPtr>();
+    try {
+      final pixels = _bindings.sk_bitmap_get_pixels(_handle, lengthPtr.cast());
+      if (pixels == ffi.nullptr) return null;
+      
+      // Calculate expected length: width * height * 4 bytes per pixel (RGBA)
+      final length = width * height * 4;
+      return pixels.cast<ffi.Uint8>().asTypedList(length);
+    } finally {
+      ffi_alloc.calloc.free(lengthPtr);
+    }
+  }
+
+  /// Notify that pixels have been changed (must call after modifying pixels)
+  void notifyPixelsChanged() {
+    _checkDisposed();
+    _bindings.sk_bitmap_notify_pixels_changed(_handle);
+  }
+
+  /// Create an image from this bitmap
+  SkiaImage? toImage() {
+    _checkDisposed();
+    final imageHandle = _bindings.sk_image_new_from_bitmap(_handle);
+    if (imageHandle == ffi.nullptr) return null;
+    return SkiaImage._(skia, imageHandle);
   }
 
   bool get isImmutable {

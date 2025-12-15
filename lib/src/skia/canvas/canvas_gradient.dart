@@ -3,10 +3,14 @@
 /// Provides linear, radial, and conic gradient support.
 
 import '../sk_color.dart';
+import '../../shared/canvas2d/canvas2d.dart';
+
+/// Gradient type enumeration
+enum GradientType { linear, radial, conic }
 
 /// A gradient that can be used as fill or stroke style
-class CanvasGradient {
-  final _GradientType _type;
+class CanvasGradient implements ICanvasGradient {
+  final GradientType _type;
   final List<_ColorStop> _colorStops = [];
   
   // Linear gradient parameters
@@ -19,17 +23,17 @@ class CanvasGradient {
   final double? _startAngle;
   
   CanvasGradient._linear(this._x0, this._y0, this._x1, this._y1)
-      : _type = _GradientType.linear,
+      : _type = GradientType.linear,
         _r0 = null,
         _r1 = null,
         _startAngle = null;
   
   CanvasGradient._radial(this._x0, this._y0, this._r0, this._x1, this._y1, this._r1)
-      : _type = _GradientType.radial,
+      : _type = GradientType.radial,
         _startAngle = null;
   
   CanvasGradient._conic(this._startAngle, double x, double y)
-      : _type = _GradientType.conic,
+      : _type = GradientType.conic,
         _x0 = x,
         _y0 = y,
         _x1 = null,
@@ -55,6 +59,7 @@ class CanvasGradient {
   /// Adds a color stop to the gradient
   /// 
   /// [offset] must be between 0.0 and 1.0
+  @override
   void addColorStop(double offset, String color) {
     if (offset < 0.0 || offset > 1.0) {
       throw RangeError('Color stop offset must be between 0 and 1');
@@ -72,7 +77,7 @@ class CanvasGradient {
   }
   
   /// Get gradient type
-  _GradientType get type => _type;
+  GradientType get type => _type;
   
   /// Linear gradient start point
   ({double x, double y})? get startPoint {
@@ -99,8 +104,6 @@ class CanvasGradient {
   /// Conic gradient start angle
   double? get startAngle => _startAngle;
 }
-
-enum _GradientType { linear, radial, conic }
 
 class _ColorStop {
   final double offset;

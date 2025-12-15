@@ -1,25 +1,28 @@
-/// Skia Canvas 2D Example
+/// Cairo HTML5-style Canvas 2D API Example
 ///
-/// This example demonstrates the HTML5-style Canvas 2D API for Skia.
-/// It shows how to create a canvas, draw shapes, and save the result as PNG.
+/// This example demonstrates how to use the HTML5-style Canvas API with Cairo
+/// for 2D drawing operations.
 ///
-/// This example is aligned with the AGG and Cairo examples to show
+/// This example is aligned with the AGG and Skia examples to show
 /// the same visual output.
 
 import 'dart:math' as math;
-import 'package:agg/skia_canvas.dart';
+
+import 'package:agg/cairo.dart';
 
 void main() {
-  print('Skia Canvas 2D API Example');
+  print('Cairo Canvas 2D API Example');
   print('=' * 40);
 
-  // Initialize Skia
-  final skia = Skia();
-
-  // Create a canvas
-  final canvas = Canvas(skia, 800, 600);
+  // Create a Cairo instance
+  final cairo = Cairo();
+  
+  // Create a canvas using the HTML5-style API
+  final canvas = CairoHtmlCanvas(800, 600, cairo: cairo);
+  
+  // Get the 2D rendering context
   final ctx = canvas.getContext('2d');
-
+  
   // Clear with white background
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, 800, 600);
@@ -149,7 +152,7 @@ void main() {
   // ========================
   print('7. Drawing rounded rectangle...');
 
-  // Draw rounded rectangle manually
+  // Cairo: draw rounded rectangle manually
   final rx = 400.0;
   final ry = 350.0;
   final rw = 120.0;
@@ -203,9 +206,9 @@ void main() {
   print('\n' + '=' * 40);
   print('Saving canvas...');
 
-  canvas.savePng('skia_canvas2d_example.png');
-
-  print('Example completed! Check skia_canvas2d_example.png');
+  canvas.saveAs('cairo_canvas2d_example.png');
+  
+  print('Example completed! Check cairo_canvas2d_example.png');
   print('\nCanvas info:');
   print('  Size: `${canvas.width} x `${canvas.height}');
 

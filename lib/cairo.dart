@@ -58,3 +58,4 @@ export 'src/cairo/cairo_pattern.dart';
 export 'src/cairo/cairo_svg.dart';
 export 'src/cairo/cairo_types.dart';
 export 'src/cairo/svg/svg.dart';
+export 'src/cairo/canvas/canvas.dart';

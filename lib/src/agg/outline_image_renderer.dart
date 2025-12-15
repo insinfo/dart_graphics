@@ -59,16 +59,37 @@ class ImageLineRenderer extends LineRenderer {
     final double x1 = ex / LineAABasics.line_subpixel_scale;
     final double y1 = ey / LineAABasics.line_subpixel_scale;
 
-    final int strokes = math.max(1, thickness.round());
-    final double half = (strokes - 1) / 2.0;
-    for (int i = 0; i < strokes; i++) {
-      final double offset = (i - half) * 0.5;
-      _wuLine(
-        x0,
-        y0 + offset,
-        x1,
-        y1 + offset,
-      );
+    // Calculate perpendicular direction for thickness
+    final dx = x1 - x0;
+    final dy = y1 - y0;
+    final len = math.sqrt(dx * dx + dy * dy);
+    
+    if (len < 0.001) return;
+    
+    // Perpendicular unit vector
+    final perpX = -dy / len;
+    final perpY = dx / len;
+    
+    // For thickness of 1, just draw one line
+    // For larger thickness, draw multiple parallel lines
+    if (thickness <= 1.0) {
+      _wuLine(x0, y0, x1, y1);
+    } else {
+      // Calculate number of strokes needed to fill the width
+      // Each Wu line is approximately 1 pixel wide
+      final int strokes = math.max(1, thickness.ceil());
+      final double halfWidth = (thickness - 1) / 2.0;
+      
+      for (int i = 0; i < strokes; i++) {
+        final double t = strokes > 1 ? i / (strokes - 1) : 0.5;
+        final double offset = -halfWidth + t * (thickness - 1);
+        _wuLine(
+          x0 + perpX * offset,
+          y0 + perpY * offset,
+          x1 + perpX * offset,
+          y1 + perpY * offset,
+        );
+      }
     }
 
     if (cap != CapStyle.butt) {

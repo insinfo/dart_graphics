@@ -13,141 +13,142 @@
 # Headers: C:/MyDartProjects/agg/native/libs/include/skia
 # DLL: C:/MyDartProjects/agg/native/libs/bin/skia.dll
 # use o C:\MyDartProjects\agg\scripts\generate_skiasharp_bindings.dart 
-name: SkiaBindings
-description: Bindings to Skia Graphics Library for Dart.
-output: 'lib/src/skia/generated/ffi.dart'
-llvm-path:
-  - 'C:/LLVM'  # pasta onde está o clang.exe
 
-language: c++
+# name: SkiaBindings
+# description: Bindings to Skia Graphics Library for Dart.
+# output: 'lib/src/skia/generated/ffi.dart'
+# llvm-path:
+#   - 'C:/LLVM'  # pasta onde está o clang.exe
 
-headers:
-  entry-points:
-    # Core Skia headers
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkCanvas.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkPaint.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkPath.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkSurface.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkImage.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkBitmap.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkColor.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkMatrix.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkRect.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkFont.h'
-    - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkTypeface.h'
+# language: c++
+
+# headers:
+#   entry-points:
+#     # Core Skia headers
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkCanvas.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkPaint.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkPath.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkSurface.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkImage.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkBitmap.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkColor.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkMatrix.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkRect.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkFont.h'
+#     - 'C:/MyDartProjects/agg/native/libs/include/skia/core/SkTypeface.h'
    
-compiler-opts:
-  # Skia includes
-  - '-IC:/MyDartProjects/agg/native/libs/include/skia'
-  - '-IC:/MyDartProjects/agg/native/libs/include/skia/core'
-  - '-IC:/MyDartProjects/agg/native/libs/include/skia/include/core'
-  - '-IC:/MyDartProjects/agg/native/libs/include/skia/include'
-  - '-IC:/MyDartProjects/agg/native/libs/include'
+# compiler-opts:
+#   # Skia includes
+#   - '-IC:/MyDartProjects/agg/native/libs/include/skia'
+#   - '-IC:/MyDartProjects/agg/native/libs/include/skia/core'
+#   - '-IC:/MyDartProjects/agg/native/libs/include/skia/include/core'
+#   - '-IC:/MyDartProjects/agg/native/libs/include/skia/include'
+#   - '-IC:/MyDartProjects/agg/native/libs/include'
   
-  # C++ standard
-  - '-std=c++17'
-  - '-x'
-  - 'c++'
+#   # C++ standard
+#   - '-std=c++17'
+#   - '-x'
+#   - 'c++'
   
-  # MSVC (ajuste a versão 14.41.34120 se for diferente)
-  - '-IC:/Progra~1/MICROS~4/2022/Community/VC/Tools/MSVC/14.41.34120/include'
+#   # MSVC (ajuste a versão 14.41.34120 se for diferente)
+#   - '-IC:/Progra~1/MICROS~4/2022/Community/VC/Tools/MSVC/14.41.34120/include'
 
-  # Windows SDK / UCRT (ajuste a versão 10.0.26100.0)
-  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/ucrt'
-  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/shared'
-  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/um'
+#   # Windows SDK / UCRT (ajuste a versão 10.0.26100.0)
+#   - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/ucrt'
+#   - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/shared'
+#   - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/um'
   
-  # Supressão de warnings barulhentos do Windows SDK
-  - '-Wno-everything'
+#   # Supressão de warnings barulhentos do Windows SDK
+#   - '-Wno-everything'
 
-preamble: |
-  // ignore_for_file: camel_case_types, non_constant_identifier_names, unused_element
-  // ignore_for_file: constant_identifier_names, public_member_api_docs
-  // ignore_for_file: unused_field, lines_longer_than_80_chars
-  // 
-  // Skia Bindings - DLL location: C:/MyDartProjects/agg/native/libs/bin/skia.dll
+# preamble: |
+#   // ignore_for_file: camel_case_types, non_constant_identifier_names, unused_element
+#   // ignore_for_file: constant_identifier_names, public_member_api_docs
+#   // ignore_for_file: unused_field, lines_longer_than_80_chars
+#   // 
+#   // Skia Bindings - DLL location: C:/MyDartProjects/agg/native/libs/bin/skia.dll
 
-# NOTA: Skia é C++ e usa classes, não funções C puras.
-# ffigen tem suporte experimental para C++.
-# As classes abaixo são exemplos - ajuste conforme necessário.
+# # NOTA: Skia é C++ e usa classes, não funções C puras.
+# # ffigen tem suporte experimental para C++.
+# # As classes abaixo são exemplos - ajuste conforme necessário.
 
-classes:
-  include:
-    # Core classes
-    - SkCanvas
-    - SkPaint
-    - SkPath
-    - SkSurface
-    - SkImage
-    - SkBitmap
-    - SkPixmap
-    - SkMatrix
-    - SkRect
-    - SkIRect
-    - SkRRect
-    - SkPoint
-    - SkIPoint
-    - SkSize
-    - SkISize
-    - SkColor4f
-    - SkFont
-    - SkTypeface
-    - SkFontStyle
-    - SkFontMgr
-    - SkPathBuilder
-    - SkPathMeasure
-    - SkShader
-    - SkColorFilter
-    - SkImageFilter
-    - SkMaskFilter
-    - SkPathEffect
-    - SkBlender
-    - SkColorSpace
-    - SkData
-    - SkStream
-    - SkWStream
-    - SkTextBlob
-    - SkTextBlobBuilder
-    - SkPicture
-    - SkPictureRecorder
+# classes:
+#   include:
+#     # Core classes
+#     - SkCanvas
+#     - SkPaint
+#     - SkPath
+#     - SkSurface
+#     - SkImage
+#     - SkBitmap
+#     - SkPixmap
+#     - SkMatrix
+#     - SkRect
+#     - SkIRect
+#     - SkRRect
+#     - SkPoint
+#     - SkIPoint
+#     - SkSize
+#     - SkISize
+#     - SkColor4f
+#     - SkFont
+#     - SkTypeface
+#     - SkFontStyle
+#     - SkFontMgr
+#     - SkPathBuilder
+#     - SkPathMeasure
+#     - SkShader
+#     - SkColorFilter
+#     - SkImageFilter
+#     - SkMaskFilter
+#     - SkPathEffect
+#     - SkBlender
+#     - SkColorSpace
+#     - SkData
+#     - SkStream
+#     - SkWStream
+#     - SkTextBlob
+#     - SkTextBlobBuilder
+#     - SkPicture
+#     - SkPictureRecorder
 
-structs:
-  include:
-    - SkImageInfo
-    - SkSurfaceProps
-    - SkFontMetrics
-    - SkSamplingOptions
+# structs:
+#   include:
+#     - SkImageInfo
+#     - SkSurfaceProps
+#     - SkFontMetrics
+#     - SkSamplingOptions
 
-enums:
-  include:
-    - SkBlendMode
-    - SkClipOp
-    - SkColorType
-    - SkAlphaType
-    - SkFilterMode
-    - SkMipmapMode
-    - SkTileMode
-    - SkPathFillType
-    - SkPathDirection
-    - SkPathVerb
-    - SkPaint_Style
-    - SkPaint_Cap
-    - SkPaint_Join
-    - SkFont_Edging
-    - SkFontHinting
-    - SkTextEncoding
+# enums:
+#   include:
+#     - SkBlendMode
+#     - SkClipOp
+#     - SkColorType
+#     - SkAlphaType
+#     - SkFilterMode
+#     - SkMipmapMode
+#     - SkTileMode
+#     - SkPathFillType
+#     - SkPathDirection
+#     - SkPathVerb
+#     - SkPaint_Style
+#     - SkPaint_Cap
+#     - SkPaint_Join
+#     - SkFont_Edging
+#     - SkFontHinting
+#     - SkTextEncoding
 
-macros:
-  include:
-    - SK_*
+# macros:
+#   include:
+#     - SK_*
 
-unions:
-  include: []
+# unions:
+#   include: []
 
-globals:
-  include: []
+# globals:
+#   include: []
 
-unnamed-enums:
-  include: []
+# unnamed-enums:
+#   include: []
 
-silence-enum-warning: true
+# silence-enum-warning: true

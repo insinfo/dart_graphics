@@ -226,21 +226,11 @@ class SvgGroup extends SvgElement {
   static void _applyTransform(SkiaCanvas canvas, SvgTransform transform) {
     final m = transform.matrix;
     // For 2D affine transform [a, b, c, d, e, f]:
-    // We can decompose into scale, rotation, skew, and translation
-    // For now, use a simpler approach: translate + scale + skew
-    // This won't handle all cases perfectly but works for most SVG transforms
-    
-    // Apply translation
-    canvas.translate(m[4], m[5]);
-    
-    // Apply the rest of the transform using scale and skew
-    // TODO: Implement proper matrix concat when we have SKMatrix support
-    if (m[0] != 1.0 || m[3] != 1.0) {
-      canvas.scale(m[0], m[3]);
-    }
-    if (m[1] != 0.0 || m[2] != 0.0) {
-      canvas.skew(m[2], m[1]);
-    }
+    // | a  c  e |
+    // | b  d  f |
+    // | 0  0  1 |
+    // Use canvas.concat2D to apply the full transform
+    canvas.concat2D(m[0], m[1], m[2], m[3], m[4], m[5]);
   }
 }
 
@@ -570,19 +560,58 @@ class SvgText extends SvgElement {
     
     canvas.save();
     
-    // For now, use simple text rendering with a default font
-    // TODO: Load custom typefaces based on fontFamily
+    // Try to create font from font family, falling back to default
     final fillPaint = createFillPaint(ctx);
     if (fillPaint != null) {
-      // Create a default font with the specified size
-      final font = ctx.createFont(size: fontSize);
-      if (font != null) {
+      // Parse font weight
+      final weight = _parseFontWeight(fontWeight);
+      
+      // Parse font style (italic/oblique)
+      final slant = fontStyle == 'italic' ? 1 : (fontStyle == 'oblique' ? 2 : 0);
+      
+      // Try to create typeface from family name
+      SkiaTypeface? typeface;
+      final family = fontFamily;
+      if (family != null && family.isNotEmpty) {
+        // Try each font in the family list
+        for (final familyName in family.split(',').map((s) => s.trim().replaceAll(RegExp(r'^["\x27]|["\x27]$'), ''))) {
+          typeface = ctx.skia.createTypefaceFromFamilyName(familyName, weight: weight, slant: slant);
+          if (typeface != null) break;
+        }
+      }
+      
+      // Fall back to default typeface
+      typeface ??= ctx.skia.createDefaultTypeface();
+      
+      if (typeface != null) {
+        final font = ctx.skia.createFontFromTypeface(typeface, size: fontSize);
         canvas.drawSimpleText(text, x, y, font, fillPaint);
         font.dispose();
+        typeface.dispose();
       }
       fillPaint.dispose();
     }
     
     canvas.restore();
+  }
+  
+  int _parseFontWeight(String weight) {
+    switch (weight) {
+      case 'thin': return 100;
+      case 'extra-light':
+      case 'extralight': return 200;
+      case 'light': return 300;
+      case 'normal': return 400;
+      case 'medium': return 500;
+      case 'semi-bold':
+      case 'semibold': return 600;
+      case 'bold': return 700;
+      case 'extra-bold':
+      case 'extrabold': return 800;
+      case 'black': return 900;
+      default:
+        // Try to parse as a number
+        return int.tryParse(weight) ?? 400;
+    }
   }
 }

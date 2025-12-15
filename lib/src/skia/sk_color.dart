@@ -1,3 +1,51 @@
+/// Map of named CSS colors.
+const Map<String, int> _namedColors = {
+  'transparent': 0x00000000,
+  'black': 0xFF000000,
+  'white': 0xFFFFFFFF,
+  'red': 0xFFFF0000,
+  'green': 0xFF008000,
+  'blue': 0xFF0000FF,
+  'yellow': 0xFFFFFF00,
+  'cyan': 0xFF00FFFF,
+  'magenta': 0xFFFF00FF,
+  'purple': 0xFF800080,
+  'orange': 0xFFFFA500,
+  'pink': 0xFFFFC0CB,
+  'gray': 0xFF808080,
+  'grey': 0xFF808080,
+  'silver': 0xFFC0C0C0,
+  'maroon': 0xFF800000,
+  'olive': 0xFF808000,
+  'lime': 0xFF00FF00,
+  'aqua': 0xFF00FFFF,
+  'teal': 0xFF008080,
+  'navy': 0xFF000080,
+  'fuchsia': 0xFFFF00FF,
+  'brown': 0xFFA52A2A,
+  'coral': 0xFFFF7F50,
+  'crimson': 0xFFDC143C,
+  'darkblue': 0xFF00008B,
+  'darkgreen': 0xFF006400,
+  'darkred': 0xFF8B0000,
+  'gold': 0xFFFFD700,
+  'indigo': 0xFF4B0082,
+  'ivory': 0xFFFFFFF0,
+  'khaki': 0xFFF0E68C,
+  'lavender': 0xFFE6E6FA,
+  'lightblue': 0xFFADD8E6,
+  'lightgreen': 0xFF90EE90,
+  'lightgray': 0xFFD3D3D3,
+  'lightgrey': 0xFFD3D3D3,
+  'lightyellow': 0xFFFFFFE0,
+  'salmon': 0xFFFA8072,
+  'skyblue': 0xFF87CEEB,
+  'tan': 0xFFD2B48C,
+  'turquoise': 0xFF40E0D0,
+  'violet': 0xFFEE82EE,
+  'wheat': 0xFFF5DEB3,
+};
+
 /// Represents an ARGB color as a 32-bit integer.
 /// 
 /// The color is stored as 0xAARRGGBB.
@@ -78,35 +126,89 @@ class SKColor {
     );
   }
 
-  /// Parses a color from a hex string like "#RRGGBB" or "#AARRGGBB".
-  static SKColor parse(String hexString) {
-    final result = tryParse(hexString);
+  /// Parses a color from a hex string like "#RRGGBB" or "#AARRGGBB",
+  /// a named color like "red" or "blue", or CSS rgb/rgba functions.
+  static SKColor parse(String colorString) {
+    final result = tryParse(colorString);
     if (result == null) {
-      throw ArgumentError('Invalid hexadecimal color string: $hexString');
+      throw ArgumentError('Invalid hexadecimal color string: $colorString');
     }
     return result;
   }
 
-  /// Tries to parse a color from a hex string.
-  static SKColor? tryParse(String hexString) {
-    var hex = hexString.trim();
-    if (hex.startsWith('#')) {
-      hex = hex.substring(1);
+  /// Tries to parse a color from a hex string, named color, or CSS function.
+  static SKColor? tryParse(String colorString) {
+    var str = colorString.trim().toLowerCase();
+    
+    // Check for named colors first
+    final namedColor = _namedColors[str];
+    if (namedColor != null) {
+      return SKColor(namedColor);
     }
     
-    if (hex.length == 6) {
-      final value = int.tryParse(hex, radix: 16);
-      if (value != null) {
-        return SKColor(0xFF000000 | value);
+    // Check for hex color
+    if (str.startsWith('#')) {
+      var hex = str.substring(1);
+      if (hex.length == 3) {
+        // #RGB -> #RRGGBB
+        hex = '${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}';
+      } else if (hex.length == 4) {
+        // #RGBA -> #RRGGBBAA
+        hex = '${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}';
       }
-    } else if (hex.length == 8) {
-      final value = int.tryParse(hex, radix: 16);
-      if (value != null) {
-        return SKColor(value);
+      
+      if (hex.length == 6) {
+        final value = int.tryParse(hex, radix: 16);
+        if (value != null) {
+          return SKColor(0xFF000000 | value);
+        }
+      } else if (hex.length == 8) {
+        // RRGGBBAA -> AARRGGBB
+        final r = int.tryParse(hex.substring(0, 2), radix: 16);
+        final g = int.tryParse(hex.substring(2, 4), radix: 16);
+        final b = int.tryParse(hex.substring(4, 6), radix: 16);
+        final a = int.tryParse(hex.substring(6, 8), radix: 16);
+        if (r != null && g != null && b != null && a != null) {
+          return SKColor.fromARGB(a, r, g, b);
+        }
       }
+    }
+    
+    // Check for rgb/rgba functions
+    if (str.startsWith('rgb')) {
+      return _parseRgbFunction(str);
     }
     
     return null;
+  }
+  
+  static SKColor? _parseRgbFunction(String str) {
+    final isRgba = str.startsWith('rgba');
+    final start = isRgba ? 5 : 4;
+    final end = str.indexOf(')');
+    if (end == -1) return null;
+    
+    final parts = str.substring(start, end).split(',').map((s) => s.trim()).toList();
+    if (parts.length < 3) return null;
+    
+    final r = _parseColorComponent(parts[0]);
+    final g = _parseColorComponent(parts[1]);
+    final b = _parseColorComponent(parts[2]);
+    final a = parts.length > 3 ? (double.tryParse(parts[3]) ?? 1.0) : 1.0;
+    
+    return SKColor.fromARGB(
+      (a * 255).round().clamp(0, 255),
+      r.round().clamp(0, 255),
+      g.round().clamp(0, 255),
+      b.round().clamp(0, 255),
+    );
+  }
+  
+  static double _parseColorComponent(String value) {
+    if (value.endsWith('%')) {
+      return (double.tryParse(value.substring(0, value.length - 1)) ?? 0) * 2.55;
+    }
+    return double.tryParse(value) ?? 0;
   }
 
   @override

@@ -38,7 +38,7 @@
 library;
 
 export 'canvas.dart';
-export 'canvas_rendering_context_2d.dart' hide Matrix2D;
+export 'canvas_rendering_context_2d.dart';
 export 'canvas_gradient.dart';
 export 'canvas_pattern.dart';
 export 'path_2d.dart';

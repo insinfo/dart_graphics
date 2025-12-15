@@ -9,6 +9,7 @@ import 'dart:typed_data';
 import '../skia_api.dart';
 import '../sk_color.dart';
 import '../sk_geometry.dart';
+import '../../shared/canvas2d/canvas2d.dart' hide TextAlign, TextBaseline;
 import 'canvas.dart';
 import 'canvas_gradient.dart';
 import 'canvas_pattern.dart';
@@ -20,9 +21,6 @@ enum TextAlign { left, right, center, start, end }
 /// Text baseline options
 enum TextBaseline { top, hanging, middle, alphabetic, ideographic, bottom }
 
-/// Image smoothing quality
-enum ImageSmoothingQuality { low, medium, high }
-
 /// Direction for text rendering
 enum TextDirection { ltr, rtl, inherit }
 
@@ -30,7 +28,7 @@ enum TextDirection { ltr, rtl, inherit }
 /// 
 /// Provides methods for drawing shapes, text, images, and other graphics
 /// following the HTML5 Canvas 2D API.
-class CanvasRenderingContext2D {
+class CanvasRenderingContext2D implements ICanvasRenderingContext2D {
   final Canvas canvas;
   final Skia _skia;
   
@@ -95,12 +93,14 @@ class CanvasRenderingContext2D {
   // ==================== Transforms ====================
   
   /// Adds a scaling transformation
+  @override
   void scale(double x, double y) {
     _skCanvas.scale(x, y);
     _state.transform = _state.transform.scaled(x, y);
   }
   
   /// Adds a rotation transformation
+  @override
   void rotate(double angle) {
     final degrees = angle * 180 / math.pi;
     _skCanvas.rotate(degrees);
@@ -108,33 +108,38 @@ class CanvasRenderingContext2D {
   }
   
   /// Adds a translation transformation
+  @override
   void translate(double x, double y) {
     _skCanvas.translate(x, y);
     _state.transform = _state.transform.translated(x, y);
   }
   
   /// Multiplies the current transformation matrix
+  @override
   void transform(double a, double b, double c, double d, double e, double f) {
     // [ a c e ]   [ m11 m21 dx ]
     // [ b d f ] = [ m12 m22 dy ]
     // [ 0 0 1 ]   [  0   0   1 ]
-    final matrix = Matrix2D(a, b, c, d, e, f);
+    final matrix = DOMMatrix(a, b, c, d, e, f);
     _state.transform = _state.transform.multiplied(matrix);
     _applyTransformToCanvas();
   }
   
   /// Sets the transformation matrix
+  @override
   void setTransform(double a, double b, double c, double d, double e, double f) {
-    _state.transform = Matrix2D(a, b, c, d, e, f);
+    _state.transform = DOMMatrix(a, b, c, d, e, f);
     _applyTransformToCanvas();
   }
   
   /// Gets the current transformation matrix
-  Matrix2D getTransform() => _state.transform.clone();
+  @override
+  DOMMatrix getTransform() => _state.transform.clone();
   
   /// Resets the transformation to identity
+  @override
   void resetTransform() {
-    _state.transform = Matrix2D.identity();
+    _state.transform = DOMMatrix.identity();
     _applyTransformToCanvas();
   }
   
@@ -202,12 +207,13 @@ class CanvasRenderingContext2D {
       final color = SKColor.parse(style);
       final alpha = (_state.globalAlpha * color.alpha).round();
       _fillPaint.color = color.withAlpha(alpha);
+      _fillPaint.clearShader();
     } else if (style is CanvasGradient) {
-      // TODO: Apply gradient shader
-      _fillPaint.color = SKColors.black;
+      _applyGradientShader(_fillPaint, style);
     } else if (style is CanvasPattern) {
-      // TODO: Apply pattern shader
+      // Pattern shaders require bitmap support - using fallback color
       _fillPaint.color = SKColors.black;
+      _fillPaint.clearShader();
     }
     
     _applyBlendMode(_fillPaint);
@@ -220,18 +226,30 @@ class CanvasRenderingContext2D {
       final color = SKColor.parse(style);
       final alpha = (_state.globalAlpha * color.alpha).round();
       _strokePaint.color = color.withAlpha(alpha);
+      _strokePaint.clearShader();
     } else if (style is CanvasGradient) {
-      // TODO: Apply gradient shader
-      _strokePaint.color = SKColors.black;
+      _applyGradientShader(_strokePaint, style);
     } else if (style is CanvasPattern) {
-      // TODO: Apply pattern shader
+      // Pattern shaders require bitmap support - using fallback color
       _strokePaint.color = SKColors.black;
+      _strokePaint.clearShader();
     }
     
     _strokePaint.strokeWidth = _state.lineWidth;
     _strokePaint.strokeCap = _state.lineCap;
     _strokePaint.strokeJoin = _state.lineJoin;
     _strokePaint.strokeMiter = _state.miterLimit;
+    
+    // Apply dash pattern if set
+    if (_state.lineDash.isNotEmpty) {
+      // Ensure even number of intervals
+      final intervals = _state.lineDash.length % 2 == 0 
+          ? _state.lineDash 
+          : [..._state.lineDash, ..._state.lineDash];
+      _strokePaint.setDashPathEffect(intervals, _state.lineDashOffset);
+    } else {
+      _strokePaint.clearPathEffect();
+    }
     
     _applyBlendMode(_strokePaint);
     _applyShadow(_strokePaint);
@@ -243,8 +261,68 @@ class CanvasRenderingContext2D {
   }
   
   void _applyShadow(SkiaPaint paint) {
-    // TODO: Apply shadow if configured
-    // This would require maskFilter or imageFilter support
+    // Shadow support requires image filters which aren't fully exposed
+    // The shadow properties are stored but not applied visually
+    // shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY are available
+    // but SkiaSharp's sk_paint_set_image_filter would be needed
+  }
+  
+  void _applyGradientShader(SkiaPaint paint, CanvasGradient gradient) {
+    final stops = gradient.colorStops;
+    if (stops.isEmpty) {
+      paint.color = SKColors.black;
+      paint.clearShader();
+      return;
+    }
+    
+    // Convert colors to ARGB integers
+    final colors = stops.map((s) => s.color.value).toList();
+    final positions = stops.map((s) => s.offset).toList();
+    
+    final shader = switch (gradient.type) {
+      GradientType.linear => () {
+        final start = gradient.startPoint;
+        final end = gradient.endPoint;
+        if (start == null || end == null) return null;
+        return _skia.createLinearGradientShader(
+          [SKPoint(start.x, start.y), SKPoint(end.x, end.y)],
+          colors,
+          positions,
+        );
+      }(),
+      GradientType.radial => () {
+        final start = gradient.startPoint;
+        final r1 = gradient.endRadius;
+        if (start == null || r1 == null) return null;
+        return _skia.createRadialGradientShader(
+          SKPoint(start.x, start.y),
+          r1,
+          colors,
+          positions,
+        );
+      }(),
+      GradientType.conic => () {
+        final start = gradient.startPoint;
+        final angle = gradient.startAngle;
+        if (start == null || angle == null) return null;
+        // Convert radians to degrees for sweep gradient
+        final startDegrees = angle * 180 / math.pi;
+        return _skia.createSweepGradientShader(
+          SKPoint(start.x, start.y),
+          colors,
+          positions,
+          startAngle: startDegrees,
+          endAngle: startDegrees + 360,
+        );
+      }(),
+    };
+    
+    if (shader != null && shader.address != 0) {
+      paint.setShader(shader);
+    } else {
+      paint.color = stops.isNotEmpty ? stops.first.color : SKColors.black;
+      paint.clearShader();
+    }
   }
   
   BlendMode _parseBlendMode(String op) {
@@ -404,17 +482,61 @@ class CanvasRenderingContext2D {
   }
   
   /// Letter spacing
-  double get letterSpacing => _state.letterSpacing;
-  set letterSpacing(double value) {
+  @override
+  String get letterSpacing => _state.letterSpacing;
+  @override
+  set letterSpacing(String value) {
     _state.letterSpacing = value;
   }
   
   /// Word spacing
-  double get wordSpacing => _state.wordSpacing;
-  set wordSpacing(double value) {
+  @override
+  String get wordSpacing => _state.wordSpacing;
+  @override
+  set wordSpacing(String value) {
     _state.wordSpacing = value;
   }
   
+  /// Filter effects
+  @override
+  String get filter => _state.filter;
+  @override
+  set filter(String value) {
+    _state.filter = value;
+  }
+  
+  /// Font kerning
+  @override
+  String get fontKerning => _state.fontKerning;
+  @override
+  set fontKerning(String value) {
+    _state.fontKerning = value;
+  }
+  
+  /// Font stretch
+  @override
+  String get fontStretch => _state.fontStretch;
+  @override
+  set fontStretch(String value) {
+    _state.fontStretch = value;
+  }
+  
+  /// Font variant caps
+  @override
+  String get fontVariantCaps => _state.fontVariantCaps;
+  @override
+  set fontVariantCaps(String value) {
+    _state.fontVariantCaps = value;
+  }
+  
+  /// Text rendering
+  @override
+  String get textRendering => _state.textRendering;
+  @override
+  set textRendering(String value) {
+    _state.textRendering = value;
+  }
+
   TextAlign _parseTextAlign(String align) {
     switch (align) {
       case 'left': return TextAlign.left;
@@ -564,8 +686,9 @@ class CanvasRenderingContext2D {
   }
   
   /// Strokes the current path
-  void stroke([Path2D? path]) {
-    final pathToStroke = path ?? _currentPath;
+  @override
+  void stroke([IPath2D? path]) {
+    final pathToStroke = (path as Path2D?) ?? _currentPath;
     
     _updateStrokePaint();
     
@@ -602,14 +725,50 @@ class CanvasRenderingContext2D {
   
   /// Tests if a point is in the current path
   bool isPointInPath(double x, double y, [String fillRule = 'nonzero']) {
-    // TODO: Implement proper hit testing
-    return false;
+    final path = _currentPath.path;
+    if (path == null) return false;
+    
+    // Set fill type based on fill rule
+    final previousFillType = path.fillType;
+    path.fillType = fillRule == 'evenodd' ? PathFillType.evenOdd : PathFillType.winding;
+    
+    final result = path.contains(x, y);
+    
+    // Restore previous fill type
+    path.fillType = previousFillType;
+    return result;
   }
   
   /// Tests if a point is in the stroke of the current path
   bool isPointInStroke(double x, double y) {
-    // TODO: Implement proper hit testing
-    return false;
+    // Get the stroked path and test containment
+    // For now, use a simple bounding box approximation
+    final path = _currentPath.path;
+    if (path == null) return false;
+    
+    // A proper implementation would create a stroked path copy
+    // and test containment on that. For now, use the fill containment
+    // with a small tolerance based on stroke width.
+    final halfWidth = _state.lineWidth / 2;
+    
+    // Test points around the target in a cross pattern
+    return path.contains(x, y) ||
+           path.contains(x - halfWidth, y) ||
+           path.contains(x + halfWidth, y) ||
+           path.contains(x, y - halfWidth) ||
+           path.contains(x, y + halfWidth);
+  }
+  
+  /// Draws focus ring if element is focused (not supported in this implementation)
+  @override
+  void drawFocusIfNeeded(dynamic pathOrElement, [dynamic element]) {
+    // Not supported - this is a browser-specific feature
+  }
+  
+  /// Scrolls the path into view (not supported in this implementation)
+  @override
+  void scrollPathIntoView([IPath2D? path]) {
+    // Not supported - this is a browser-specific feature
   }
   
   // ==================== Drawing Rectangles ====================
@@ -658,7 +817,8 @@ class CanvasRenderingContext2D {
   }
   
   /// Measures text width
-  TextMetrics measureText(String text) {
+  @override
+  ITextMetrics measureText(String text) {
     final font = _createFont();
     final fontSize = _parseFontSize(_state.font);
     // Rough approximation
@@ -686,25 +846,129 @@ class CanvasRenderingContext2D {
   
   /// Draws an image to the canvas
   void drawImage(dynamic image, double dx, double dy, [double? dWidth, double? dHeight, double? sx, double? sy, double? sWidth, double? sHeight]) {
-    // TODO: Implement image drawing
+    if (image is SkiaImage) {
+      _drawSkiaImage(image, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight);
+    } else if (image is ImageData) {
+      // Create temporary image from ImageData
+      final bitmap = _skia.createBitmap(image.width, image.height);
+      // Copy pixel data (RGBA to RGBA)
+      final pixels = bitmap.getPixels();
+      if (pixels != null) {
+        for (int i = 0; i < image.data.length && i < pixels.length; i++) {
+          pixels[i] = image.data[i];
+        }
+        bitmap.notifyPixelsChanged();
+      }
+      
+      final skImage = bitmap.toImage();
+      if (skImage != null) {
+        _drawSkiaImage(skImage, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight);
+        skImage.dispose();
+      }
+      bitmap.dispose();
+    }
+  }
+  
+  void _drawSkiaImage(SkiaImage image, double dx, double dy, [double? dWidth, double? dHeight, double? sx, double? sy, double? sWidth, double? sHeight]) {
+    _updateFillPaint();
+    
+    final srcRect = sx != null && sy != null && sWidth != null && sHeight != null
+        ? SKRect.fromXYWH(sx, sy, sWidth, sHeight)
+        : SKRect.fromXYWH(0, 0, image.width.toDouble(), image.height.toDouble());
+    
+    final dstRect = SKRect.fromXYWH(
+      dx, 
+      dy, 
+      dWidth ?? image.width.toDouble(), 
+      dHeight ?? image.height.toDouble(),
+    );
+    
+    _skCanvas.drawImageRect(image, srcRect, dstRect, _fillPaint);
   }
   
   // ==================== Pixel Manipulation ====================
   
   /// Creates image data
-  ImageData createImageData(int width, int height) {
+  @override
+  IImageData createImageData(int width, int height) {
     return ImageData(width, height);
   }
   
   /// Gets image data from the canvas
-  ImageData getImageData(int sx, int sy, int sw, int sh) {
-    // TODO: Implement getImageData
-    return ImageData(sw, sh);
+  @override
+  IImageData getImageData(int sx, int sy, int sw, int sh) {
+    final imageData = ImageData(sw, sh);
+    
+    // Get a snapshot of the surface
+    final snapshot = canvas.surface?.snapshot();
+    if (snapshot == null) return imageData;
+    
+    // Read pixels from the snapshot
+    final pixels = snapshot.readPixels();
+    snapshot.dispose();
+    
+    if (pixels == null) return imageData;
+    
+    // Copy the requested region
+    final surfaceWidth = canvas.width;
+    final surfaceStride = surfaceWidth * 4;
+    
+    for (int y = 0; y < sh; y++) {
+      for (int x = 0; x < sw; x++) {
+        final srcX = sx + x;
+        final srcY = sy + y;
+        
+        if (srcX >= 0 && srcX < surfaceWidth && srcY >= 0 && srcY < canvas.height) {
+          final srcIdx = srcY * surfaceStride + srcX * 4;
+          final dstIdx = (y * sw + x) * 4;
+          
+          if (srcIdx + 3 < pixels.length && dstIdx + 3 < imageData.data.length) {
+            // RGBA to RGBA (direct copy)
+            imageData.data[dstIdx + 0] = pixels[srcIdx + 0];
+            imageData.data[dstIdx + 1] = pixels[srcIdx + 1];
+            imageData.data[dstIdx + 2] = pixels[srcIdx + 2];
+            imageData.data[dstIdx + 3] = pixels[srcIdx + 3];
+          }
+        }
+      }
+    }
+    
+    return imageData;
   }
   
   /// Puts image data to the canvas
-  void putImageData(ImageData imageData, int dx, int dy, [int? dirtyX, int? dirtyY, int? dirtyWidth, int? dirtyHeight]) {
-    // TODO: Implement putImageData
+  @override
+  void putImageData(IImageData imageData, int dx, int dy, [int? dirtyX, int? dirtyY, int? dirtyWidth, int? dirtyHeight]) {
+    final srcX = dirtyX ?? 0;
+    final srcY = dirtyY ?? 0;
+    final srcW = dirtyWidth ?? imageData.width;
+    final srcH = dirtyHeight ?? imageData.height;
+    
+    // Create a bitmap from the image data
+    final bitmap = _skia.createBitmap(imageData.width, imageData.height);
+    final pixels = bitmap.getPixels();
+    
+    if (pixels != null) {
+      // Copy RGBA data
+      for (int i = 0; i < imageData.data.length && i < pixels.length; i++) {
+        pixels[i] = imageData.data[i];
+      }
+      bitmap.notifyPixelsChanged();
+    }
+    
+    // Draw the bitmap to canvas
+    final skImage = bitmap.toImage();
+    if (skImage != null) {
+      final srcRect = SKRect.fromXYWH(srcX.toDouble(), srcY.toDouble(), srcW.toDouble(), srcH.toDouble());
+      final dstRect = SKRect.fromXYWH((dx + srcX).toDouble(), (dy + srcY).toDouble(), srcW.toDouble(), srcH.toDouble());
+      
+      final paint = _skia.createPaint();
+      paint.blendMode = BlendMode.src; // Replace pixels directly
+      _skCanvas.drawImageRect(skImage, srcRect, dstRect, paint);
+      paint.dispose();
+      skImage.dispose();
+    }
+    bitmap.dispose();
   }
   
   // ==================== Gradients and Patterns ====================
@@ -743,7 +1007,7 @@ class CanvasRenderingContext2D {
 
 /// Internal state for context
 class _ContextState {
-  Matrix2D transform = Matrix2D.identity();
+  DOMMatrix transform = DOMMatrix.identity();
   double globalAlpha = 1.0;
   String globalCompositeOperation = 'source-over';
   bool imageSmoothingEnabled = true;
@@ -768,8 +1032,13 @@ class _ContextState {
   TextAlign textAlign = TextAlign.start;
   TextBaseline textBaseline = TextBaseline.alphabetic;
   TextDirection direction = TextDirection.inherit;
-  double letterSpacing = 0.0;
-  double wordSpacing = 0.0;
+  String letterSpacing = '0px';
+  String wordSpacing = '0px';
+  String filter = 'none';
+  String fontKerning = 'auto';
+  String fontStretch = 'normal';
+  String fontVariantCaps = 'normal';
+  String textRendering = 'auto';
   
   _ContextState clone() {
     return _ContextState()
@@ -795,69 +1064,72 @@ class _ContextState {
       ..textBaseline = textBaseline
       ..direction = direction
       ..letterSpacing = letterSpacing
-      ..wordSpacing = wordSpacing;
-  }
-}
-
-/// 2D affine transformation matrix
-class Matrix2D {
-  double a, b, c, d, e, f;
-  
-  Matrix2D(this.a, this.b, this.c, this.d, this.e, this.f);
-  
-  factory Matrix2D.identity() => Matrix2D(1, 0, 0, 1, 0, 0);
-  
-  Matrix2D clone() => Matrix2D(a, b, c, d, e, f);
-  
-  Matrix2D translated(double tx, double ty) {
-    return Matrix2D(a, b, c, d, e + tx, f + ty);
-  }
-  
-  Matrix2D scaled(double sx, double sy) {
-    return Matrix2D(a * sx, b * sy, c * sx, d * sy, e * sx, f * sy);
-  }
-  
-  Matrix2D rotated(double angle) {
-    final cos = math.cos(angle);
-    final sin = math.sin(angle);
-    return Matrix2D(
-      a * cos + c * sin,
-      b * cos + d * sin,
-      c * cos - a * sin,
-      d * cos - b * sin,
-      e,
-      f,
-    );
-  }
-  
-  Matrix2D multiplied(Matrix2D other) {
-    return Matrix2D(
-      a * other.a + c * other.b,
-      b * other.a + d * other.b,
-      a * other.c + c * other.d,
-      b * other.c + d * other.d,
-      a * other.e + c * other.f + e,
-      b * other.e + d * other.f + f,
-    );
+      ..wordSpacing = wordSpacing
+      ..filter = filter
+      ..fontKerning = fontKerning
+      ..fontStretch = fontStretch
+      ..fontVariantCaps = fontVariantCaps
+      ..textRendering = textRendering;
   }
 }
 
 /// Text measurement result
-class TextMetrics {
+class TextMetrics implements ITextMetrics {
+  @override
   final double width;
+  @override
+  final double actualBoundingBoxLeft;
+  @override
+  final double actualBoundingBoxRight;
+  @override
+  final double actualBoundingBoxAscent;
+  @override
+  final double actualBoundingBoxDescent;
+  @override
+  final double fontBoundingBoxAscent;
+  @override
+  final double fontBoundingBoxDescent;
+  @override
+  final double emHeightAscent;
+  @override
+  final double emHeightDescent;
+  @override
+  final double hangingBaseline;
+  @override
+  final double alphabeticBaseline;
+  @override
+  final double ideographicBaseline;
   
-  TextMetrics({required this.width});
+  TextMetrics({
+    required this.width,
+    this.actualBoundingBoxLeft = 0,
+    this.actualBoundingBoxRight = 0,
+    this.actualBoundingBoxAscent = 0,
+    this.actualBoundingBoxDescent = 0,
+    this.fontBoundingBoxAscent = 0,
+    this.fontBoundingBoxDescent = 0,
+    this.emHeightAscent = 0,
+    this.emHeightDescent = 0,
+    this.hangingBaseline = 0,
+    this.alphabeticBaseline = 0,
+    this.ideographicBaseline = 0,
+  });
 }
 
 /// Image data for pixel manipulation
-class ImageData {
+class ImageData implements IImageData {
+  @override
   final int width;
+  @override
   final int height;
+  @override
   late final Uint8ClampedList data;
+  @override
+  final String colorSpace;
   
-  ImageData(this.width, this.height) {
+  ImageData(this.width, this.height, {this.colorSpace = 'srgb'}) {
     data = Uint8ClampedList(width * height * 4);
   }
   
-  ImageData.fromData(this.width, this.height, this.data);
+  ImageData.fromData(this.width, this.height, this.data, {this.colorSpace = 'srgb'});
 }

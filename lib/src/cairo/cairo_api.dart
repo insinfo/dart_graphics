@@ -306,6 +306,12 @@ class CairoCanvasImpl {
     _bindings.cairo_set_source(_ctx, pattern);
     return this;
   }
+  
+  /// Set a surface as the source for drawing
+  CairoCanvasImpl setSourceSurface(CairoSurfaceImpl surface, [double x = 0, double y = 0]) {
+    _bindings.cairo_set_source_surface(_ctx, surface.pointer, x, y);
+    return this;
+  }
 
   // ==================== Line Style ====================
 
