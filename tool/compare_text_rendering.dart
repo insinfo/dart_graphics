@@ -1,8 +1,10 @@
 /// Compare Cairo FreeType rendering with AGG Typography rendering
 import 'dart:io';
 
-import 'package:agg/src/cairo/cairo.dart';
-import 'package:agg/src/cairo/cairo_types.dart';
+import 'package:agg/cairo.dart';
+
+/// Global Cairo instance
+final cairo = Cairo();
 
 void main() {
   print('Comparing Cairo FreeType vs AGG Typography text rendering...\n');
@@ -11,7 +13,7 @@ void main() {
   final fontPath = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
   
   // Create Cairo rendering
-  final canvas = CairoCanvas(400, 100);
+  final canvas = cairo.createCanvas(400, 100);
   canvas.clear(CairoColor.white);
   canvas.setFontFaceFromFile(fontPath);
   canvas.setFontSize(48);

@@ -3,7 +3,15 @@ import 'dart:io';
 import 'generated/ffi.dart';
 
 /// Loads the Cairo native library
-CairoBindings loadCairo() {
+/// 
+/// [libraryPath] - Optional custom path to the Cairo library. If not provided,
+/// the library will be searched in common system locations.
+CairoBindings loadCairo({String? libraryPath}) {
+  // If custom path provided, use it directly
+  if (libraryPath != null) {
+    return CairoBindings(ffi.DynamicLibrary.open(libraryPath));
+  }
+  
   if (Platform.isWindows) {
     // Try common locations for cairo DLL on Windows
     final possiblePaths = [

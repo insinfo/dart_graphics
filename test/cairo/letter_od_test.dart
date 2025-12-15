@@ -19,6 +19,9 @@ import 'package:agg/src/typography/openfont/typeface.dart';
 import 'package:image/image.dart' as img;
 import 'dart:math' as math;
 
+/// Global Cairo instance
+final cairo = Cairo();
+
 void main() {
   late Typeface sansFace;
 
@@ -34,7 +37,7 @@ void main() {
 
   group('Investigação Letra O e D', () {
     test('Cairo golden - letra "o"', () {
-      final canvas = CairoCanvas(100, 100);
+      final canvas = cairo.createCanvas(100, 100);
       canvas.clear(CairoColor.white);
 
       canvas.setFontSize(60);
@@ -49,7 +52,7 @@ void main() {
     });
 
     test('Cairo golden - letra "d"', () {
-      final canvas = CairoCanvas(100, 100);
+      final canvas = cairo.createCanvas(100, 100);
       canvas.clear(CairoColor.white);
 
       canvas.setFontSize(60);
@@ -64,7 +67,7 @@ void main() {
     });
 
     test('Cairo golden - "od"', () {
-      final canvas = CairoCanvas(150, 100);
+      final canvas = cairo.createCanvas(150, 100);
       canvas.clear(CairoColor.white);
 
       canvas.setFontSize(60);

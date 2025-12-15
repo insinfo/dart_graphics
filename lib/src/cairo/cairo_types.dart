@@ -24,6 +24,16 @@ class CairoColor {
     );
   }
   
+  /// Create a copy of this color with a different alpha value (0.0 - 1.0)
+  CairoColor withAlpha(double alpha) {
+    return CairoColor(r, g, b, alpha.clamp(0.0, 1.0));
+  }
+  
+  /// Create a copy of this color with a different alpha (as int 0-255)
+  CairoColor withAlphaInt(int alpha) {
+    return CairoColor(r, g, b, (alpha / 255.0).clamp(0.0, 1.0));
+  }
+  
   // Common colors
   static const black = CairoColor(0.0, 0.0, 0.0);
   static const white = CairoColor(1.0, 1.0, 1.0);

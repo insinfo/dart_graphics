@@ -15,6 +15,9 @@ const _liberationSerifRegular = 'resources/fonts/liberation-fonts-ttf-1.07.0/Lib
 const _liberationSerifBold = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Bold.ttf';
 const _liberationMonoRegular = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationMono-Regular.ttf';
 
+/// Global Cairo instance
+final cairo = Cairo();
+
 void main() {
   setUpAll(() {
     Directory('test/golden').createSync(recursive: true);
@@ -22,7 +25,7 @@ void main() {
 
   group('Cairo Golden - Shapes', () {
     test('Heart shape', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       // Heart shape using bezier curves (same as AGG test)
@@ -59,7 +62,7 @@ void main() {
     });
 
     test('Spiral shape', () {
-      final canvas = CairoCanvas(300, 300);
+      final canvas = cairo.createCanvas(300, 300);
       canvas.clear(CairoColor.white);
 
       final cx = 150.0;
@@ -96,7 +99,7 @@ void main() {
     });
 
     test('Bezier curves', () {
-      final canvas = CairoCanvas(400, 300);
+      final canvas = cairo.createCanvas(400, 300);
       canvas.clear(CairoColor.white);
 
       canvas.newPath();
@@ -126,7 +129,7 @@ void main() {
     });
 
     test('Star shape', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       final cx = 100.0;
@@ -161,7 +164,7 @@ void main() {
     });
 
     test('Concentric circles', () {
-      final canvas = CairoCanvas(300, 300);
+      final canvas = cairo.createCanvas(300, 300);
       canvas.clear(CairoColor.white);
 
       for (var i = 10; i > 0; i--) {
@@ -182,7 +185,7 @@ void main() {
     });
 
     test('Rounded rectangles', () {
-      final canvas = CairoCanvas(400, 300);
+      final canvas = cairo.createCanvas(400, 300);
       canvas.clear(CairoColor.white);
 
       // Match exact AGG test coordinates and colors
@@ -211,7 +214,7 @@ void main() {
     });
 
     test('Arrow shape', () {
-      final canvas = CairoCanvas(300, 200);
+      final canvas = cairo.createCanvas(300, 200);
       canvas.clear(CairoColor.white);
 
       // Arrow from (50, 100) to (250, 100)
@@ -259,7 +262,7 @@ void main() {
     });
 
     test('Pie slice', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       final cx = 100.0;
@@ -285,7 +288,7 @@ void main() {
 
   group('Cairo Golden - Text', () {
     test('Hello World basic', () {
-      final canvas = CairoCanvas(400, 100);
+      final canvas = cairo.createCanvas(400, 100);
       canvas.clear(CairoColor.white);
 
       canvas.setColor(CairoColor.black);
@@ -300,7 +303,7 @@ void main() {
     });
 
     test('Outlined text', () {
-      final canvas = CairoCanvas(400, 100);
+      final canvas = cairo.createCanvas(400, 100);
       canvas.clear(CairoColor.white);
 
       canvas.setFontFaceFromFile(_liberationSansBold);
@@ -321,7 +324,7 @@ void main() {
     });
 
     test('Multiple font sizes', () {
-      final canvas = CairoCanvas(600, 250);
+      final canvas = cairo.createCanvas(600, 250);
       canvas.clear(CairoColor.white);
 
       canvas.setColor(CairoColor.black);
@@ -349,7 +352,7 @@ void main() {
     });
 
     test('Multiple lines', () {
-      final canvas = CairoCanvas(500, 200);
+      final canvas = cairo.createCanvas(500, 200);
       canvas.clear(CairoColor.white);
 
       canvas.setFontSize(32);
@@ -373,7 +376,7 @@ void main() {
     });
 
     test('Mixed styles', () {
-      final canvas = CairoCanvas(700, 300);
+      final canvas = cairo.createCanvas(700, 300);
       canvas.clear(CairoColor.fromRgba(245, 245, 245, 255));
 
       // Header
@@ -408,7 +411,7 @@ void main() {
     });
 
     test('Special characters', () {
-      final canvas = CairoCanvas(500, 150);
+      final canvas = cairo.createCanvas(500, 150);
       canvas.clear(CairoColor.white);
 
       canvas.setFontFaceFromFile(_liberationSansRegular);
@@ -431,7 +434,7 @@ void main() {
     });
 
     test('Rotated text', () {
-      final canvas = CairoCanvas(300, 300);
+      final canvas = cairo.createCanvas(300, 300);
       canvas.clear(CairoColor.white);
 
       canvas.setFontFaceFromFile(_liberationSansBold);
@@ -460,7 +463,7 @@ void main() {
     });
 
     test('Unicode text', () {
-      final canvas = CairoCanvas(500, 200);
+      final canvas = cairo.createCanvas(500, 200);
       canvas.clear(CairoColor.white);
 
       canvas.setColor(CairoColor.black);
@@ -481,7 +484,7 @@ void main() {
 
   group('Cairo Golden - Anti-aliasing', () {
     test('Diagonal lines', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       canvas.setColor(CairoColor.black);
@@ -498,7 +501,7 @@ void main() {
     });
 
     test('Small circles', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       canvas.setColor(CairoColor.black);
@@ -518,7 +521,7 @@ void main() {
     });
 
     test('Thin strokes', () {
-      final canvas = CairoCanvas(300, 200);
+      final canvas = cairo.createCanvas(300, 200);
       canvas.clear(CairoColor.white);
 
       canvas.setColor(CairoColor.black);
@@ -539,15 +542,15 @@ void main() {
 
   group('Cairo Golden - Gradients', () {
     test('Linear gradient horizontal', () {
-      final canvas = CairoCanvas(300, 100);
+      final canvas = cairo.createCanvas(300, 100);
       canvas.clear(CairoColor.white);
 
-      final gradient = LinearGradient(0, 0, 300, 0)
+      final gradient = LinearGradient(cairo, 0, 0, 300, 0)
         ..addColorStop(0.0, CairoColor.red)
         ..addColorStop(0.5, CairoColor.green)
         ..addColorStop(1.0, CairoColor.blue);
 
-      canvas.setPattern(gradient);
+      canvas.setPattern(gradient.pointer);
       canvas.fillRect(10, 10, 280, 80);
       gradient.dispose();
 
@@ -558,14 +561,14 @@ void main() {
     });
 
     test('Linear gradient vertical', () {
-      final canvas = CairoCanvas(100, 300);
+      final canvas = cairo.createCanvas(100, 300);
       canvas.clear(CairoColor.white);
 
-      final gradient = LinearGradient(0, 0, 0, 300)
+      final gradient = LinearGradient(cairo, 0, 0, 0, 300)
         ..addColorStop(0.0, CairoColor.yellow)
         ..addColorStop(1.0, CairoColor.magenta);
 
-      canvas.setPattern(gradient);
+      canvas.setPattern(gradient.pointer);
       canvas.fillRect(10, 10, 80, 280);
       gradient.dispose();
 
@@ -576,15 +579,15 @@ void main() {
     });
 
     test('Radial gradient', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
-      final gradient = RadialGradient.centered(100, 100, 0, 90)
+      final gradient = RadialGradient.centered(cairo, 100, 100, 0, 90)
         ..addColorStop(0.0, CairoColor.white)
         ..addColorStop(0.5, CairoColor.yellow)
         ..addColorStop(1.0, CairoColor.red);
 
-      canvas.setPattern(gradient);
+      canvas.setPattern(gradient.pointer);
       canvas.fillCircle(100, 100, 90);
       gradient.dispose();
 
@@ -595,10 +598,10 @@ void main() {
     });
 
     test('Rainbow gradient', () {
-      final canvas = CairoCanvas(400, 100);
+      final canvas = cairo.createCanvas(400, 100);
       canvas.clear(CairoColor.white);
 
-      final gradient = LinearGradient(0, 0, 400, 0)
+      final gradient = LinearGradient(cairo, 0, 0, 400, 0)
         ..addColorStop(0.0, CairoColor.red)
         ..addColorStop(0.17, CairoColor.fromHex(0xFF7F00)) // Orange
         ..addColorStop(0.33, CairoColor.yellow)
@@ -607,7 +610,7 @@ void main() {
         ..addColorStop(0.83, CairoColor.fromHex(0x4B0082)) // Indigo
         ..addColorStop(1.0, CairoColor.fromHex(0x9400D3)); // Violet
 
-      canvas.setPattern(gradient);
+      canvas.setPattern(gradient.pointer);
       canvas.fillRect(0, 0, 400, 100);
       gradient.dispose();
 
@@ -620,7 +623,7 @@ void main() {
 
   group('Cairo Golden - Complex', () {
     test('Layered transparency', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       // Red circle
@@ -642,7 +645,7 @@ void main() {
     });
 
     test('Strokes with various joins', () {
-      final canvas = CairoCanvas(400, 150);
+      final canvas = cairo.createCanvas(400, 150);
       canvas.clear(CairoColor.white);
 
       // Miter join
@@ -688,7 +691,7 @@ void main() {
     });
 
     test('Pattern - checker', () {
-      final canvas = CairoCanvas(200, 200);
+      final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
       final size = 20.0;
@@ -710,7 +713,7 @@ void main() {
     });
 
     test('Color wheel (HSV)', () {
-      final canvas = CairoCanvas(300, 300);
+      final canvas = cairo.createCanvas(300, 300);
       canvas.clear(CairoColor.white);
 
       final cx = 150.0;
@@ -766,3 +769,4 @@ CairoColor _hsvToRgb(double h, double s, double v) {
 
   return CairoColor(r, g, b);
 }
+

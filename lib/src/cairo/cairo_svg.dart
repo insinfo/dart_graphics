@@ -5,7 +5,7 @@
 
 
 import 'dart:math' as math;
-import 'cairo.dart';
+import 'cairo_api.dart';
 import 'cairo_types.dart';
 
 /// SVG path command types
@@ -86,7 +86,7 @@ class SvgPath {
   }
   
   /// Render this path to a Cairo canvas
-  void render(CairoCanvas canvas) {
+  void render(CairoCanvasImpl canvas) {
     double currentX = 0;
     double currentY = 0;
     double startX = 0;
@@ -277,7 +277,7 @@ class SvgPath {
     }
   }
   
-  void _handleMoveTo(SvgPathCommand cmd, CairoCanvas canvas, {
+  void _handleMoveTo(SvgPathCommand cmd, CairoCanvasImpl canvas, {
     required bool relative,
     required double currentX,
     required double currentY,
@@ -299,7 +299,7 @@ class SvgPath {
     }
   }
   
-  void _handleLineTo(SvgPathCommand cmd, CairoCanvas canvas, {
+  void _handleLineTo(SvgPathCommand cmd, CairoCanvasImpl canvas, {
     required bool relative,
     required double currentX,
     required double currentY,
@@ -317,7 +317,7 @@ class SvgPath {
   
   /// Convert SVG arc to Cairo curves (approximation using Bezier curves)
   void _arcTo(
-    CairoCanvas canvas,
+    CairoCanvasImpl canvas,
     double x1, double y1,
     double rx, double ry,
     double phi,
@@ -423,7 +423,7 @@ class SvgPath {
 
 /// Parse and render simple SVG elements
 class SimpleSvgRenderer {
-  final CairoCanvas canvas;
+  final CairoCanvasImpl canvas;
   
   SimpleSvgRenderer(this.canvas);
   
@@ -571,10 +571,10 @@ class SimpleSvgRenderer {
   }
 }
 
-/// Extension to add SVG rendering to CairoCanvas
-extension CairoCanvasSvgExtension on CairoCanvas {
+/// Extension to add SVG rendering to CairoCanvasImpl
+extension CairoCanvasSvgExtension on CairoCanvasImpl {
   /// Render an SVG path string
-  CairoCanvas svgPath(String pathData) {
+  CairoCanvasImpl svgPath(String pathData) {
     final path = SvgPath.parse(pathData);
     path.render(this);
     return this;
