@@ -397,3 +397,142 @@ extension on double {
     return guess;
   }
 }
+
+/// Image color type enumeration (re-export from bindings)
+/// Use the SKColorType from generated bindings for FFI compatibility.
+typedef ImageColorType = int;
+
+/// Image alpha type enumeration (re-export from bindings)  
+/// Use the SKAlphaType from generated bindings for FFI compatibility.
+typedef ImageAlphaType = int;
+
+/// Alpha type constants for SKImageInfo
+class AlphaType {
+  static const int unknown = 0;
+  static const int opaque = 1;
+  static const int premul = 2;
+  static const int unpremul = 3;
+}
+
+/// Color type constants for SKImageInfo
+class ColorType {
+  static const int unknown = 0;
+  static const int alpha8 = 1;
+  static const int rgb565 = 2;
+  static const int argb4444 = 3;
+  static const int rgba8888 = 4;
+  static const int rgb888x = 5;
+  static const int bgra8888 = 6;
+  static const int rgba1010102 = 7;
+  static const int bgra1010102 = 8;
+  static const int rgb101010x = 9;
+  static const int bgr101010x = 10;
+  static const int gray8 = 11;
+  static const int rgbaF16Normalized = 12;
+  static const int rgbaF16 = 13;
+  static const int rgbaF32 = 14;
+  static const int r8g8UnormA = 15;
+  static const int a16Float = 16;
+  static const int r16g16Float = 17;
+  static const int a16UNorm = 18;
+  static const int r16g16UNorm = 19;
+  static const int r16g16b16a16UNorm = 20;
+  static const int srgba8888 = 21;
+}
+
+/// Describes pixel format and size for an image
+class SKImageInfo {
+  /// Width in pixels
+  final int width;
+  
+  /// Height in pixels
+  final int height;
+  
+  /// The color type (pixel format) - use ColorType constants
+  final int colorType;
+  
+  /// The alpha type (transparency handling) - use AlphaType constants
+  final int alphaType;
+  
+  /// Creates image info with default RGBA8888 premultiplied format
+  const SKImageInfo(
+    this.width,
+    this.height, {
+    this.colorType = ColorType.rgba8888,
+    this.alphaType = AlphaType.premul,
+  });
+  
+  /// Returns true if width or height is zero
+  bool get isEmpty => width <= 0 || height <= 0;
+  
+  /// Bytes per pixel for this color type
+  int get bytesPerPixel {
+    switch (colorType) {
+      case ColorType.unknown:
+        return 0;
+      case ColorType.alpha8:
+      case ColorType.gray8:
+        return 1;
+      case ColorType.rgb565:
+      case ColorType.argb4444:
+      case ColorType.a16Float:
+      case ColorType.a16UNorm:
+        return 2;
+      case ColorType.rgba8888:
+      case ColorType.rgb888x:
+      case ColorType.bgra8888:
+      case ColorType.rgba1010102:
+      case ColorType.bgra1010102:
+      case ColorType.rgb101010x:
+      case ColorType.bgr101010x:
+      case ColorType.srgba8888:
+      case ColorType.r8g8UnormA:
+      case ColorType.r16g16Float:
+      case ColorType.r16g16UNorm:
+        return 4;
+      case ColorType.rgbaF16Normalized:
+      case ColorType.rgbaF16:
+      case ColorType.r16g16b16a16UNorm:
+        return 8;
+      case ColorType.rgbaF32:
+        return 16;
+      default:
+        return 4;
+    }
+  }
+  
+  /// Bytes per row (width * bytesPerPixel)
+  int get rowBytes => width * bytesPerPixel;
+  
+  /// Total byte size of the image data
+  int get byteSize => rowBytes * height;
+  
+  /// Creates a copy with different dimensions
+  SKImageInfo withSize(int newWidth, int newHeight) {
+    return SKImageInfo(newWidth, newHeight, colorType: colorType, alphaType: alphaType);
+  }
+  
+  /// Creates a copy with different color type
+  SKImageInfo withColorType(int newColorType) {
+    return SKImageInfo(width, height, colorType: newColorType, alphaType: alphaType);
+  }
+  
+  /// Creates a copy with different alpha type  
+  SKImageInfo withAlphaType(int newAlphaType) {
+    return SKImageInfo(width, height, colorType: colorType, alphaType: newAlphaType);
+  }
+  
+  @override
+  String toString() => 'SKImageInfo($width x $height, colorType=$colorType, alphaType=$alphaType)';
+  
+  @override
+  bool operator ==(Object other) =>
+      other is SKImageInfo &&
+      other.width == width &&
+      other.height == height &&
+      other.colorType == colorType &&
+      other.alphaType == alphaType;
+  
+  @override
+  int get hashCode => Object.hash(width, height, colorType, alphaType);
+}

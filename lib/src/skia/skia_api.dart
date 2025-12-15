@@ -31,32 +31,6 @@ import 'generated/skiasharp_bindings.dart';
 import 'sk_color.dart';
 import 'sk_geometry.dart';
 
-/// Pixel color type
-enum SKColorType {
-  unknown,
-  alpha8,
-  rgb565,
-  argb4444,
-  rgba8888,
-  rgb888x,
-  bgra8888,
-  rgba1010102,
-  bgra1010102,
-  rgb101010x,
-  bgr101010x,
-  gray8,
-  rgbaF16Normalized,
-  rgbaF16,
-  rgbaF32,
-  r8g8UnormA,
-  a16Float,
-  r16g16Float,
-  a16UNorm,
-  r16g16UNorm,
-  r16g16b16a16UNorm,
-  srgba8888,
-}
-
 /// Main Skia API facade class
 ///
 /// This is the single entry point for Skia functionality. All Skia objects
@@ -147,7 +121,7 @@ class Skia {
   SkiaSurface? createSurface(
     int width,
     int height, {
-    SKColorType colorType = SKColorType.rgba8888,
+    int colorType = ColorType.rgba8888,
   }) {
     if (width <= 0 || height <= 0) return null;
 
@@ -155,8 +129,8 @@ class Skia {
     try {
       info.ref.width = width;
       info.ref.height = height;
-      info.ref.colorType = colorType.index;
-      info.ref.alphaType = _SKAlphaType.premul.index;
+      info.ref.colorType = colorType;
+      info.ref.alphaType = AlphaType.premul;
       info.ref.colorspace = ffi.nullptr;
 
       final handle = _bindings.sk_surface_new_raster(
@@ -471,7 +445,7 @@ class Skia {
   SkiaBitmap createBitmap(
     int width,
     int height, {
-    SKColorType colorType = SKColorType.rgba8888,
+    int colorType = ColorType.rgba8888,
   }) {
     final handle = _bindings.sk_bitmap_new();
     if (handle == ffi.nullptr) {
@@ -482,8 +456,8 @@ class Skia {
     try {
       info.ref.width = width;
       info.ref.height = height;
-      info.ref.colorType = colorType.index;
-      info.ref.alphaType = _SKAlphaType.premul.index;
+      info.ref.colorType = colorType;
+      info.ref.alphaType = AlphaType.premul;
       info.ref.colorspace = ffi.nullptr;
 
       final success = _bindings.sk_bitmap_try_alloc_pixels(
@@ -536,17 +510,6 @@ final class _SKPngEncoderOptions extends ffi.Struct {
   external ffi.Pointer<ffi.Void> fICCProfile;
   
   external ffi.Pointer<ffi.Void> fICCProfileDescription;
-}
-
-/// Internal alpha type enum
-enum _SKAlphaType {
-  // ignore: unused_field
-  unknown,
-  // ignore: unused_field
-  opaque,
-  premul,
-  // ignore: unused_field
-  unpremul,
 }
 
 // ==================== Skia Surface ====================
@@ -1179,6 +1142,26 @@ class SkiaFont {
     _bindings.sk_font_set_force_auto_hinting(_handle, value);
   }
 
+  bool get isEmbolden {
+    _checkDisposed();
+    return _bindings.sk_font_is_embolden(_handle);
+  }
+
+  set isEmbolden(bool value) {
+    _checkDisposed();
+    _bindings.sk_font_set_embolden(_handle, value);
+  }
+
+  bool get isLinearMetrics {
+    _checkDisposed();
+    return _bindings.sk_font_is_linear_metrics(_handle);
+  }
+
+  set isLinearMetrics(bool value) {
+    _checkDisposed();
+    _bindings.sk_font_set_linear_metrics(_handle, value);
+  }
+
   FontEdging get edging {
     _checkDisposed();
     return FontEdging.values[_bindings.sk_font_get_edging(_handle).address];
@@ -1532,8 +1515,8 @@ class SkiaImage {
       try {
         info.ref.width = w;
         info.ref.height = h;
-        info.ref.colorType = SKColorType.rgba8888.index;
-        info.ref.alphaType = _SKAlphaType.premul.index;
+        info.ref.colorType = ColorType.rgba8888;
+        info.ref.alphaType = AlphaType.premul;
         info.ref.colorspace = ffi.nullptr;
         
         final success = _bindings.sk_image_read_pixels(
@@ -1598,8 +1581,8 @@ class SkiaImage {
           try {
             info.ref.width = w;
             info.ref.height = h;
-            info.ref.colorType = SKColorType.rgba8888.index;
-            info.ref.alphaType = _SKAlphaType.premul.index;
+            info.ref.colorType = ColorType.rgba8888;
+            info.ref.alphaType = AlphaType.premul;
             info.ref.colorspace = ffi.nullptr;
             
             if (!_bindings.sk_image_read_pixels(
@@ -1710,8 +1693,8 @@ class SkiaImage {
       info.ref.colorspace = ffi.nullptr;
       info.ref.width = w;
       info.ref.height = h;
-      info.ref.colorType = SKColorType.rgba8888.index;
-      info.ref.alphaType = _SKAlphaType.premul.index;
+      info.ref.colorType = ColorType.rgba8888;
+      info.ref.alphaType = AlphaType.premul;
       
       // Create pixmap with our buffer
       final pixmap = _bindings.sk_pixmap_new_with_params(

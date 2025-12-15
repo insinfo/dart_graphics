@@ -323,6 +323,209 @@ class AggCanvasRenderingContext2D implements ICanvasRenderingContext2D {
     return double.tryParse(value) ?? 0;
   }
   
+  // ==================== Shadow Helpers ====================
+  
+  /// Returns whether shadow should be drawn
+  bool _shouldDrawShadow() {
+    final shadowColor = _parseShadowColor();
+    // Shadow is only drawn if color has non-zero alpha and there's offset or blur
+    if (shadowColor.alpha == 0) return false;
+    return _state.shadowBlur > 0 || 
+           _state.shadowOffsetX != 0 || 
+           _state.shadowOffsetY != 0;
+  }
+  
+  /// Parses the shadow color string to a Color
+  Color _parseShadowColor() {
+    return _parseColor(_state.shadowColor);
+  }
+  
+  /// Applies box blur to a buffer (3-pass approximation of Gaussian blur)
+  void _applyBoxBlur(ImageBuffer buffer, double radius) {
+    if (radius <= 0) return;
+    
+    final r = radius.ceil();
+    final w = buffer.width;
+    final h = buffer.height;
+    final pixels = buffer.getBuffer();
+    
+    // Create temporary buffer for the intermediate result
+    final temp = Uint8List(pixels.length);
+    
+    // 3-pass box blur approximation of Gaussian blur
+    for (int pass = 0; pass < 3; pass++) {
+      // Horizontal pass
+      for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+          int sumR = 0, sumG = 0, sumB = 0, sumA = 0;
+          int count = 0;
+          
+          for (int dx = -r; dx <= r; dx++) {
+            final nx = x + dx;
+            if (nx >= 0 && nx < w) {
+              final offset = (y * w + nx) * 4;
+              sumR += pixels[offset];
+              sumG += pixels[offset + 1];
+              sumB += pixels[offset + 2];
+              sumA += pixels[offset + 3];
+              count++;
+            }
+          }
+          
+          final offset = (y * w + x) * 4;
+          temp[offset] = sumR ~/ count;
+          temp[offset + 1] = sumG ~/ count;
+          temp[offset + 2] = sumB ~/ count;
+          temp[offset + 3] = sumA ~/ count;
+        }
+      }
+      
+      // Copy temp back to pixels for vertical pass
+      pixels.setAll(0, temp);
+      
+      // Vertical pass
+      for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+          int sumR = 0, sumG = 0, sumB = 0, sumA = 0;
+          int count = 0;
+          
+          for (int dy = -r; dy <= r; dy++) {
+            final ny = y + dy;
+            if (ny >= 0 && ny < h) {
+              final offset = (ny * w + x) * 4;
+              sumR += pixels[offset];
+              sumG += pixels[offset + 1];
+              sumB += pixels[offset + 2];
+              sumA += pixels[offset + 3];
+              count++;
+            }
+          }
+          
+          final offset = (y * w + x) * 4;
+          temp[offset] = sumR ~/ count;
+          temp[offset + 1] = sumG ~/ count;
+          temp[offset + 2] = sumB ~/ count;
+          temp[offset + 3] = sumA ~/ count;
+        }
+      }
+      
+      // Copy temp back to pixels
+      pixels.setAll(0, temp);
+    }
+  }
+  
+  /// Draws a shadow for the given vertex storage
+  void _drawShadow(VertexStorage vs, {bool isFill = true}) {
+    if (!_shouldDrawShadow()) return;
+    
+    final shadowColor = _parseShadowColor();
+    final offsetX = _state.shadowOffsetX;
+    final offsetY = _state.shadowOffsetY;
+    final blur = _state.shadowBlur;
+    
+    // Calculate the bounding box of the path
+    double minX = double.infinity, minY = double.infinity;
+    double maxX = double.negativeInfinity, maxY = double.negativeInfinity;
+    
+    for (final v in vs.vertices()) {
+      if (v.x < minX) minX = v.x;
+      if (v.y < minY) minY = v.y;
+      if (v.x > maxX) maxX = v.x;
+      if (v.y > maxY) maxY = v.y;
+    }
+    
+    // Expand bounds for blur radius and offset
+    final blurExpand = (blur * 2).ceil();
+    final bufferX = (minX + offsetX - blurExpand).floor().clamp(0, _buffer.width - 1);
+    final bufferY = (minY + offsetY - blurExpand).floor().clamp(0, _buffer.height - 1);
+    final bufferW = ((maxX - minX + blurExpand * 2).ceil() + 1).clamp(1, _buffer.width - bufferX);
+    final bufferH = ((maxY - minY + blurExpand * 2).ceil() + 1).clamp(1, _buffer.height - bufferY);
+    
+    if (bufferW <= 0 || bufferH <= 0) return;
+    
+    // Create a temporary buffer for the shadow
+    final shadowBuffer = ImageBuffer(bufferW, bufferH);
+    final shadowGraphics = BasicGraphics2D(shadowBuffer);
+    
+    // Translate the path to draw in the shadow buffer
+    final translatedVs = VertexStorage();
+    for (final v in vs.vertices()) {
+      final newX = v.x - bufferX + offsetX;
+      final newY = v.y - bufferY + offsetY;
+      
+      if (v.command.isMoveTo) {
+        translatedVs.moveTo(newX, newY);
+      } else if (v.command.isLineTo) {
+        translatedVs.lineTo(newX, newY);
+      } else if (v.command.isClose) {
+        translatedVs.closePath();
+      }
+    }
+    
+    // Draw the shape in shadow color
+    if (isFill) {
+      shadowGraphics.render(translatedVs, shadowColor);
+    } else {
+      // For stroke, we need to draw lines
+      final vertices = translatedVs.vertices().toList();
+      ({double x, double y})? firstPoint;
+      ({double x, double y})? lastPoint;
+      
+      for (final v in vertices) {
+        if (v.command.isMoveTo) {
+          firstPoint = (x: v.x, y: v.y);
+          lastPoint = firstPoint;
+        } else if (v.command.isLineTo && lastPoint != null) {
+          shadowGraphics.drawLine(
+            lastPoint.x, lastPoint.y, v.x, v.y,
+            shadowColor,
+            thickness: _state.lineWidth,
+          );
+          lastPoint = (x: v.x, y: v.y);
+        } else if (v.command.isClose && lastPoint != null && firstPoint != null) {
+          shadowGraphics.drawLine(
+            lastPoint.x, lastPoint.y, firstPoint.x, firstPoint.y,
+            shadowColor,
+            thickness: _state.lineWidth,
+          );
+          lastPoint = firstPoint;
+        }
+      }
+    }
+    
+    // Apply blur if needed
+    if (blur > 0) {
+      _applyBoxBlur(shadowBuffer, blur / 2);
+    }
+    
+    // Blend the shadow buffer onto the main buffer
+    for (int y = 0; y < bufferH; y++) {
+      final destY = bufferY + y;
+      if (destY < 0 || destY >= _buffer.height) continue;
+      
+      for (int x = 0; x < bufferW; x++) {
+        final destX = bufferX + x;
+        if (destX < 0 || destX >= _buffer.width) continue;
+        
+        final shadowPixel = shadowBuffer.getPixel(x, y);
+        if (shadowPixel.alpha > 0) {
+          _buffer.BlendPixel(destX, destY, shadowPixel, shadowPixel.alpha);
+        }
+      }
+    }
+  }
+  
+  /// Draws a shadow for a rectangle
+  void _drawRectShadow(double x1, double y1, double x2, double y2, {bool isFill = true}) {
+    final vs = VertexStorage();
+    vs.moveTo(x1, y1);
+    vs.lineTo(x2, y1);
+    vs.lineTo(x2, y2);
+    vs.lineTo(x1, y2);
+    vs.closePath();
+    _drawShadow(vs, isFill: isFill);
+  }
+  
   // ==================== Line Styles ====================
   
   /// Line width for strokes
@@ -634,6 +837,10 @@ class AggCanvasRenderingContext2D implements ICanvasRenderingContext2D {
     }
     
     final vs = path.toVertexStorage();
+    
+    // Draw shadow first if enabled
+    _drawShadow(vs, isFill: true);
+    
     final fillColor = _getFillColor();
     _graphics.render(vs, fillColor);
   }
@@ -646,11 +853,14 @@ class AggCanvasRenderingContext2D implements ICanvasRenderingContext2D {
       p = path;
     }
     
-    final strokeColor = _getStrokeColor();
-    final strokeWidth = _state.lineWidth;
-    
     // Convert path to flattened list of points
     final vs = p.toVertexStorageFlattened();
+    
+    // Draw shadow first if enabled
+    _drawShadow(vs, isFill: false);
+    
+    final strokeColor = _getStrokeColor();
+    final strokeWidth = _state.lineWidth;
     
     // Collect all points for each subpath
     final subpaths = <List<({double x, double y})>>[];
@@ -826,8 +1036,16 @@ class AggCanvasRenderingContext2D implements ICanvasRenderingContext2D {
     if (isSimpleTransform) {
       // Simple case: only translation and scale
       final tp = t.transformPoint(x, y);
+      final x1 = tp.x;
+      final y1 = tp.y;
+      final x2 = tp.x + width * t.a;
+      final y2 = tp.y + height * t.d;
+      
+      // Draw shadow first if enabled
+      _drawRectShadow(x1, y1, x2, y2, isFill: true);
+      
       final fillColor = _getFillColor();
-      _graphics.fillRect(tp.x, tp.y, tp.x + width * t.a, tp.y + height * t.d, fillColor);
+      _graphics.fillRect(x1, y1, x2, y2, fillColor);
     } else {
       // Complex transform: transform all 4 corners and draw as polygon
       final p1 = t.transformPoint(x, y);
@@ -841,6 +1059,9 @@ class AggCanvasRenderingContext2D implements ICanvasRenderingContext2D {
       vs.lineTo(p3.x, p3.y);
       vs.lineTo(p4.x, p4.y);
       vs.closePath();
+      
+      // Draw shadow first if enabled
+      _drawShadow(vs, isFill: true);
       
       final fillColor = _getFillColor();
       _graphics.render(vs, fillColor);
@@ -857,14 +1078,32 @@ class AggCanvasRenderingContext2D implements ICanvasRenderingContext2D {
     if (isSimpleTransform) {
       // Simple case: only translation and scale
       final tp = t.transformPoint(x, y);
+      final x1 = tp.x;
+      final y1 = tp.y;
+      final x2 = tp.x + width * t.a;
+      final y2 = tp.y + height * t.d;
+      
+      // Draw shadow first if enabled
+      _drawRectShadow(x1, y1, x2, y2, isFill: false);
+      
       final strokeColor = _getStrokeColor();
-      _graphics.strokeRect(tp.x, tp.y, tp.x + width * t.a, tp.y + height * t.d, strokeColor, thickness: _state.lineWidth);
+      _graphics.strokeRect(x1, y1, x2, y2, strokeColor, thickness: _state.lineWidth);
     } else {
       // Complex transform: draw as path
       final p1 = t.transformPoint(x, y);
       final p2 = t.transformPoint(x + width, y);
       final p3 = t.transformPoint(x + width, y + height);
       final p4 = t.transformPoint(x, y + height);
+      
+      final vs = VertexStorage();
+      vs.moveTo(p1.x, p1.y);
+      vs.lineTo(p2.x, p2.y);
+      vs.lineTo(p3.x, p3.y);
+      vs.lineTo(p4.x, p4.y);
+      vs.closePath();
+      
+      // Draw shadow first if enabled
+      _drawShadow(vs, isFill: false);
       
       final strokeColor = _getStrokeColor();
       final strokeWidth = _state.lineWidth;

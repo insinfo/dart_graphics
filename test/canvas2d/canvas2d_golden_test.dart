@@ -43,81 +43,81 @@ int compareImages(img.Image a, img.Image b, {int tolerance = 5}) {
 void drawTestPattern(dynamic ctx) {
   // Clear with white background
   ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, 400, 300);
+  ctx.fillRect(0.0, 0.0, 400.0, 300.0);
 
   // 1. Filled rectangle (Red)
   ctx.fillStyle = '#FF0000';
-  ctx.fillRect(25, 25, 50, 40);
+  ctx.fillRect(25.0, 25.0, 50.0, 40.0);
 
   // 2. Stroked rectangle (Blue)
   ctx.strokeStyle = '#0000FF';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(100, 25, 50, 40);
+  ctx.lineWidth = 3.0;
+  ctx.strokeRect(100.0, 25.0, 50.0, 40.0);
 
   // 3. Filled circle (Cyan)
   ctx.beginPath();
-  ctx.arc(225, 45, 20, 0, 2 * math.pi);
+  ctx.arc(225.0, 45.0, 20.0, 0.0, 2 * math.pi);
   ctx.fillStyle = '#00FFFF';
   ctx.fill();
 
   // 4. Stroked circle (Purple)
   ctx.beginPath();
-  ctx.arc(300, 45, 20, 0, 2 * math.pi);
+  ctx.arc(300.0, 45.0, 20.0, 0.0, 2 * math.pi);
   ctx.strokeStyle = 'purple';
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 4.0;
   ctx.stroke();
 
   // 5. Filled triangle
   ctx.beginPath();
   ctx.fillStyle = '#2ECC71';
-  ctx.moveTo(50, 90);
-  ctx.lineTo(25, 150);
-  ctx.lineTo(75, 150);
+  ctx.moveTo(50.0, 90.0);
+  ctx.lineTo(25.0, 150.0);
+  ctx.lineTo(75.0, 150.0);
   ctx.closePath();
   ctx.fill();
 
   // 6. Stroked triangle
   ctx.beginPath();
   ctx.strokeStyle = '#E74C3C';
-  ctx.lineWidth = 3;
-  ctx.moveTo(125, 90);
-  ctx.lineTo(100, 150);
-  ctx.lineTo(150, 150);
+  ctx.lineWidth = 3.0;
+  ctx.moveTo(125.0, 90.0);
+  ctx.lineTo(100.0, 150.0);
+  ctx.lineTo(150.0, 150.0);
   ctx.closePath();
   ctx.stroke();
 
   // 7. Pac-man (arc)
   ctx.beginPath();
   ctx.fillStyle = '#F1C40F';
-  ctx.moveTo(225, 120);
-  ctx.arc(225, 120, 30, 0.3, 2 * math.pi - 0.3);
+  ctx.moveTo(225.0, 120.0);
+  ctx.arc(225.0, 120.0, 30.0, 0.3, 2 * math.pi - 0.3);
   ctx.closePath();
   ctx.fill();
 
   // 8. Bezier curve
   ctx.beginPath();
   ctx.strokeStyle = '#00BCD4';
-  ctx.lineWidth = 4;
-  ctx.moveTo(275, 100);
-  ctx.quadraticCurveTo(310, 80, 350, 140);
+  ctx.lineWidth = 4.0;
+  ctx.moveTo(275.0, 100.0);
+  ctx.quadraticCurveTo(310.0, 80.0, 350.0, 140.0);
   ctx.stroke();
 
   // 9. Dashed line
-  ctx.setLineDash([10, 5]);
+  ctx.setLineDash([10.0, 5.0]);
   ctx.strokeStyle = '#607D8B';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.0;
   ctx.beginPath();
-  ctx.moveTo(25, 200);
-  ctx.lineTo(375, 200);
+  ctx.moveTo(25.0, 200.0);
+  ctx.lineTo(375.0, 200.0);
   ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.setLineDash(<double>[]);
 
   // 10. Rotated rectangle
   ctx.save();
-  ctx.translate(300, 250);
+  ctx.translate(300.0, 250.0);
   ctx.rotate(math.pi / 6);
   ctx.fillStyle = 'rgba(128, 0, 128, 0.7)';
-  ctx.fillRect(-25, -15, 50, 30);
+  ctx.fillRect(-25.0, -15.0, 50.0, 30.0);
   ctx.restore();
 }
 
@@ -149,26 +149,26 @@ void main() {
       final ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, 100, 100);
+      ctx.fillRect(0.0, 0.0, 100.0, 100.0);
       
       // Draw horizontal line with thickness 3
       ctx.strokeStyle = 'black';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.0;
       ctx.beginPath();
-      ctx.moveTo(10, 25);
-      ctx.lineTo(90, 25);
+      ctx.moveTo(10.0, 25.0);
+      ctx.lineTo(90.0, 25.0);
       ctx.stroke();
       
       // Draw vertical line with thickness 3
       ctx.beginPath();
-      ctx.moveTo(50, 40);
-      ctx.lineTo(50, 90);
+      ctx.moveTo(50.0, 40.0);
+      ctx.lineTo(50.0, 90.0);
       ctx.stroke();
       
       // Draw diagonal line with thickness 3
       ctx.beginPath();
-      ctx.moveTo(10, 50);
-      ctx.lineTo(40, 90);
+      ctx.moveTo(10.0, 50.0);
+      ctx.lineTo(40.0, 90.0);
       ctx.stroke();
       
       final path = 'test/tmp/canvas2d_agg_lines.png';
@@ -202,14 +202,14 @@ void main() {
       final ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, 100, 100);
+      ctx.fillRect(0.0, 0.0, 100.0, 100.0);
       
       // Draw rotated rectangle
       ctx.save();
-      ctx.translate(50, 50);
+      ctx.translate(50.0, 50.0);
       ctx.rotate(math.pi / 4);
       ctx.fillStyle = 'red';
-      ctx.fillRect(-20, -10, 40, 20);
+      ctx.fillRect(-20.0, -10.0, 40.0, 20.0);
       ctx.restore();
       
       final path = 'test/tmp/canvas2d_agg_transform.png';
@@ -261,14 +261,14 @@ void main() {
       final ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, 200, 50);
+      ctx.fillRect(0.0, 0.0, 200.0, 50.0);
       
-      ctx.setLineDash([10, 5]);
+      ctx.setLineDash([10.0, 5.0]);
       ctx.strokeStyle = 'black';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.0;
       ctx.beginPath();
-      ctx.moveTo(10, 25);
-      ctx.lineTo(190, 25);
+      ctx.moveTo(10.0, 25.0);
+      ctx.lineTo(190.0, 25.0);
       ctx.stroke();
       
       final path = 'test/tmp/canvas2d_skia_dash.png';
@@ -301,13 +301,13 @@ void main() {
       final ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, 100, 100);
+      ctx.fillRect(0.0, 0.0, 100.0, 100.0);
       
       // Draw pac-man shape
       ctx.beginPath();
       ctx.fillStyle = 'yellow';
-      ctx.moveTo(50, 50);
-      ctx.arc(50, 50, 30, 0.3, 2 * math.pi - 0.3);
+      ctx.moveTo(50.0, 50.0);
+      ctx.arc(50.0, 50.0, 30.0, 0.3, 2 * math.pi - 0.3);
       ctx.closePath();
       ctx.fill();
       

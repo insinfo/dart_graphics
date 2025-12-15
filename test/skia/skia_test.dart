@@ -51,7 +51,8 @@ void main() {
     });
 
     test('should parse hex string with alpha', () {
-      final color = SKColor.parse('#80FF8040');
+      // CSS format: #RRGGBBAA
+      final color = SKColor.parse('#FF804080');
       expect(color.alpha, 0x80);
       expect(color.red, 0xFF);
       expect(color.green, 0x80);
@@ -749,25 +750,24 @@ void main() {
     });
   });
 
-  // TODO: SKImageInfo not exposed in new OOP API
-  // group('SKImageInfo', () {
-  //   test('should calculate byte sizes', () {
-  //     final info = SKImageInfo(100, 100);
-  //     expect(info.width, 100);
-  //     expect(info.height, 100);
-  //     expect(info.bytesPerPixel, 4);
-  //     expect(info.rowBytes, 400);
-  //     expect(info.byteSize, 40000);
-  //   });
+  group('SKImageInfo', () {
+    test('should calculate byte sizes', () {
+      final info = SKImageInfo(100, 100);
+      expect(info.width, 100);
+      expect(info.height, 100);
+      expect(info.bytesPerPixel, 4);
+      expect(info.rowBytes, 400);
+      expect(info.byteSize, 40000);
+    });
 
-  //   test('should detect empty', () {
-  //     final info = SKImageInfo(0, 0);
-  //     expect(info.isEmpty, isTrue);
+    test('should detect empty', () {
+      final info = SKImageInfo(0, 0);
+      expect(info.isEmpty, isTrue);
 
-  //     final valid = SKImageInfo(100, 100);
-  //     expect(valid.isEmpty, isFalse);
-  //   });
-  // });
+      final valid = SKImageInfo(100, 100);
+      expect(valid.isEmpty, isFalse);
+    });
+  });
 
   // ═══════════════════════════════════════════════════════════
   // Font and Text Tests
@@ -896,24 +896,23 @@ void main() {
       font.dispose();
     });
 
-    // TODO: Add isEmbolden, isLinearMetrics to SkiaFont API
-    // test('should set and get embolden', () {
-    //   final font = skia.createFont();
-    //   font.isEmbolden = true;
-    //   expect(font.isEmbolden, isTrue);
-    //   font.isEmbolden = false;
-    //   expect(font.isEmbolden, isFalse);
-    //   font.dispose();
-    // });
+    test('should set and get embolden', () {
+      final font = skia.createFont();
+      font.isEmbolden = true;
+      expect(font.isEmbolden, isTrue);
+      font.isEmbolden = false;
+      expect(font.isEmbolden, isFalse);
+      font.dispose();
+    });
 
-    // test('should set and get linear metrics', () {
-    //   final font = skia.createFont();
-    //   font.isLinearMetrics = true;
-    //   expect(font.isLinearMetrics, isTrue);
-    //   font.isLinearMetrics = false;
-    //   expect(font.isLinearMetrics, isFalse);
-    //   font.dispose();
-    // });
+    test('should set and get linear metrics', () {
+      final font = skia.createFont();
+      font.isLinearMetrics = true;
+      expect(font.isLinearMetrics, isTrue);
+      font.isLinearMetrics = false;
+      expect(font.isLinearMetrics, isFalse);
+      font.dispose();
+    });
 
     // test('should get typeface from font', () {
     //   final typeface = skia.loadTypeface(liberationSansPath)!;
@@ -1051,32 +1050,31 @@ void main() {
       surface.dispose();
     });
 
-    // TODO: isEmbolden not implemented in SkiaFont
-    // test('should draw text with synthetic bold (embolden)', () {
-    //   final surface = skia.createSurface(400, 150)!;
-    //   final canvas = surface.canvas;
-    //   canvas.clear(SKColors.white);
+    test('should draw text with synthetic bold (embolden)', () {
+      final surface = skia.createSurface(400, 150)!;
+      final canvas = surface.canvas;
+      canvas.clear(SKColors.white);
 
-    //   final typeface = skia.loadTypeface(liberationSansPath)!;
-    //   final paint = skia.createPaint()
-    //     ..color = SKColors.black
-    //     ..isAntialias = true;
+      final typeface = skia.loadTypeface(liberationSansPath)!;
+      final paint = skia.createPaint()
+        ..color = SKColors.black
+        ..isAntialias = true;
 
-    //   // Regular
-    //   final regularFont = skia.createFontFromTypeface(typeface, size: 24);
-    //   canvas.drawSimpleText('Regular Text', 20, 50, regularFont, paint);
+      // Regular
+      final regularFont = skia.createFontFromTypeface(typeface, size: 24);
+      canvas.drawSimpleText('Regular Text', 20, 50, regularFont, paint);
 
-    //   // Synthetic bold
-    //   final boldFont = skia.createFontFromTypeface(typeface, size: 24)
-    //     ..isEmbolden = true;
-    //   canvas.drawSimpleText('Emboldened Text', 20, 100, boldFont, paint);
+      // Synthetic bold
+      final boldFont = skia.createFontFromTypeface(typeface, size: 24)
+        ..isEmbolden = true;
+      canvas.drawSimpleText('Emboldened Text', 20, 100, boldFont, paint);
 
-    //   paint.dispose();
-    //   regularFont.dispose();
-    //   boldFont.dispose();
-    //   typeface.dispose();
-    //   surface.dispose();
-    // });
+      paint.dispose();
+      regularFont.dispose();
+      boldFont.dispose();
+      typeface.dispose();
+      surface.dispose();
+    });
 
     test('should draw text with synthetic italic (skew)', () {
       final surface = skia.createSurface(400, 150)!;
