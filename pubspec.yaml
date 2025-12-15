@@ -21,6 +21,7 @@ dev_dependencies:
   ffigen: ^19.0.0
   http: ^1.6.0
   path: ^1.9.1
+  benchmark_harness: ^2.3.1
   
   # glfw: ^0.2.4
   # pedantic: ^1.0.0
