@@ -1,8 +1,8 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/vertex_source/ivertex_source.dart';
-import 'package:agg/src/agg/vertex_source/path_commands.dart';
-import 'package:agg/src/agg/vertex_source/vertex_data.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/vertex_source/ivertex_source.dart';
+import 'package:dart_graphics/src/agg/vertex_source/path_commands.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_data.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 /// Status of text rendering
 enum _GsvTextStatus {

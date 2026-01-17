@@ -1,4 +1,4 @@
-import 'package:agg/src/agg/agg_math.dart';
+import 'package:dart_graphics/src/agg/agg_math.dart';
 
 /// Vertex (x, y) with distance to next vertex; implements [XY] for area helpers.
 class VertexDistance implements XY {

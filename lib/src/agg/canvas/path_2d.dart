@@ -4,7 +4,7 @@
 
 import 'dart:math' as math;
 
-import 'package:agg/src/shared/canvas2d/canvas2d.dart';
+import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
 
 import '../vertex_source/vertex_storage.dart';
 import 'canvas_rendering_context_2d.dart';

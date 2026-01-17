@@ -1,11 +1,11 @@
 /// Debug: Verificar vértices gerados para a letra "o"
 
 import 'dart:io';
-import 'package:agg/src/shared/ref_param.dart';
-import 'package:agg/src/agg/vertex_source/glyph_vertex_source.dart';
-import 'package:agg/src/agg/vertex_source/flatten_curve.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/vertex_source/glyph_vertex_source.dart';
+import 'package:dart_graphics/src/agg/vertex_source/flatten_curve.dart';
 
-import 'package:agg/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 
 
 void main() async {

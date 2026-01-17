@@ -6,7 +6,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:agg/cairo.dart';
+import 'package:dart_graphics/cairo.dart';
 
 /// Font paths - same fonts used by AGG tests for fair comparison
 const _liberationSansRegular = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';

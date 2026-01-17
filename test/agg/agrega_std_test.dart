@@ -3,17 +3,17 @@
 
 import 'dart:io';
 import 'package:test/test.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_packed8.dart';
-import 'package:agg/src/agg/scanline_bin.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/vertex_source/stroke.dart';
-import 'package:agg/src/agg/vertex_source/stroke_math.dart';
-import 'package:agg/src/agg/agg_gamma_functions.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_packed8.dart';
+import 'package:dart_graphics/src/agg/scanline_bin.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke_math.dart';
+import 'package:dart_graphics/src/agg/agg_gamma_functions.dart';
 
 import '../test_utils/image_compare.dart';
 

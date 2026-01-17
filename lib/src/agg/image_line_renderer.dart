@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/agg/agg_pattern_filters_rgba.dart';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/line_aa_basics.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/agg_pattern_filters_rgba.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/line_aa_basics.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 class LineImagePattern extends ImageBuffer {
   late IPatternFilter _filter;

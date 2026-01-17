@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 abstract class IThresholdFunction {
   double transform(Color color);

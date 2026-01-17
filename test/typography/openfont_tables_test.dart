@@ -3,20 +3,20 @@
 
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
-import 'package:agg/src/typography/openfont/glyph.dart';
-import 'package:agg/src/typography/openfont/typeface.dart';
-import 'package:agg/src/typography/openfont/tables/head.dart';
-import 'package:agg/src/typography/openfont/tables/maxp.dart';
-import 'package:agg/src/typography/openfont/tables/hhea.dart';
-import 'package:agg/src/typography/openfont/tables/os2.dart';
-import 'package:agg/src/typography/openfont/tables/hmtx.dart';
-import 'package:agg/src/typography/openfont/tables/name_entry.dart';
-import 'package:agg/src/typography/openfont/tables/cmap.dart';
-import 'package:agg/src/typography/openfont/tables/loca.dart';
-import 'package:agg/src/typography/openfont/tables/table_entry.dart';
-import 'package:agg/src/typography/openfont/tables/utils.dart';
-import 'package:agg/src/typography/openfont/tables/gdef.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/glyph.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/head.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/maxp.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/hhea.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/os2.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/hmtx.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/name_entry.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/cmap.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/loca.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/table_entry.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/utils.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/gdef.dart';
 
 void main() {
   group('ByteOrderSwappingBinaryReader', () {

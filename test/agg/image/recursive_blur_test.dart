@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/image/recursive_blur.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/recursive_blur.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 void main() {
   group('RecursiveBlur', () {

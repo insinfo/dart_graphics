@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/interfaces/iscanline.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/spans/span_allocator.dart';
-import 'package:agg/src/agg/spans/span_generator.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/interfaces/iscanline.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/spans/span_allocator.dart';
+import 'package:dart_graphics/src/agg/spans/span_generator.dart';
 
 /// Helpers to render scanlines into an image buffer.
 class ScanlineRenderer {

@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/svg/svg_paint.dart';
-import 'package:agg/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
 
 enum StrokeLineCap { butt, round, square }
 

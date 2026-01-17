@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
 
 /// A simple PNG encoder.
 class PngEncoder {

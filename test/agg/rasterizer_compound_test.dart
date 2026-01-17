@@ -1,8 +1,8 @@
-import 'package:agg/src/agg/graphics2D.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/rasterizer_compound_aa.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/graphics2D.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/rasterizer_compound_aa.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
 import 'package:test/test.dart';
 
 VertexStorage _rectPath(double x1, double y1, double x2, double y2) {

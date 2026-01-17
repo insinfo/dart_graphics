@@ -1,9 +1,9 @@
-import 'package:agg/src/typography/openfont/glyph.dart';
-import 'package:agg/src/typography/openfont/tables/coverage_table.dart';
-import 'package:agg/src/typography/openfont/tables/gdef.dart';
-import 'package:agg/src/typography/openfont/tables/gpos.dart' as gpos;
-import 'package:agg/src/typography/openfont/tables/gsub.dart' as gsub;
-import 'package:agg/src/typography/openfont/tables/i_glyph_index_list.dart';
+import 'package:dart_graphics/src/typography/openfont/glyph.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/coverage_table.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/gdef.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/gpos.dart' as gpos;
+import 'package:dart_graphics/src/typography/openfont/tables/gsub.dart' as gsub;
+import 'package:dart_graphics/src/typography/openfont/tables/i_glyph_index_list.dart';
 import 'package:test/test.dart';
 
 void main() {

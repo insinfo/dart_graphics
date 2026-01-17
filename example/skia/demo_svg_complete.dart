@@ -1,4 +1,4 @@
-import 'package:agg/skia.dart';
+import 'package:dart_graphics/skia.dart';
 
 /// Global Skia instance
 late final Skia skia;

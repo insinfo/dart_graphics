@@ -1,11 +1,11 @@
 import 'dart:math' as math;
 
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/line_profile_aa.dart';
-import 'package:agg/src/agg/line_aa_basics.dart';
-import 'package:agg/src/agg/primitives/rectangle_int.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/rasterizer_outline_aa.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/line_profile_aa.dart';
+import 'package:dart_graphics/src/agg/line_aa_basics.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/rasterizer_outline_aa.dart';
 
 /// Minimal image-backed line renderer: projects subpixel coords into pixel
 /// space and draws a simple solid line.

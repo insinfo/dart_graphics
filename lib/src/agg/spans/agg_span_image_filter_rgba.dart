@@ -1,14 +1,14 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/agg_image_filters.dart';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
-import 'package:agg/src/agg/primitives/i_color_type.dart';
+import 'package:dart_graphics/src/agg/agg_image_filters.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/agg/primitives/i_color_type.dart';
 import '../image/raster_buffer_accessors.dart';
-import 'package:agg/src/agg/spans/agg_span_image_filter.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
-import 'package:agg/src/shared/ref_param.dart';
-import 'package:agg/src/vector_math/vector2.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_image_filter.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_linear.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/vector_math/vector2.dart';
 import 'dart:math' as math;
 
 class SpanImageFilterRgbaNnStepXby1 extends SpanImageFilter {

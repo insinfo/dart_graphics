@@ -1,4 +1,4 @@
-import 'package:agg/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
 
 class PixelCellAa {
   int x;

@@ -1,11 +1,11 @@
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_unpacked8.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/vertex_source/ivertex_source.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_unpacked8.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/vertex_source/ivertex_source.dart';
 
 enum CompoundLayerOrder { direct, inverse }
 

@@ -1,4 +1,4 @@
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 import 'dart:math' as math;
 import '../agg_math.dart';
 import 'ivertex_source.dart';

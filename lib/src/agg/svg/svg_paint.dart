@@ -1,5 +1,5 @@
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
 
 abstract class SvgPaint {
   const SvgPaint();

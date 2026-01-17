@@ -1,15 +1,15 @@
 import 'dart:typed_data';
-import 'package:agg/src/brotli/brotli.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
-import 'package:agg/src/typography/openfont/open_font_reader.dart';
-import 'package:agg/src/typography/openfont/tables/table_entry.dart';
-import 'package:agg/src/typography/openfont/tables/utils.dart';
-import 'package:agg/src/typography/openfont/typeface.dart';
-import 'package:agg/src/typography/openfont/tables/glyf.dart';
-import 'package:agg/src/typography/openfont/tables/loca.dart';
-import 'package:agg/src/typography/openfont/glyph.dart';
-import 'package:agg/src/typography/openfont/webfont/woff2_utils.dart';
-import 'package:agg/src/typography/openfont/tables/utils.dart' as utils;
+import 'package:dart_graphics/src/brotli/brotli.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/table_entry.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/utils.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/glyf.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/loca.dart';
+import 'package:dart_graphics/src/typography/openfont/glyph.dart';
+import 'package:dart_graphics/src/typography/openfont/webfont/woff2_utils.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/utils.dart' as utils;
 
 class Woff2Header {
   late int flavor;

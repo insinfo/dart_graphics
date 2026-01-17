@@ -2,9 +2,9 @@
 
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/image/rgba.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/gamma_lookup_table.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/gamma_lookup_table.dart';
 
 /// Base class for BGR/RGB blenders with 24-bit pixel format.
 abstract class BlenderBaseBgr {

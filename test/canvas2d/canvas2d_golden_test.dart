@@ -9,9 +9,9 @@ import 'dart:math' as math;
 import 'package:test/test.dart';
 import 'package:image/image.dart' as img;
 
-import 'package:agg/src/agg/canvas/canvas.dart';
-import 'package:agg/skia_canvas.dart';
-import 'package:agg/cairo.dart';
+import 'package:dart_graphics/src/agg/canvas/canvas.dart';
+import 'package:dart_graphics/skia_canvas.dart';
+import 'package:dart_graphics/cairo.dart';
 
 /// Compare two images with tolerance
 /// Returns the number of different pixels

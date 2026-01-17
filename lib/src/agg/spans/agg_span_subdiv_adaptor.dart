@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/transform/i_transform.dart';
-import 'package:agg/src/agg/util.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
+import 'package:dart_graphics/src/agg/transform/i_transform.dart';
+import 'package:dart_graphics/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_linear.dart';
 
 class SpanSubdivAdaptor implements ISpanInterpolator {
   int m_subdiv_shift;

@@ -6,8 +6,8 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
 
 /// Blender for grayscale images using ITU-R BT.601 luminance weights.
 /// Converts RGB to grayscale: gray = R*77 + G*151 + B*28 (approximates 0.299R + 0.587G + 0.114B)

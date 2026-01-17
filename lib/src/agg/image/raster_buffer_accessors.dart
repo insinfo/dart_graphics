@@ -1,8 +1,8 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 abstract class IImageBufferAccessor {
   Uint8List span(int x, int y, int len, RefParam<int> bufferIndex);

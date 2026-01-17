@@ -1,7 +1,7 @@
 // Exemplo de uso da biblioteca Typography
 // Este exemplo demonstra como usar as funcionalidades básicas implementadas
 
-import 'package:agg/typography.dart';
+import 'package:dart_graphics/typography.dart';
 
 void main() {
   print('=== Typography Library Example ===\n');

@@ -186,7 +186,7 @@ Parser completo de comandos de caminho SVG:
 ### Exemplo Básico
 
 ```dart
-import 'package:agg/skia.dart';
+import 'package:dart_graphics/skia.dart';
 
 void main() {
   // Carregar SkiaSharp

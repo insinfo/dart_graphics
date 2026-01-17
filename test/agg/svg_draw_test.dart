@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/graphics2D.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/graphics2D.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 import 'package:test/test.dart';
 
 void main() {

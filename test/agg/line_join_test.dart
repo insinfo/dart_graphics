@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'package:test/test.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_unpacked8.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/vertex_source/stroke.dart';
-import 'package:agg/src/agg/vertex_source/stroke_math.dart';
-import 'package:agg/src/agg/vertex_source/gsv_text.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_unpacked8.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke_math.dart';
+import 'package:dart_graphics/src/agg/vertex_source/gsv_text.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
 import '../test_utils/png_golden.dart';
 
 void main() {

@@ -4,8 +4,8 @@
 
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/rgba.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 /// BGRA Blender with premultiplied alpha and poly color support.
 ///

@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
-import 'package:agg/src/typography/openfont/tables/variations/variation_calculator.dart';
-import 'package:agg/src/typography/openfont/tables/variations/item_variation_store.dart';
-import 'package:agg/src/typography/openfont/tables/variations/tuple_variation.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/variations/variation_calculator.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/variations/item_variation_store.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/variations/tuple_variation.dart';
 
 void main() {
   group('VariationCoordinates', () {

@@ -1,5 +1,5 @@
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
 
 abstract class IColorType {
   ColorF toColorF();

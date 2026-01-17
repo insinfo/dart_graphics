@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/spans/span_gouraud_rgba.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/spans/span_gouraud_rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 void main() {
   group('SpanGouraudRgba', () {

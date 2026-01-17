@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
-import 'package:agg/src/typography/openfont/tables/colr.dart';
-import 'package:agg/src/typography/openfont/tables/cpal.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/colr.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/cpal.dart';
 
 void main() {
   group('COLR', () {

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:agg/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
 
 void savePpm(ImageBuffer image, String filename) {
   final file = File(filename);

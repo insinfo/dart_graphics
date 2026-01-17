@@ -1,16 +1,16 @@
 //==================================================rasterizer_scanline_aa
 // Polygon rasterizer that is used to render filled polygons with
 // high-quality Anti-Aliasing. See agg_rasterizer_scanline_aa in AGG.
-import 'package:agg/src/shared/ref_param.dart';
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/agg/agg_gamma_functions.dart';
-import 'package:agg/src/agg/interfaces/iscanline.dart';
-import 'package:agg/src/agg/primitives/rectangle_double.dart';
-import 'package:agg/src/agg/rasterizer_cells_aa.dart';
-import 'package:agg/src/agg/vector_clipper.dart';
-import 'package:agg/src/agg/vertex_source/flatten_curve.dart';
-import 'package:agg/src/agg/vertex_source/ivertex_source.dart';
-import 'package:agg/src/agg/vertex_source/path_commands.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/agg_gamma_functions.dart';
+import 'package:dart_graphics/src/agg/interfaces/iscanline.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_double.dart';
+import 'package:dart_graphics/src/agg/rasterizer_cells_aa.dart';
+import 'package:dart_graphics/src/agg/vector_clipper.dart';
+import 'package:dart_graphics/src/agg/vertex_source/flatten_curve.dart';
+import 'package:dart_graphics/src/agg/vertex_source/ivertex_source.dart';
+import 'package:dart_graphics/src/agg/vertex_source/path_commands.dart';
 
 abstract class IRasterizer {
   int min_x();

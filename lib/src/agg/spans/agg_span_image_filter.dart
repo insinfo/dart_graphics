@@ -1,10 +1,10 @@
-import 'package:agg/src/agg/agg_image_filters.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/agg/agg_image_filters.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
 
 import '../image/raster_buffer_accessors.dart';
-import 'package:agg/src/agg/spans/agg_span_generator.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
-import 'package:agg/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_generator.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_linear.dart';
+import 'package:dart_graphics/src/agg/util.dart';
 
 abstract class SpanImageFilter extends ISpanGenerator {
   late IImageBufferAccessor _imageBufferAccessor;

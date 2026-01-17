@@ -5,7 +5,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:agg/skia.dart';
+import 'package:dart_graphics/skia.dart';
 
 /// Global Skia instance for all tests
 late final Skia skia;

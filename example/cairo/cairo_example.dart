@@ -5,7 +5,7 @@
 /// Requires cairo library to be installed on your system.
 
 import 'dart:math' as math;
-import 'package:agg/cairo.dart';
+import 'package:dart_graphics/cairo.dart';
 
 /// Global Cairo instance for all examples
 final cairo = Cairo();

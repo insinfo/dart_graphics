@@ -2,7 +2,7 @@
 /// 
 /// Represents a pattern that can be used as a fill or stroke style.
 
-import 'package:agg/src/shared/canvas2d/canvas2d.dart';
+import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
 
 import '../image/image_buffer.dart';
 import '../primitives/color.dart';

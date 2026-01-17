@@ -1,4 +1,4 @@
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 /// Reusable span buffer for color-based rendering.
 class SpanAllocator {

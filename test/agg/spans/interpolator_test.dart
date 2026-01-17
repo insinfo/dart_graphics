@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_persp.dart';
-import 'package:agg/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_linear.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_persp.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
 
 
 void main() {

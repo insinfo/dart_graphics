@@ -4,19 +4,19 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_packed8.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/vertex_source/apply_transform.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/vertex_source/ellipse.dart';
-import 'package:agg/src/agg/vertex_source/rounded_rect.dart';
-import 'package:agg/src/agg/vertex_source/stroke.dart';
-import 'package:agg/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_packed8.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/vertex_source/apply_transform.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/vertex_source/ellipse.dart';
+import 'package:dart_graphics/src/agg/vertex_source/rounded_rect.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
 
 void main() {
   setUpAll(() {

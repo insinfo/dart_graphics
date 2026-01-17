@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:agg/src/agg/util.dart';
-import 'package:agg/src/agg/agg_math.dart';
+import 'package:dart_graphics/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/agg_math.dart';
 
 abstract class IImageFilterFunction {
   double radius();

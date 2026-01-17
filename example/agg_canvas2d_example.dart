@@ -7,7 +7,7 @@
 /// the same visual output.
 
 import 'dart:math' as math;
-import 'package:agg/src/agg/canvas/canvas.dart';
+import 'package:dart_graphics/src/agg/canvas/canvas.dart';
 
 void main() {
   print('AGG Canvas 2D API Example');

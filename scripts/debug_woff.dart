@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:agg/src/typography/openfont/open_font_reader.dart';
-import 'package:agg/src/typography/openfont/webfont/woff_reader.dart';
-import 'package:agg/src/typography/openfont/webfont/woff2_reader.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/webfont/woff_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/webfont/woff2_reader.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
 
 void main(List<String> args) {
   final fontPath = args.isNotEmpty

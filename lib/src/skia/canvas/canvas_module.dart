@@ -9,8 +9,8 @@
 /// ## Example
 /// 
 /// ```dart
-/// import 'package:agg/skia.dart';
-/// import 'package:agg/canvas.dart';
+/// import 'package:dart_graphics/skia.dart';
+/// import 'package:dart_graphics/canvas.dart';
 /// 
 /// void main() {
 ///   // Create a Skia instance

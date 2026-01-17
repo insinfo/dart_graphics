@@ -2,26 +2,26 @@
 // Ported to Dart by insinfo, 2025
 
 import 'package:test/test.dart';
-import 'package:agg/src/typography/text_layout/glyph_plan.dart';
-import 'package:agg/src/typography/text_layout/glyph_index_list.dart';
-import 'package:agg/src/typography/text_layout/glyph_layout.dart';
-import 'package:agg/src/typography/text_layout/pixel_scale_extensions.dart';
-import 'package:agg/src/typography/text_layout/user_char_to_glyph_index_map.dart';
-import 'package:agg/src/typography/openfont/typeface.dart';
-import 'package:agg/src/typography/openfont/glyph.dart';
-import 'package:agg/src/typography/openfont/tables/os2.dart';
-import 'package:agg/src/typography/openfont/tables/hmtx.dart';
-import 'package:agg/src/typography/openfont/tables/name_entry.dart';
-import 'package:agg/src/typography/openfont/tables/cmap.dart';
-import 'package:agg/src/typography/openfont/tables/utils.dart';
-import 'package:agg/src/typography/openfont/tables/coverage_table.dart';
-import 'package:agg/src/typography/openfont/tables/feature_list.dart';
-import 'package:agg/src/typography/openfont/tables/gdef.dart';
-import 'package:agg/src/typography/openfont/tables/gpos.dart' as gpos_table;
-import 'package:agg/src/typography/openfont/tables/gsub.dart' as gsub_table;
-import 'package:agg/src/typography/openfont/tables/class_def_table.dart';
-import 'package:agg/src/typography/openfont/tables/script_list.dart';
-import 'package:agg/src/typography/openfont/tables/script_table.dart';
+import 'package:dart_graphics/src/typography/text_layout/glyph_plan.dart';
+import 'package:dart_graphics/src/typography/text_layout/glyph_index_list.dart';
+import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
+import 'package:dart_graphics/src/typography/text_layout/pixel_scale_extensions.dart';
+import 'package:dart_graphics/src/typography/text_layout/user_char_to_glyph_index_map.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
+import 'package:dart_graphics/src/typography/openfont/glyph.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/os2.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/hmtx.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/name_entry.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/cmap.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/utils.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/coverage_table.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/feature_list.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/gdef.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/gpos.dart' as gpos_table;
+import 'package:dart_graphics/src/typography/openfont/tables/gsub.dart' as gsub_table;
+import 'package:dart_graphics/src/typography/openfont/tables/class_def_table.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/script_list.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/script_table.dart';
 
 const int _testGlyphCount = 100;
 const int _testAdvanceBase = 500;

@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/svg/svg_parser.dart';
-import 'package:agg/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/svg/svg_parser.dart';
+import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
 import 'package:test/test.dart';
 
 void main() {

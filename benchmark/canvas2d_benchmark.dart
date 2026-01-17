@@ -11,10 +11,10 @@
 import 'dart:math' as math;
 
 import 'package:benchmark_harness/benchmark_harness.dart';
-import 'package:agg/src/agg/canvas/canvas.dart' as agg;
-import 'package:agg/cairo.dart' as cairo;
-import 'package:agg/skia_canvas.dart' as skia;
-import 'package:agg/src/shared/canvas2d/canvas2d.dart';
+import 'package:dart_graphics/src/agg/canvas/canvas.dart' as agg;
+import 'package:dart_graphics/cairo.dart' as cairo;
+import 'package:dart_graphics/skia_canvas.dart' as skia;
+import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
 
 // ============================================================================
 // Constants

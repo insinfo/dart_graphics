@@ -4,11 +4,11 @@
 
 import 'dart:math';
 import 'package:test/test.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/primitives/rectangle_double.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_double.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 void main() {
   group('Vector2 Tests', () {

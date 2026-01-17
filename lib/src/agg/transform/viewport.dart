@@ -1,5 +1,5 @@
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 /// Simple orthogonal viewport transform (world <-> device) with aspect control.
 class Viewport {

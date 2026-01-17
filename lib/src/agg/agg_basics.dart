@@ -1,6 +1,6 @@
 //----------------------------------------------------------filling_rule_e
 import 'dart:typed_data';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 import 'dart:math' as math;
 
 enum filling_rule_e { fill_non_zero, fill_even_odd }

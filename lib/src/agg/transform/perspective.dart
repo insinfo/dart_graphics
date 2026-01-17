@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/shared/ref_param.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/transform/i_transform.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/transform/i_transform.dart';
 
 /// Perspective 2D transformation (3x3 matrix with projective terms).
 class Perspective implements ITransform {

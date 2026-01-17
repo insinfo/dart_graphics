@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:agg/src/brotli/brotli.dart';
+import 'package:dart_graphics/src/brotli/brotli.dart';
 import 'package:test/test.dart';
 
 void main() {

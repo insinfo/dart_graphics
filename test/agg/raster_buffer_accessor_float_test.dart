@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/graphics2D.dart';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/image/raster_buffer_accessors.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
-import 'package:agg/src/agg/primitives/rectangle_int.dart';
-import 'package:agg/src/vector_math/vector2.dart';
+import 'package:dart_graphics/src/agg/graphics2D.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/image/raster_buffer_accessors.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/vector_math/vector2.dart';
 import 'package:test/test.dart';
-import 'package:agg/src/shared/ref_param.dart';
-import 'package:agg/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
 
 class _FloatImage implements IImageFloat {
   @override

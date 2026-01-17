@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/agg_simul_eq.dart';
-import 'package:agg/src/agg/transform/i_transform.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/agg_simul_eq.dart';
+import 'package:dart_graphics/src/agg/transform/i_transform.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 /// Bilinear 2D transformation between quadrilaterals.
 class Bilinear implements ITransform {

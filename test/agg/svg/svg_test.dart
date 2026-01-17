@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/svg/svg_parser_new.dart';
-import 'package:agg/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/svg/svg_parser_new.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
 
 void main() {
   test('SVG Parser parses fill-rule correctly', () {

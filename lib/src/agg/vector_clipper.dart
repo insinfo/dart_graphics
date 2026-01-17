@@ -1,7 +1,7 @@
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/agg/agg_clip_liang_barsky.dart';
-import 'package:agg/src/agg/rasterizer_cells_aa.dart';
-import 'package:agg/src/agg/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/agg_clip_liang_barsky.dart';
+import 'package:dart_graphics/src/agg/rasterizer_cells_aa.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_int.dart';
 
 /// Clip utility mirroring AGG's vector clipper (Liang–Barsky).
 class VectorClipper {

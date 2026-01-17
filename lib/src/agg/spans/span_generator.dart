@@ -1,5 +1,5 @@
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
 
 /// Generates spans of colors for scanline rendering.
 abstract class ISpanGenerator {

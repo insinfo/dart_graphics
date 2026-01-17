@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 /// Coordinate helpers for line AA math.
 class LineCoord {

@@ -1,14 +1,14 @@
-import 'package:agg/src/agg/svg/css/css_style_sheet.dart';
+import 'package:dart_graphics/src/agg/svg/css/css_style_sheet.dart';
 import 'package:xml/xml.dart';
 
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/svg/svg_shape.dart';
-import 'package:agg/src/agg/svg/svg_paint.dart';
-import 'package:agg/src/agg/svg/svg_path_parser.dart';
-import 'package:agg/src/agg/svg/svg_transform_parser.dart';
-import 'package:agg/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/svg/svg_shape.dart';
+import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/agg/svg/svg_path_parser.dart';
+import 'package:dart_graphics/src/agg/svg/svg_transform_parser.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
 
 class SvgParserNew {
   static List<SvgShape> parse(String svg) {

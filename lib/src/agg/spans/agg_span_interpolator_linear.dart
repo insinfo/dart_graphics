@@ -1,7 +1,7 @@
-import 'package:agg/src/agg/transform/i_transform.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/agg_dda_line.dart';
-import 'package:agg/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/transform/i_transform.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/agg_dda_line.dart';
+import 'package:dart_graphics/src/agg/util.dart';
 
 abstract class ISpanInterpolator {
   void begin(double x, double y, int len);

@@ -1,7 +1,7 @@
 /// Pure FreeType bindings for Dart
 ///
 /// This library provides FreeType font loading without any Cairo dependency.
-/// For Cairo integration, see `package:agg/src/cairo/cairo_freetype.dart`.
+/// For Cairo integration, see `package:dart_graphics/src/cairo/cairo_freetype.dart`.
 library freetype;
 
 import 'dart:ffi' as ffi;

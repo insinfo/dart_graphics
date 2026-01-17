@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/image/threshold_functions.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/threshold_functions.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 void main() {
   group('ThresholdFunctions', () {

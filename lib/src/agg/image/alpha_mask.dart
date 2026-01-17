@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/util.dart';
 
 abstract class IAlphaMask {
   int pixel(int x, int y);

@@ -1,19 +1,19 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/vertex_source/path_commands.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_unpacked8.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/vertex_source/apply_transform.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
-import 'package:agg/src/agg/primitives/rectangle_double.dart';
-import 'package:agg/src/agg/vertex_source/ivertex_source.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/vertex_source/path_commands.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_unpacked8.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/vertex_source/apply_transform.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_double.dart';
+import 'package:dart_graphics/src/agg/vertex_source/ivertex_source.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 RectangleDouble? boundingRect(IVertexSource vs) {
   vs.rewind();

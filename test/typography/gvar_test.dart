@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
-import 'package:agg/src/typography/openfont/tables/variations/gvar.dart';
-import 'package:agg/src/typography/openfont/tables/table_entry.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/variations/gvar.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/table_entry.dart';
 
 void main() {
   group('GVar Table', () {

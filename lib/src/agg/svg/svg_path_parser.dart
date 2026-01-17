@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
 
 class SvgPathParser {
   static VertexStorage parse(String d) {

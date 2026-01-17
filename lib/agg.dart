@@ -1,10 +1,10 @@
 
 export 'typography.dart';
 
-// AGG Canvas 2D API
+// Canvas 2D API
 export 'src/agg/canvas/canvas.dart';
 
-// AGG Core
+// Core
 export 'src/agg/graphics2D.dart';
 export 'src/agg/image/image_buffer.dart';
 export 'src/agg/primitives/color.dart';

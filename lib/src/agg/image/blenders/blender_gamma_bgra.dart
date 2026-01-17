@@ -4,9 +4,9 @@
 
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/gamma_lookup_table.dart';
-import 'package:agg/src/agg/image/rgba.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/gamma_lookup_table.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 /// BGRA blender with gamma correction.
 ///

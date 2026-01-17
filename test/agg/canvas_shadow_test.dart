@@ -1,4 +1,4 @@
-import 'package:agg/src/agg/canvas/canvas.dart';
+import 'package:dart_graphics/src/agg/canvas/canvas.dart';
 import 'package:test/test.dart';
 
 void main() {

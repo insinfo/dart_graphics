@@ -5,7 +5,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:agg/src/shared/canvas2d/canvas2d.dart';
+import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
 
 import '../image/image_buffer.dart';
 import '../image/png_encoder.dart';

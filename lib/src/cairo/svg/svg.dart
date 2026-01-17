@@ -16,8 +16,8 @@
 /// ## Example
 /// 
 /// ```dart
-/// import 'package:agg/cairo.dart';
-/// import 'package:agg/src/cairo/svg/svg.dart';
+/// import 'package:dart_graphics/cairo.dart';
+/// import 'package:dart_graphics/src/cairo/svg/svg.dart';
 /// 
 /// void main() {
 ///   final svg = '''

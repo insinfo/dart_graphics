@@ -1,10 +1,10 @@
 
 
-import 'package:agg/src/agg/agg_image_filters.dart';
-import 'package:agg/src/agg/image/raster_buffer_accessors.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/spans/agg_span_image_filter.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
+import 'package:dart_graphics/src/agg/agg_image_filters.dart';
+import 'package:dart_graphics/src/agg/image/raster_buffer_accessors.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_image_filter.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_linear.dart';
 
 /// Nearest-neighbor grayscale image filter optimized for step X by 1.
 ///

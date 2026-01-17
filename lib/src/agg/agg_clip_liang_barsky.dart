@@ -1,4 +1,4 @@
-import 'package:agg/src/agg/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_int.dart';
 
 /// Liang–Barsky clipping helpers used by the vector clipper.
 class ClipLiangBarsky {

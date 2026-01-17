@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
 
 void drawBlackFrame(ImageBuffer pix) {
   final w = pix.width;

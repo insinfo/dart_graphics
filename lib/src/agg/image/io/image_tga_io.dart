@@ -3,7 +3,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
 
 /// TGA file format I/O for reading and writing TGA images.
 class ImageTgaIO {

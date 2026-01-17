@@ -6,7 +6,7 @@
 /// ## Getting Started
 ///
 /// ```dart
-/// import 'package:agg/skia.dart';
+/// import 'package:dart_graphics/skia.dart';
 ///
 /// void main() {
 ///   // Create Skia instance (optionally with custom DLL path)

@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
-import 'package:agg/src/typography/openfont/open_font_reader.dart';
-import 'package:agg/src/typography/openfont/tables/table_entry.dart';
-import 'package:agg/src/typography/openfont/tables/utils.dart';
-import 'package:agg/src/typography/openfont/typeface.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/table_entry.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/utils.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
 
 class WoffHeader {
   late int flavor;

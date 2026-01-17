@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:agg/src/agg/svg/svg_parser.dart';
-import 'package:agg/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/agg/svg/svg_parser.dart';
+import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
 
 void main() {
   final files = [

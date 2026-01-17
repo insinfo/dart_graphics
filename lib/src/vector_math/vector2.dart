@@ -1,5 +1,5 @@
-import 'package:agg/src/shared/iequatable.dart';
-import 'package:agg/src/vector_math/utils.dart';
+import 'package:dart_graphics/src/shared/iequatable.dart';
+import 'package:dart_graphics/src/vector_math/utils.dart';
 import 'dart:math' as math;
 
 class Vector2 implements IEquatable<Vector2> {

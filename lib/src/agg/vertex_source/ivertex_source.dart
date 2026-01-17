@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/vertex_source/path_commands.dart';
-import 'package:agg/src/agg/vertex_source/vertex_data.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/vertex_source/path_commands.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_data.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 abstract class IVertexSource {
   void rewind([int pathId = 0]);

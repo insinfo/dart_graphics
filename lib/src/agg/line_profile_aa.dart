@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/agg/agg_gamma_functions.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/agg_gamma_functions.dart';
 
 /// Precomputed coverage profile used by outline AA rendering.
 class LineProfileAA {

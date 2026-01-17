@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_bin.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_unpacked8.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_bin.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_unpacked8.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
 import 'package:test/test.dart';
 
 import '../test_utils/png_golden.dart';

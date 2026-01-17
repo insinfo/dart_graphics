@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/rgba.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 /// Premultiplied alpha BGRA blender writing into byte buffers.
 class BlenderPremultBgra implements IRecieveBlenderByte {

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:agg/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 import 'package:test/test.dart';
 
 void main() {

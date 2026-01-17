@@ -1,8 +1,8 @@
-import 'package:agg/src/agg/svg/colored_vertex_source.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/svg/svg_parser_new.dart';
-import 'package:agg/src/agg/svg/svg_paint.dart';
-import 'package:agg/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/svg/colored_vertex_source.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/svg/svg_parser_new.dart';
+import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
 
 /// Lightweight SVG parser for paths and polygons.
 ///

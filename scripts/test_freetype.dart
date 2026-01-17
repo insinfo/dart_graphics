@@ -1,7 +1,7 @@
 /// Test script to verify FreeType font loading with Cairo
 import 'dart:io';
-import 'package:agg/cairo.dart';
-import 'package:agg/src/freetype/freetype.dart';
+import 'package:dart_graphics/cairo.dart';
+import 'package:dart_graphics/src/freetype/freetype.dart';
 
 /// Global Cairo instance
 final cairo = Cairo();

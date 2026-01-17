@@ -1,9 +1,9 @@
 import 'dart:math';
-import 'package:agg/src/agg/agg_dda_line.dart';
-import 'package:agg/src/agg/transform/i_transform.dart';
-import 'package:agg/src/agg/transform/perspective.dart';
-import 'package:agg/src/agg/util.dart';
-import 'package:agg/src/agg/spans/agg_span_interpolator_linear.dart';
+import 'package:dart_graphics/src/agg/agg_dda_line.dart';
+import 'package:dart_graphics/src/agg/transform/i_transform.dart';
+import 'package:dart_graphics/src/agg/transform/perspective.dart';
+import 'package:dart_graphics/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/spans/agg_span_interpolator_linear.dart';
 
 class SpanInterpolatorPerspLerp implements ISpanInterpolator {
   Perspective m_trans_dir = Perspective();

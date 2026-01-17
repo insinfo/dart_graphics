@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/image/blenders/blender_bgra_exact_copy.dart';
-import 'package:agg/src/agg/image/blenders/blender_bgra_half_half.dart';
-import 'package:agg/src/agg/image/blenders/blender_poly_color_premult_bgra.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/blenders/blender_bgra_exact_copy.dart';
+import 'package:dart_graphics/src/agg/image/blenders/blender_bgra_half_half.dart';
+import 'package:dart_graphics/src/agg/image/blenders/blender_poly_color_premult_bgra.dart';
 
 void main() {
   group('BlenderBgraExactCopy', () {

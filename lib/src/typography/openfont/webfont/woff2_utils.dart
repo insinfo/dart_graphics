@@ -1,4 +1,4 @@
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
 
 class Woff2Utils {
   static const int oneMoreByteCode1 = 255;

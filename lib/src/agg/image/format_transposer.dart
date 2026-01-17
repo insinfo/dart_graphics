@@ -1,7 +1,7 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/image/image_proxy.dart';
-import 'package:agg/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/image/image_proxy.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
 
 class FormatTransposer extends ImageProxy {
   FormatTransposer(IImageByte linkedImage) : super(linkedImage);

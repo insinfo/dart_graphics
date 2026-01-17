@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/vertex_source/vertex_source.dart';
-import 'package:agg/src/agg/primitives/point2d.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_source.dart';
+import 'package:dart_graphics/src/agg/primitives/point2d.dart';
 
 void main() {
   group('VertexStorage', () {

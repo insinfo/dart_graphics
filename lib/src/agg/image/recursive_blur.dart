@@ -1,8 +1,8 @@
 import 'dart:math';
-import 'package:agg/src/agg/image/format_transposer.dart';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/util.dart';
+import 'package:dart_graphics/src/agg/image/format_transposer.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/util.dart';
 
 abstract class RecursizeBlurCalculator {
   double r = 0, g = 0, b = 0, a = 0;

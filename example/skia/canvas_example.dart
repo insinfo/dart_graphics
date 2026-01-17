@@ -7,7 +7,7 @@
 /// the same visual output.
 
 import 'dart:math' as math;
-import 'package:agg/skia_canvas.dart';
+import 'package:dart_graphics/skia_canvas.dart';
 
 void main() {
   print('Skia Canvas 2D API Example');

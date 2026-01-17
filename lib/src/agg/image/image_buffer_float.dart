@@ -1,12 +1,12 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'package:agg/src/agg/graphics2D.dart';
-import 'package:agg/src/agg/image/blender_rgba_float.dart';
-import 'package:agg/src/agg/image/iimage.dart';
-import 'package:agg/src/agg/image/rgba.dart';
-import 'package:agg/src/agg/primitives/color_f.dart';
-import 'package:agg/src/agg/primitives/rectangle_int.dart';
-import 'package:agg/src/vector_math/vector2.dart';
+import 'package:dart_graphics/src/agg/graphics2D.dart';
+import 'package:dart_graphics/src/agg/image/blender_rgba_float.dart';
+import 'package:dart_graphics/src/agg/image/iimage.dart';
+import 'package:dart_graphics/src/agg/image/rgba.dart';
+import 'package:dart_graphics/src/agg/primitives/color_f.dart';
+import 'package:dart_graphics/src/agg/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/vector_math/vector2.dart';
 
 /// Floating-point RGBA image buffer used for high precision rendering tests.
 class ImageBufferFloat implements IImageFloat {

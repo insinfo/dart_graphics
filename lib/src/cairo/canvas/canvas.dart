@@ -6,7 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:agg/src/shared/canvas2d/canvas2d.dart';
+import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
 
 import '../cairo_api.dart';
 import '../cairo_types.dart';

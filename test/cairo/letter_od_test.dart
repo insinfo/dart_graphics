@@ -3,19 +3,19 @@
 
 import 'dart:io';
 import 'package:test/test.dart';
-import 'package:agg/cairo.dart';
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/image/png_encoder.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/agg/scanline_rasterizer.dart';
-import 'package:agg/src/agg/scanline_renderer.dart';
-import 'package:agg/src/agg/scanline_packed8.dart';
-import 'package:agg/src/agg/transform/affine.dart';
-import 'package:agg/src/agg/vertex_source/apply_transform.dart';
-import 'package:agg/src/agg/vertex_source/glyph_vertex_source.dart';
-import 'package:agg/src/typography/text_layout/glyph_layout.dart';
-import 'package:agg/src/typography/openfont/open_font_reader.dart';
-import 'package:agg/src/typography/openfont/typeface.dart';
+import 'package:dart_graphics/cairo.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/agg/scanline_renderer.dart';
+import 'package:dart_graphics/src/agg/scanline_packed8.dart';
+import 'package:dart_graphics/src/agg/transform/affine.dart';
+import 'package:dart_graphics/src/agg/vertex_source/apply_transform.dart';
+import 'package:dart_graphics/src/agg/vertex_source/glyph_vertex_source.dart';
+import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
 import 'package:image/image.dart' as img;
 import 'dart:math' as math;
 

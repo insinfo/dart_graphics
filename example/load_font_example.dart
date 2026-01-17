@@ -2,8 +2,8 @@
 // Este exemplo mostra como carregar e usar uma fonte a partir de um arquivo
 
 import 'dart:io';
-import 'package:agg/src/typography/openfont/typeface.dart';
-import 'package:agg/src/typography/text_layout/glyph_layout.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
+import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
 
 void main(List<String> args) {
   if (args.isEmpty) {

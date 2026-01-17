@@ -3,7 +3,7 @@
 /// Represents either a linear or radial gradient that can be used
 /// as a fill or stroke style.
 
-import 'package:agg/src/shared/canvas2d/canvas2d.dart';
+import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
 
 import '../primitives/color.dart';
 import '../spans/span_gradient.dart';

@@ -1,5 +1,5 @@
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
 
 /// Simple pair of geometry + fill paint for parsed SVG shapes.
 class ColoredVertexSource {

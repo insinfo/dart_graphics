@@ -1,7 +1,7 @@
 import 'dart:math' as math;
-import 'package:agg/src/shared/iequatable.dart';
-import 'package:agg/src/vector_math/utils.dart';
-import 'package:agg/src/vector_math/vector2.dart';
+import 'package:dart_graphics/src/shared/iequatable.dart';
+import 'package:dart_graphics/src/vector_math/utils.dart';
+import 'package:dart_graphics/src/vector_math/vector2.dart';
 
 /// Represents a 4D vector using four double-precision floating-point numbers.
 class Vector4 implements IEquatable<Vector4> {

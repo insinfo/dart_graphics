@@ -1,8 +1,8 @@
-import 'package:agg/src/agg/image/image_buffer.dart';
-import 'package:agg/src/agg/image/raster_buffer_accessors.dart';
-import 'package:agg/src/agg/line_aa_basics.dart';
-import 'package:agg/src/agg/primitives/color.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/agg/image/raster_buffer_accessors.dart';
+import 'package:dart_graphics/src/agg/line_aa_basics.dart';
+import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 abstract class IPatternFilter {
   int dilation();

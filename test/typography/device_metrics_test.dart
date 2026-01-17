@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:agg/src/typography/io/byte_order_swapping_reader.dart';
-import 'package:agg/src/typography/openfont/tables/hdmx.dart';
-import 'package:agg/src/typography/openfont/tables/vdmx.dart';
-import 'package:agg/src/typography/openfont/tables/ltsh.dart';
+import 'package:dart_graphics/src/typography/io/byte_order_swapping_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/hdmx.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/vdmx.dart';
+import 'package:dart_graphics/src/typography/openfont/tables/ltsh.dart';
 
 void main() {
   group('HorizontalDeviceMetrics (hdmx)', () {

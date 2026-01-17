@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:agg/src/agg/agg_basics.dart';
-import 'package:agg/src/agg/line_aa_basics.dart';
+import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/agg/line_aa_basics.dart';
 
 /// Vertex with subpixel x/y and cached length to next vertex.
 class LineAAVertex {

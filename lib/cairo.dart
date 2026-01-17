@@ -12,7 +12,7 @@
 /// ## Example
 ///
 /// ```dart
-/// import 'package:agg/cairo.dart';
+/// import 'package:dart_graphics/cairo.dart';
 ///
 /// void main() {
 ///   // Create Cairo instance (optionally with custom DLL path)

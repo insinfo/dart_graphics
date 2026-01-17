@@ -1,6 +1,6 @@
-import 'package:agg/src/agg/line_aa_basics.dart';
-import 'package:agg/src/agg/line_aa_vertex_sequence.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/line_aa_basics.dart';
+import 'package:dart_graphics/src/agg/line_aa_vertex_sequence.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 typedef CompareFunction = bool Function(int value);
 

@@ -5,7 +5,7 @@
 
 
 import 'dart:ffi' as ffi;
-import 'package:agg/cairo.dart';
+import 'package:dart_graphics/cairo.dart';
 
 import '../freetype/freetype.dart';
 import 'generated/ffi.dart' as cairo_ffi;

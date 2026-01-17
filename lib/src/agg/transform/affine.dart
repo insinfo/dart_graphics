@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:agg/src/agg/transform/i_transform.dart';
+import 'package:dart_graphics/src/agg/transform/i_transform.dart';
 
 /// Affine transformation matrix for 2D graphics.
 /// Represents a 2x3 matrix for affine transformations:

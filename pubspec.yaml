@@ -1,5 +1,5 @@
-name: agg
-description: A dart port of Anti-Grain Geometry (AGG) C++ 2D graphic library
+name: dart_graphics
+description: A pure dart 2D graphic library
 version: 1.0.0
 publish_to: none
 
@@ -12,8 +12,7 @@ dependencies:
   vector_math: ^2.2.0
   xml: ^6.5.0
   csslib: ^1.0.0
-  archive: ^4.0.7
-  #brotli: ^0.6.0
+  archive: ^4.0.7 
   ffi: ^2.1.3
 
 dev_dependencies:

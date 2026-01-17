@@ -1,10 +1,10 @@
 import 'package:test/test.dart';
-import 'package:agg/src/agg/vertex_source/stroke.dart';
-import 'package:agg/src/agg/vertex_source/contour.dart';
-import 'package:agg/src/agg/vertex_source/path_commands.dart';
-import 'package:agg/src/agg/vertex_source/stroke_math.dart';
-import 'package:agg/src/agg/vertex_source/vertex_storage.dart';
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke.dart';
+import 'package:dart_graphics/src/agg/vertex_source/contour.dart';
+import 'package:dart_graphics/src/agg/vertex_source/path_commands.dart';
+import 'package:dart_graphics/src/agg/vertex_source/stroke_math.dart';
+import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 
 void main() {
   group('Stroke', () {

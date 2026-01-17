@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/interfaces/iscanline.dart';
+import 'package:dart_graphics/src/agg/interfaces/iscanline.dart';
 
 /// General-purpose scanline container with packed spans and covers (u8).
 class ScanlineCachePacked8 implements IScanlineCache {

@@ -8,7 +8,7 @@
 
 import 'dart:math' as math;
 
-import 'package:agg/cairo.dart';
+import 'package:dart_graphics/cairo.dart';
 
 void main() {
   print('Cairo Canvas 2D API Example');

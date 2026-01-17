@@ -1,7 +1,7 @@
 /// Compare Cairo FreeType rendering with AGG Typography rendering
 import 'dart:io';
 
-import 'package:agg/cairo.dart';
+import 'package:dart_graphics/cairo.dart';
 
 /// Global Cairo instance
 final cairo = Cairo();

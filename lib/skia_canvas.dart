@@ -15,7 +15,7 @@
 /// ## Example
 ///
 /// ```dart
-/// import 'package:agg/canvas.dart';
+/// import 'package:dart_graphics/canvas.dart';
 ///
 /// void main() {
 ///   // Create a 800x600 canvas
@@ -55,7 +55,7 @@
 /// - **Windows**: `libSkiaSharp.dll` in PATH or current directory
 /// - **Linux**: `libSkiaSharp.so`
 /// - **macOS**: `libSkiaSharp.dylib`
-library canvas;
+library skia_canvas;
 
 // Core canvas classes
 export 'src/skia/canvas/canvas.dart';

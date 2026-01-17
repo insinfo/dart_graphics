@@ -2,7 +2,7 @@
 // TypeFacePrinter renders text as IVertexSource, providing vertices for
 // each glyph in the text string with proper positioning and alignment.
 
-import 'package:agg/src/shared/ref_param.dart';
+import 'package:dart_graphics/src/shared/ref_param.dart';
 import '../primitives/rectangle_double.dart';
 import '../vertex_source/ivertex_source.dart';
 import '../vertex_source/path_commands.dart';

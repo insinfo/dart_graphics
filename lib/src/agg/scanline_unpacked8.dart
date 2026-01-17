@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:agg/src/agg/interfaces/iscanline.dart';
+import 'package:dart_graphics/src/agg/interfaces/iscanline.dart';
 
 /// Unpacked scanline container with per-pixel covers (u8).
 class ScanlineUnpacked8 implements IScanlineCache {
