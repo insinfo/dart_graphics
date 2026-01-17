@@ -1,7 +1,7 @@
 /// Canvas 2D Benchmark
 ///
 /// Compares performance of three Canvas 2D implementations:
-/// - AGG (Anti-Grain Geometry)
+/// - DartGraphics (Anti-Grain Geometry)
 /// - Cairo
 /// - Skia
 ///
@@ -11,7 +11,7 @@
 import 'dart:math' as math;
 
 import 'package:benchmark_harness/benchmark_harness.dart';
-import 'package:dart_graphics/src/agg/canvas/canvas.dart' as agg;
+import 'package:dart_graphics/src/dart_graphics/canvas/canvas.dart' as DartGraphics;
 import 'package:dart_graphics/cairo.dart' as cairo;
 import 'package:dart_graphics/skia_canvas.dart' as skia;
 import 'package:dart_graphics/src/shared/canvas2d/canvas2d.dart';
@@ -25,18 +25,18 @@ const int canvasHeight = 600;
 const int iterations = 100;
 
 // ============================================================================
-// AGG Benchmarks
+// DartGraphics Benchmarks
 // ============================================================================
 
-class AggFillRectBenchmark extends BenchmarkBase {
-  late agg.AggHtmlCanvas canvas;
+class DartGraphicsFillRectBenchmark extends BenchmarkBase {
+  late DartGraphics.DartGraphicsCanvas canvas;
   late ICanvasRenderingContext2D ctx;
 
-  AggFillRectBenchmark() : super('AGG.fillRect');
+  DartGraphicsFillRectBenchmark() : super('DartGraphics.fillRect');
 
   @override
   void setup() {
-    canvas = agg.AggHtmlCanvas(canvasWidth, canvasHeight);
+    canvas = DartGraphics.DartGraphicsCanvas(canvasWidth, canvasHeight);
     ctx = canvas.getContext('2d');
   }
 
@@ -52,15 +52,15 @@ class AggFillRectBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class AggStrokeRectBenchmark extends BenchmarkBase {
-  late agg.AggHtmlCanvas canvas;
+class DartGraphicsStrokeRectBenchmark extends BenchmarkBase {
+  late DartGraphics.DartGraphicsCanvas canvas;
   late ICanvasRenderingContext2D ctx;
 
-  AggStrokeRectBenchmark() : super('AGG.strokeRect');
+  DartGraphicsStrokeRectBenchmark() : super('DartGraphics.strokeRect');
 
   @override
   void setup() {
-    canvas = agg.AggHtmlCanvas(canvasWidth, canvasHeight);
+    canvas = DartGraphics.DartGraphicsCanvas(canvasWidth, canvasHeight);
     ctx = canvas.getContext('2d');
     ctx.lineWidth = 2;
   }
@@ -77,15 +77,15 @@ class AggStrokeRectBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class AggArcBenchmark extends BenchmarkBase {
-  late agg.AggHtmlCanvas canvas;
+class DartGraphicsArcBenchmark extends BenchmarkBase {
+  late DartGraphics.DartGraphicsCanvas canvas;
   late ICanvasRenderingContext2D ctx;
 
-  AggArcBenchmark() : super('AGG.arc');
+  DartGraphicsArcBenchmark() : super('DartGraphics.arc');
 
   @override
   void setup() {
-    canvas = agg.AggHtmlCanvas(canvasWidth, canvasHeight);
+    canvas = DartGraphics.DartGraphicsCanvas(canvasWidth, canvasHeight);
     ctx = canvas.getContext('2d');
   }
 
@@ -103,15 +103,15 @@ class AggArcBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class AggPathBenchmark extends BenchmarkBase {
-  late agg.AggHtmlCanvas canvas;
+class DartGraphicsPathBenchmark extends BenchmarkBase {
+  late DartGraphics.DartGraphicsCanvas canvas;
   late ICanvasRenderingContext2D ctx;
 
-  AggPathBenchmark() : super('AGG.path');
+  DartGraphicsPathBenchmark() : super('DartGraphics.path');
 
   @override
   void setup() {
-    canvas = agg.AggHtmlCanvas(canvasWidth, canvasHeight);
+    canvas = DartGraphics.DartGraphicsCanvas(canvasWidth, canvasHeight);
     ctx = canvas.getContext('2d');
   }
 
@@ -132,15 +132,15 @@ class AggPathBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class AggTransformBenchmark extends BenchmarkBase {
-  late agg.AggHtmlCanvas canvas;
+class DartGraphicsTransformBenchmark extends BenchmarkBase {
+  late DartGraphics.DartGraphicsCanvas canvas;
   late ICanvasRenderingContext2D ctx;
 
-  AggTransformBenchmark() : super('AGG.transform');
+  DartGraphicsTransformBenchmark() : super('DartGraphics.transform');
 
   @override
   void setup() {
-    canvas = agg.AggHtmlCanvas(canvasWidth, canvasHeight);
+    canvas = DartGraphics.DartGraphicsCanvas(canvasWidth, canvasHeight);
     ctx = canvas.getContext('2d');
   }
 
@@ -161,15 +161,15 @@ class AggTransformBenchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-class AggComplexSceneBenchmark extends BenchmarkBase {
-  late agg.AggHtmlCanvas canvas;
+class DartGraphicsComplexSceneBenchmark extends BenchmarkBase {
+  late DartGraphics.DartGraphicsCanvas canvas;
   late ICanvasRenderingContext2D ctx;
 
-  AggComplexSceneBenchmark() : super('AGG.complexScene');
+  DartGraphicsComplexSceneBenchmark() : super('DartGraphics.complexScene');
 
   @override
   void setup() {
-    canvas = agg.AggHtmlCanvas(canvasWidth, canvasHeight);
+    canvas = DartGraphics.DartGraphicsCanvas(canvasWidth, canvasHeight);
     ctx = canvas.getContext('2d');
   }
 
@@ -651,7 +651,7 @@ class SkiaComplexSceneBenchmark extends BenchmarkBase {
 
 void main() {
   print('=' * 70);
-  print('Canvas 2D Benchmark - Comparing AGG, Cairo, and Skia');
+  print('Canvas 2D Benchmark - Comparing DartGraphics, Cairo, and Skia');
   print('=' * 70);
   print('Canvas size: ${canvasWidth}x$canvasHeight');
   print('Iterations per run: $iterations');
@@ -661,32 +661,32 @@ void main() {
   // Group benchmarks by operation
   final benchmarks = <String, List<BenchmarkBase>>{
     'fillRect': [
-      AggFillRectBenchmark(),
+      DartGraphicsFillRectBenchmark(),
       CairoFillRectBenchmark(),
       SkiaFillRectBenchmark(),
     ],
     'strokeRect': [
-      AggStrokeRectBenchmark(),
+      DartGraphicsStrokeRectBenchmark(),
       CairoStrokeRectBenchmark(),
       SkiaStrokeRectBenchmark(),
     ],
     'arc': [
-      AggArcBenchmark(),
+      DartGraphicsArcBenchmark(),
       CairoArcBenchmark(),
       SkiaArcBenchmark(),
     ],
     'path': [
-      AggPathBenchmark(),
+      DartGraphicsPathBenchmark(),
       CairoPathBenchmark(),
       SkiaPathBenchmark(),
     ],
     'transform': [
-      AggTransformBenchmark(),
+      DartGraphicsTransformBenchmark(),
       CairoTransformBenchmark(),
       SkiaTransformBenchmark(),
     ],
     'complexScene': [
-      AggComplexSceneBenchmark(),
+      DartGraphicsComplexSceneBenchmark(),
       CairoComplexSceneBenchmark(),
       SkiaComplexSceneBenchmark(),
     ],
@@ -714,17 +714,17 @@ void main() {
   print('SUMMARY (microseconds per run, lower is better)');
   print('=' * 70);
   print('');
-  print('${_pad('Operation', 15)} ${_pad('AGG', 18)} ${_pad('Cairo', 18)} ${_pad('Skia', 18)}');
+  print('${_pad('Operation', 15)} ${_pad('DartGraphics', 18)} ${_pad('Cairo', 18)} ${_pad('Skia', 18)}');
   print('-' * 70);
 
   for (final operation in benchmarks.keys) {
     final opResults = results[operation]!;
-    final aggResult = opResults['AGG.$operation'] ?? 0;
+    final DartGraphicsResult = opResults['DartGraphics.$operation'] ?? 0;
     final cairoResult = opResults['Cairo.$operation'] ?? 0;
     final skiaResult = opResults['Skia.$operation'] ?? 0;
 
     print(
-        '${_pad(operation, 15)} ${_pad(aggResult.toStringAsFixed(2), 18)} ${_pad(cairoResult.toStringAsFixed(2), 18)} ${_pad(skiaResult.toStringAsFixed(2), 18)}');
+        '${_pad(operation, 15)} ${_pad(DartGraphicsResult.toStringAsFixed(2), 18)} ${_pad(cairoResult.toStringAsFixed(2), 18)} ${_pad(skiaResult.toStringAsFixed(2), 18)}');
   }
 
   print('-' * 70);

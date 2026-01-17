@@ -1,6 +1,6 @@
 /// Golden tests for Canvas 2D examples
 /// 
-/// These tests verify that the AGG, Cairo and Skia Canvas 2D implementations
+/// These tests verify that the DartGraphics, Cairo and Skia Canvas 2D implementations
 /// produce consistent visual output.
 
 import 'dart:io';
@@ -9,7 +9,7 @@ import 'dart:math' as math;
 import 'package:test/test.dart';
 import 'package:image/image.dart' as img;
 
-import 'package:dart_graphics/src/agg/canvas/canvas.dart';
+import 'package:dart_graphics/src/dart_graphics/canvas/canvas.dart';
 import 'package:dart_graphics/skia_canvas.dart';
 import 'package:dart_graphics/cairo.dart';
 
@@ -130,14 +130,14 @@ void main() {
     }
   });
 
-  group('Canvas 2D AGG', () {
+  group('Canvas 2D DartGraphics', () {
     test('draws test pattern without errors', () {
-      final canvas = AggHtmlCanvas(400, 300);
+      final canvas = DartGraphicsCanvas(400, 300);
       final ctx = canvas.getContext('2d');
       
       expect(() => drawTestPattern(ctx), returnsNormally);
       
-      final path = 'test/tmp/canvas2d_agg_test.png';
+      final path = 'test/tmp/canvas2d_dartgraphics_test.png';
       canvas.saveAs(path);
       
       expect(File(path).existsSync(), isTrue);
@@ -145,7 +145,7 @@ void main() {
     });
 
     test('line thickness is consistent', () {
-      final canvas = AggHtmlCanvas(100, 100);
+      final canvas = DartGraphicsCanvas(100, 100);
       final ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'white';
@@ -171,7 +171,7 @@ void main() {
       ctx.lineTo(40.0, 90.0);
       ctx.stroke();
       
-      final path = 'test/tmp/canvas2d_agg_lines.png';
+      final path = 'test/tmp/canvas2d_dartgraphics_lines.png';
       canvas.saveAs(path);
       
       // Verify image was created
@@ -198,7 +198,7 @@ void main() {
     });
 
     test('transforms work correctly', () {
-      final canvas = AggHtmlCanvas(100, 100);
+      final canvas = DartGraphicsCanvas(100, 100);
       final ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'white';
@@ -212,7 +212,7 @@ void main() {
       ctx.fillRect(-20.0, -10.0, 40.0, 20.0);
       ctx.restore();
       
-      final path = 'test/tmp/canvas2d_agg_transform.png';
+      final path = 'test/tmp/canvas2d_dartgraphics_transform.png';
       canvas.saveAs(path);
       
       final bytes = File(path).readAsBytesSync();
@@ -358,13 +358,13 @@ void main() {
   });
 
   group('Cross-implementation comparison', () {
-    test('AGG and Cairo produce similar output', () {
-      // Generate AGG output
-      final aggCanvas = AggHtmlCanvas(400, 300);
-      final aggCtx = aggCanvas.getContext('2d');
-      drawTestPattern(aggCtx);
-      aggCanvas.saveAs('test/tmp/canvas2d_compare_agg.png');
-      aggCanvas.dispose();
+    test('DartGraphics and Cairo produce similar output', () {
+      // Generate DartGraphics output
+      final dartGraphicsCanvas = DartGraphicsCanvas(400, 300);
+      final DartGraphicsCtx = dartGraphicsCanvas.getContext('2d');
+      drawTestPattern(DartGraphicsCtx);
+      dartGraphicsCanvas.saveAs('test/tmp/canvas2d_compare_dartgraphics.png');
+      dartGraphicsCanvas.dispose();
       
       // Generate Cairo output
       final cairo = Cairo();
@@ -376,19 +376,19 @@ void main() {
       cairoCanvas.dispose();
       
       // Compare images
-      final aggBytes = File('test/tmp/canvas2d_compare_agg.png').readAsBytesSync();
+      final DartGraphicsBytes = File('test/tmp/canvas2d_compare_dartgraphics.png').readAsBytesSync();
       final cairoBytes = File('test/tmp/canvas2d_compare_cairo.png').readAsBytesSync();
       
-      final aggImage = img.decodePng(aggBytes)!;
+      final DartGraphicsImage = img.decodePng(DartGraphicsBytes)!;
       final cairoImage = img.decodePng(cairoBytes)!;
       
-      final different = compareImages(aggImage, cairoImage, tolerance: 30);
-      final totalPixels = aggImage.width * aggImage.height;
+      final different = compareImages(DartGraphicsImage, cairoImage, tolerance: 30);
+      final totalPixels = DartGraphicsImage.width * DartGraphicsImage.height;
       final diffPercent = (different / totalPixels) * 100;
       
       // Allow up to 10% difference due to AA and rendering differences
       expect(diffPercent, lessThan(10),
-          reason: 'AGG and Cairo outputs differ by ${diffPercent.toStringAsFixed(2)}%');
+          reason: 'DartGraphics and Cairo outputs differ by ${diffPercent.toStringAsFixed(2)}%');
     });
 
     test('Skia and Cairo produce similar output', () {

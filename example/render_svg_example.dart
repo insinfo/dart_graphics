@@ -1,12 +1,12 @@
-import 'package:dart_graphics/src/agg/agg_gamma_functions.dart';
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
-import 'package:dart_graphics/src/agg/image/png_encoder.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
-import 'package:dart_graphics/src/agg/scanline_packed8.dart';
-import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
-import 'package:dart_graphics/src/agg/scanline_renderer.dart';
-import 'package:dart_graphics/src/agg/svg/svg_parser.dart';
-import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
+import 'package:dart_graphics/src/dart_graphics/gamma_functions.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_packed8.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/svg/svg_parser.dart';
+import 'package:dart_graphics/src/dart_graphics/svg/svg_paint.dart';
 
 void main() {
   // 1. Create Image

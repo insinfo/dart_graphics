@@ -1,20 +1,20 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
-import 'package:dart_graphics/src/agg/scanline_renderer.dart';
-import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
-import 'package:dart_graphics/src/agg/scanline_packed8.dart';
-import 'package:dart_graphics/src/agg/svg/svg_parser_new.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_packed8.dart';
+import 'package:dart_graphics/src/dart_graphics/svg/svg_parser_new.dart';
 
-import 'package:dart_graphics/src/agg/svg/svg_paint.dart';
-import 'package:dart_graphics/src/agg/transform/affine.dart';
-import 'package:dart_graphics/src/agg/spans/span_allocator.dart';
-import 'package:dart_graphics/src/agg/spans/span_gradient.dart';
-import 'package:dart_graphics/src/agg/vertex_source/vertex_storage.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
-import 'package:dart_graphics/src/agg/vertex_source/stroke.dart';
-import 'package:dart_graphics/src/agg/vertex_source/stroke_math.dart';
-import 'package:dart_graphics/src/agg/agg_basics.dart';
+import 'package:dart_graphics/src/dart_graphics/svg/svg_paint.dart';
+import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
+import 'package:dart_graphics/src/dart_graphics/spans/span_allocator.dart';
+import 'package:dart_graphics/src/dart_graphics/spans/span_gradient.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/vertex_storage.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke_math.dart';
+import 'package:dart_graphics/src/dart_graphics/basics.dart';
 
 Future<void> main() async {
   final file = File('resources/image/brasao_editado_1.svg');

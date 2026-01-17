@@ -1,7 +1,7 @@
 /// HTML5 Canvas 2D Rendering Context Interface
 /// 
 /// This abstract class defines the standard HTML5 Canvas 2D API interface
-/// that all implementations (AGG, Cairo, Skia) should follow.
+/// that all implementations (DartGraphics, Cairo, Skia) should follow.
 /// 
 /// Reference: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
 

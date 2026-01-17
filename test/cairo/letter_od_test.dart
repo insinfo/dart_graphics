@@ -4,15 +4,15 @@
 import 'dart:io';
 import 'package:test/test.dart';
 import 'package:dart_graphics/cairo.dart';
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
-import 'package:dart_graphics/src/agg/image/png_encoder.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
-import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
-import 'package:dart_graphics/src/agg/scanline_renderer.dart';
-import 'package:dart_graphics/src/agg/scanline_packed8.dart';
-import 'package:dart_graphics/src/agg/transform/affine.dart';
-import 'package:dart_graphics/src/agg/vertex_source/apply_transform.dart';
-import 'package:dart_graphics/src/agg/vertex_source/glyph_vertex_source.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_packed8.dart';
+import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/apply_transform.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/glyph_vertex_source.dart';
 import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
 import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 import 'package:dart_graphics/src/typography/openfont/typeface.dart';
@@ -81,7 +81,7 @@ void main() {
       expect(File('test/golden/letters_od.png').existsSync(), isTrue);
     });
 
-    test('AGG - letra "o"', () {
+    test('DartGraphics - letra "o"', () {
       final buffer = ImageBuffer(100, 100);
       _clearBuffer(buffer, Color(255, 255, 255, 255));
 
@@ -91,7 +91,7 @@ void main() {
       expect(File('test/tmp/letter_o.png').existsSync(), isTrue);
     });
 
-    test('AGG - letra "d"', () {
+    test('DartGraphics - letra "d"', () {
       final buffer = ImageBuffer(100, 100);
       _clearBuffer(buffer, Color(255, 255, 255, 255));
 
@@ -101,7 +101,7 @@ void main() {
       expect(File('test/tmp/letter_d.png').existsSync(), isTrue);
     });
 
-    test('AGG - "od"', () {
+    test('DartGraphics - "od"', () {
       final buffer = ImageBuffer(150, 100);
       _clearBuffer(buffer, Color(255, 255, 255, 255));
 
@@ -111,31 +111,31 @@ void main() {
       expect(File('test/tmp/letters_od.png').existsSync(), isTrue);
     });
 
-    test('Comparação letra "o" - AGG vs Cairo', () {
+    test('Comparação letra "o" - DartGraphics vs Cairo', () {
       // Carregar imagens
-      final aggFile = File('test/tmp/letter_o.png');
+      final DartGraphicsFile = File('test/tmp/letter_o.png');
       final cairoFile = File('test/golden/letter_o.png');
 
-      if (!aggFile.existsSync() || !cairoFile.existsSync()) {
+      if (!DartGraphicsFile.existsSync() || !cairoFile.existsSync()) {
         fail('Imagens não encontradas. Execute os testes de geração primeiro.');
       }
 
-      final aggImage = img.decodePng(aggFile.readAsBytesSync())!;
+      final DartGraphicsImage = img.decodePng(DartGraphicsFile.readAsBytesSync())!;
       final cairoImage = img.decodePng(cairoFile.readAsBytesSync())!;
 
       // Criar imagem de diferença
-      final diffImage = img.Image(width: aggImage.width, height: aggImage.height);
+      final diffImage = img.Image(width: DartGraphicsImage.width, height: DartGraphicsImage.height);
       int diffPixels = 0;
       double mse = 0;
 
-      for (int y = 0; y < aggImage.height; y++) {
-        for (int x = 0; x < aggImage.width; x++) {
-          final aggPixel = aggImage.getPixel(x, y);
+      for (int y = 0; y < DartGraphicsImage.height; y++) {
+        for (int x = 0; x < DartGraphicsImage.width; x++) {
+          final DartGraphicsPixel = DartGraphicsImage.getPixel(x, y);
           final cairoPixel = cairoImage.getPixel(x, y);
 
-          final dr = (aggPixel.r - cairoPixel.r).abs();
-          final dg = (aggPixel.g - cairoPixel.g).abs();
-          final db = (aggPixel.b - cairoPixel.b).abs();
+          final dr = (DartGraphicsPixel.r - cairoPixel.r).abs();
+          final dg = (DartGraphicsPixel.g - cairoPixel.g).abs();
+          final db = (DartGraphicsPixel.b - cairoPixel.b).abs();
 
           mse += (dr * dr + dg * dg + db * db) / 3;
 
@@ -143,18 +143,18 @@ void main() {
             diffPixels++;
             diffImage.setPixelRgba(x, y, 255, 0, 0, 255);
           } else {
-            diffImage.setPixelRgba(x, y, aggPixel.r.toInt(), aggPixel.g.toInt(), aggPixel.b.toInt(), 255);
+            diffImage.setPixelRgba(x, y, DartGraphicsPixel.r.toInt(), DartGraphicsPixel.g.toInt(), DartGraphicsPixel.b.toInt(), 255);
           }
         }
       }
 
-      mse /= (aggImage.width * aggImage.height);
+      mse /= (DartGraphicsImage.width * DartGraphicsImage.height);
       final psnr = mse > 0 ? 10 * (math.log(255 * 255 / mse) / math.ln10) : double.infinity;
 
       print('Comparação letra "o":');
       print('  PSNR: ${psnr.toStringAsFixed(2)} dB');
       print('  MSE: ${mse.toStringAsFixed(4)}');
-      print('  Pixels diferentes: $diffPixels / ${aggImage.width * aggImage.height}');
+      print('  Pixels diferentes: $diffPixels / ${DartGraphicsImage.width * DartGraphicsImage.height}');
 
       // Salvar imagem de diferença
       File('test/tmp/letter_o.diff.png').writeAsBytesSync(img.encodePng(diffImage));
@@ -162,31 +162,31 @@ void main() {
       expect(psnr, greaterThan(20.0), reason: 'Letra "o" deve ter renderização similar');
     });
 
-    test('Comparação letra "d" - AGG vs Cairo', () {
+    test('Comparação letra "d" - DartGraphics vs Cairo', () {
       // Carregar imagens
-      final aggFile = File('test/tmp/letter_d.png');
+      final DartGraphicsFile = File('test/tmp/letter_d.png');
       final cairoFile = File('test/golden/letter_d.png');
 
-      if (!aggFile.existsSync() || !cairoFile.existsSync()) {
+      if (!DartGraphicsFile.existsSync() || !cairoFile.existsSync()) {
         fail('Imagens não encontradas. Execute os testes de geração primeiro.');
       }
 
-      final aggImage = img.decodePng(aggFile.readAsBytesSync())!;
+      final DartGraphicsImage = img.decodePng(DartGraphicsFile.readAsBytesSync())!;
       final cairoImage = img.decodePng(cairoFile.readAsBytesSync())!;
 
       // Criar imagem de diferença
-      final diffImage = img.Image(width: aggImage.width, height: aggImage.height);
+      final diffImage = img.Image(width: DartGraphicsImage.width, height: DartGraphicsImage.height);
       int diffPixels = 0;
       double mse = 0;
 
-      for (int y = 0; y < aggImage.height; y++) {
-        for (int x = 0; x < aggImage.width; x++) {
-          final aggPixel = aggImage.getPixel(x, y);
+      for (int y = 0; y < DartGraphicsImage.height; y++) {
+        for (int x = 0; x < DartGraphicsImage.width; x++) {
+          final DartGraphicsPixel = DartGraphicsImage.getPixel(x, y);
           final cairoPixel = cairoImage.getPixel(x, y);
 
-          final dr = (aggPixel.r - cairoPixel.r).abs();
-          final dg = (aggPixel.g - cairoPixel.g).abs();
-          final db = (aggPixel.b - cairoPixel.b).abs();
+          final dr = (DartGraphicsPixel.r - cairoPixel.r).abs();
+          final dg = (DartGraphicsPixel.g - cairoPixel.g).abs();
+          final db = (DartGraphicsPixel.b - cairoPixel.b).abs();
 
           mse += (dr * dr + dg * dg + db * db) / 3;
 
@@ -194,18 +194,18 @@ void main() {
             diffPixels++;
             diffImage.setPixelRgba(x, y, 255, 0, 0, 255);
           } else {
-            diffImage.setPixelRgba(x, y, aggPixel.r.toInt(), aggPixel.g.toInt(), aggPixel.b.toInt(), 255);
+            diffImage.setPixelRgba(x, y, DartGraphicsPixel.r.toInt(), DartGraphicsPixel.g.toInt(), DartGraphicsPixel.b.toInt(), 255);
           }
         }
       }
 
-      mse /= (aggImage.width * aggImage.height);
+      mse /= (DartGraphicsImage.width * DartGraphicsImage.height);
       final psnr = mse > 0 ? 10 * (math.log(255 * 255 / mse) / math.ln10) : double.infinity;
 
       print('Comparação letra "d":');
       print('  PSNR: ${psnr.toStringAsFixed(2)} dB');
       print('  MSE: ${mse.toStringAsFixed(4)}');
-      print('  Pixels diferentes: $diffPixels / ${aggImage.width * aggImage.height}');
+      print('  Pixels diferentes: $diffPixels / ${DartGraphicsImage.width * DartGraphicsImage.height}');
 
       // Salvar imagem de diferença
       File('test/tmp/letter_d.diff.png').writeAsBytesSync(img.encodePng(diffImage));

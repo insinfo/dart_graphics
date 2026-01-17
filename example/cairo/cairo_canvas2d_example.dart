@@ -3,7 +3,7 @@
 /// This example demonstrates how to use the HTML5-style Canvas API with Cairo
 /// for 2D drawing operations.
 ///
-/// This example is aligned with the AGG and Skia examples to show
+/// This example is aligned with the dart_graphics and Skia examples to show
 /// the same visual output.
 
 import 'dart:math' as math;
@@ -206,9 +206,9 @@ void main() {
   print('\n' + '=' * 40);
   print('Saving canvas...');
 
-  canvas.saveAs('cairo_canvas2d_example.png');
+  canvas.saveAs('test/tmp/cairo_canvas2d_example.png');
   
-  print('Example completed! Check cairo_canvas2d_example.png');
+  print('Example completed! Check test/tmp/cairo_canvas2d_example.png');
   print('\nCanvas info:');
   print('  Size: `${canvas.width} x `${canvas.height}');
 

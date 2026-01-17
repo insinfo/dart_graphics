@@ -2203,11 +2203,11 @@ typedef FT_Face = ffi.Pointer<FT_FaceRec_>;
 /// When loading a font, FreeType makes a Unicode charmap active if
 /// possible (either if the font provides such a charmap, or if FreeType
 /// can synthesize one from PostScript glyph name dictionaries; in either
-/// case, the charmap is tagged with `FT_ENCODING_UNICODE`).  If such a
+/// case, the charmap is tDartGraphicsed with `FT_ENCODING_UNICODE`).  If such a
 /// charmap is synthesized, it is placed at the first position of the
 /// charmap array.
 ///
-/// All other encodings are considered legacy and tagged only if
+/// All other encodings are considered legacy and tDartGraphicsed only if
 /// explicitly defined in the font file.  Otherwise, `FT_ENCODING_NONE` is
 /// used.
 ///

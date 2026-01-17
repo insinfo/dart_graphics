@@ -1,20 +1,20 @@
-import 'package:dart_graphics/src/agg/agg_gamma_functions.dart';
-import 'package:dart_graphics/src/agg/image/png_encoder.dart';
-import 'package:dart_graphics/src/agg/transform/affine.dart';
-import 'package:dart_graphics/src/agg/vertex_source/apply_transform.dart';
-import 'package:dart_graphics/src/agg/vertex_source/glyph_vertex_source.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
-import 'package:dart_graphics/src/agg/scanline_renderer.dart';
-import 'package:dart_graphics/src/agg/scanline_packed8.dart';
-import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/gamma_functions.dart';
+import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
+import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/apply_transform.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/glyph_vertex_source.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_packed8.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
 import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
 import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 import 'dart:io';
 
 void main() async {
   // 1. Load Font
-  final fontPath = 'agg-sharp/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
+  final fontPath = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
   final file = File(fontPath);
   if (!file.existsSync()) {
     print('Font file not found: $fontPath');
@@ -45,7 +45,7 @@ void main() async {
   
   print('Layout: "$text" (${scaledPlans.count} glyphs)');
   
-  // 3. Setup AGG
+  // 3. Setup 
   final width = 400;
   final height = 100;
   final buffer = ImageBuffer(width, height);

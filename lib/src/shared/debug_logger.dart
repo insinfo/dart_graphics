@@ -1,4 +1,4 @@
-/// Simple debug logger for AGG library.
+/// Simple debug logger for DartGraphics library.
 ///
 /// This class provides basic logging functionality for debugging purposes.
 class DebugLogger {

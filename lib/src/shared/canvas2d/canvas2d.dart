@@ -1,7 +1,7 @@
 /// HTML5 Canvas 2D API
 /// 
 /// This library provides a standard interface for the HTML5 Canvas 2D API
-/// that all implementations (AGG, Cairo, Skia) should follow.
+/// that all implementations (DartGraphics, Cairo, Skia) should follow.
 /// 
 /// Reference: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
 

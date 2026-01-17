@@ -1,12 +1,12 @@
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
-import 'package:dart_graphics/src/agg/scanline_rasterizer.dart';
-import 'package:dart_graphics/src/agg/scanline_packed8.dart';
-import 'package:dart_graphics/src/agg/scanline_renderer.dart';
-import 'package:dart_graphics/src/agg/vertex_source/ellipse.dart';
-import 'package:dart_graphics/src/agg/vertex_source/rounded_rect.dart';
-import 'package:dart_graphics/src/agg/vertex_source/stroke.dart';
-import 'package:dart_graphics/src/agg/image/png_encoder.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_packed8.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/ellipse.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/rounded_rect.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke.dart';
+import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
 
 void main() {
   const width = 480;

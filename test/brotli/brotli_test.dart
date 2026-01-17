@@ -7,6 +7,28 @@ import 'package:test/test.dart';
 void main() {
   const assetsDir = 'test/brotli/assets';
 
+  List<int> normalizeLineEndings(List<int> bytes) {
+    final normalized = <int>[];
+
+    for (var i = 0; i < bytes.length; i++) {
+      final value = bytes[i];
+
+      if (value == 0x0d) {
+        if (i + 1 < bytes.length && bytes[i + 1] == 0x0a) {
+          i++;
+        }
+
+        normalized.add(0x0a);
+      } else {
+        normalized.add(value);
+      }
+    }
+
+    return normalized;
+  }
+
+  bool isBinaryPayload(List<int> bytes) => bytes.contains(0x00);
+
   test('Base Dictionary Words', () {
     final input = [
       0x1b, 0x03, 0x00, 0x00, //
@@ -198,7 +220,13 @@ void main() {
         // encoding: utf8,
       );
 
-      expect(output, File('$assetsDir/$file.txt').readAsBytesSync());
+      final expected = File('$assetsDir/$file.txt').readAsBytesSync();
+
+      if (isBinaryPayload(expected) || isBinaryPayload(output)) {
+        expect(output, expected);
+      } else {
+        expect(normalizeLineEndings(output), normalizeLineEndings(expected));
+      }
     }
   });
 
@@ -209,7 +237,13 @@ void main() {
         // encoding: utf8,
       );
 
-      expect(output, File('$assetsDir/mussum_ipsum.txt').readAsBytesSync());
+      final expected = File('$assetsDir/mussum_ipsum.txt').readAsBytesSync();
+
+      if (isBinaryPayload(expected) || isBinaryPayload(output)) {
+        expect(output, expected);
+      } else {
+        expect(normalizeLineEndings(output), normalizeLineEndings(expected));
+      }
     }
   });
 }

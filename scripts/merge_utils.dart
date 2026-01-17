@@ -3,11 +3,11 @@ import 'dart:io';
 
 void main() {
  
-  final libDir = Directory(r'C:\MyDartProjects\agg\agg-sharp\agg');
-  //final libDir = Directory(r'C:\MyDartProjects\agg\agg-sharp\Typography');
+  final libDir = Directory(r'C:\MyDartProjects\DartGraphics\DartGraphics-sharp\DartGraphics');
+  //final libDir = Directory(r'C:\MyDartProjects\DartGraphics\DartGraphics-sharp\Typography');
   
   
-  final outputFile = File(r'C:\MyDartProjects\agg\scripts\agg_mesclado.cs.txt');
+  final outputFile = File(r'C:\MyDartProjects\DartGraphics\scripts\DartGraphics_mesclado.cs.txt');
 
   if (outputFile.existsSync()) {
     outputFile.deleteSync();

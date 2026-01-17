@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:dart_graphics/src/agg/graphics2D.dart';
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/graphics2D.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
 import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 import 'package:test/test.dart';
 
@@ -64,7 +64,7 @@ void main() {
       final graphics = buffer.newGraphics2D() as BasicGraphics2D;
       graphics.clear(Color.white);
 
-      graphics.drawText('Agg Raster', typeface, 72, Color.black, x: 24, y: 16);
+      graphics.drawText('DartGraphics Raster', typeface, 72, Color.black, x: 24, y: 16);
 
       final pixels = buffer.getBuffer();
       var nonWhite = 0;

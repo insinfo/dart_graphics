@@ -3,7 +3,7 @@
 /// This example demonstrates the HTML5-style Canvas 2D API for Skia.
 /// It shows how to create a canvas, draw shapes, and save the result as PNG.
 ///
-/// This example is aligned with the AGG and Cairo examples to show
+/// This example is aligned with the dart_graphics and Cairo examples to show
 /// the same visual output.
 
 import 'dart:math' as math;
@@ -203,9 +203,9 @@ void main() {
   print('\n' + '=' * 40);
   print('Saving canvas...');
 
-  canvas.savePng('skia_canvas2d_example.png');
+  canvas.savePng('test/tmp/skia_canvas2d_example.png');
 
-  print('Example completed! Check skia_canvas2d_example.png');
+  print('Example completed! Check test/tmp/skia_canvas2d_example.png');
   print('\nCanvas info:');
   print('  Size: `${canvas.width} x `${canvas.height}');
 

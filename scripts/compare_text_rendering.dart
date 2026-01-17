@@ -1,4 +1,4 @@
-/// Compare Cairo FreeType rendering with AGG Typography rendering
+/// Compare Cairo FreeType rendering with DartGraphics Typography rendering
 import 'dart:io';
 
 import 'package:dart_graphics/cairo.dart';
@@ -7,7 +7,7 @@ import 'package:dart_graphics/cairo.dart';
 final cairo = Cairo();
 
 void main() {
-  print('Comparing Cairo FreeType vs AGG Typography text rendering...\n');
+  print('Comparing Cairo FreeType vs DartGraphics Typography text rendering...\n');
 
   // Load the same font file
   final fontPath = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
@@ -23,18 +23,18 @@ void main() {
   canvas.dispose();
   
   print('Cairo FreeType: test/tmp/cairo_freetype_hello.png');
-  print('AGG Typography: test/tmp/text_hello_world.png');
+  print('DartGraphics Typography: test/tmp/text_hello_world.png');
   
   // Compare pixels
   final cairoFile = File('test/tmp/cairo_freetype_hello.png');
-  final aggFile = File('test/tmp/text_hello_world.png');
+  final DartGraphicsFile = File('test/tmp/text_hello_world.png');
   
-  if (cairoFile.existsSync() && aggFile.existsSync()) {
+  if (cairoFile.existsSync() && DartGraphicsFile.existsSync()) {
     final cairoSize = cairoFile.lengthSync();
-    final aggSize = aggFile.lengthSync();
+    final DartGraphicsSize = DartGraphicsFile.lengthSync();
     print('\nFile sizes:');
     print('  Cairo: $cairoSize bytes');
-    print('  AGG:   $aggSize bytes');
+    print('  DartGraphics:   $DartGraphicsSize bytes');
   }
   
   print('\nNote: Differences may be due to:');

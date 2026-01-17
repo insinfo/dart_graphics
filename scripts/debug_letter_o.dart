@@ -2,8 +2,8 @@
 
 import 'dart:io';
 import 'package:dart_graphics/src/shared/ref_param.dart';
-import 'package:dart_graphics/src/agg/vertex_source/glyph_vertex_source.dart';
-import 'package:dart_graphics/src/agg/vertex_source/flatten_curve.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/glyph_vertex_source.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/flatten_curve.dart';
 
 import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 

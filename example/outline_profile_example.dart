@@ -1,10 +1,10 @@
-import 'package:dart_graphics/src/agg/image/image_buffer.dart';
-import 'package:dart_graphics/src/agg/line_aa_basics.dart';
-import 'package:dart_graphics/src/agg/line_profile_aa.dart';
-import 'package:dart_graphics/src/agg/outline_image_renderer.dart';
-import 'package:dart_graphics/src/agg/primitives/color.dart';
-import 'package:dart_graphics/src/agg/rasterizer_outline_aa.dart';
-import 'package:dart_graphics/src/agg/agg_gamma_functions.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/line_aa_basics.dart';
+import 'package:dart_graphics/src/dart_graphics/line_profile_aa.dart';
+import 'package:dart_graphics/src/dart_graphics/outline_image_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/rasterizer_outline_aa.dart';
+import 'package:dart_graphics/src/dart_graphics/gamma_functions.dart';
 
 void main() {
   final img = ImageBuffer(64, 64);

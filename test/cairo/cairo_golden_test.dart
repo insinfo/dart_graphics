@@ -1,19 +1,24 @@
-/// Cairo Golden Tests - Reference images for AGG port validation
-/// 
+/// Cairo Golden Tests - Reference images for DartGraphics port validation
+///
 /// These tests generate reference images using Cairo library to compare
-/// against the Dart AGG port implementation.
+/// against the Dart DartGraphics port implementation.
 
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
 import 'package:dart_graphics/cairo.dart';
 
-/// Font paths - same fonts used by AGG tests for fair comparison
-const _liberationSansRegular = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
-const _liberationSansBold = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Bold.ttf';
-const _liberationSerifRegular = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Regular.ttf';
-const _liberationSerifBold = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Bold.ttf';
-const _liberationMonoRegular = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationMono-Regular.ttf';
+/// Font paths - same fonts used by DartGraphics tests for fair comparison
+const _liberationSansRegular =
+    'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
+const _liberationSansBold =
+    'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Bold.ttf';
+const _liberationSerifRegular =
+    'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Regular.ttf';
+const _liberationSerifBold =
+    'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Bold.ttf';
+const _liberationMonoRegular =
+    'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationMono-Regular.ttf';
 
 /// Global Cairo instance
 final cairo = Cairo();
@@ -28,7 +33,7 @@ void main() {
       final canvas = cairo.createCanvas(200, 200);
       canvas.clear(CairoColor.white);
 
-      // Heart shape using bezier curves (same as AGG test)
+      // Heart shape using bezier curves (same as DartGraphics test)
       final cx = 100.0;
       final cy = 100.0;
       final size = 60.0;
@@ -38,16 +43,22 @@ void main() {
 
       // Left side curve
       canvas.curveTo(
-        cx - size * 0.5, cy - size * 0.3,
-        cx - size, cy - size * 0.2,
-        cx, cy - size * 0.8,
+        cx - size * 0.5,
+        cy - size * 0.3,
+        cx - size,
+        cy - size * 0.2,
+        cx,
+        cy - size * 0.8,
       );
 
       // Right side curve
       canvas.curveTo(
-        cx + size, cy - size * 0.2,
-        cx + size * 0.5, cy - size * 0.3,
-        cx, cy + size * 0.3,
+        cx + size,
+        cy - size * 0.2,
+        cx + size * 0.5,
+        cy - size * 0.3,
+        cx,
+        cy + size * 0.3,
       );
 
       canvas.closePath();
@@ -169,9 +180,9 @@ void main() {
 
       for (var i = 10; i > 0; i--) {
         final radius = i * 14.0;
-        // Match AGG: i % 2 == 0 (even) -> blue, odd -> orange
+        // Match DartGraphics: i % 2 == 0 (even) -> blue, odd -> orange
         final color = (i % 2 == 0)
-            ? CairoColor.fromRgba(100, 150, 200, 255)  // blue for even
+            ? CairoColor.fromRgba(100, 150, 200, 255) // blue for even
             : CairoColor.fromRgba(200, 150, 100, 255); // orange for odd
 
         canvas.setColor(color);
@@ -188,9 +199,9 @@ void main() {
       final canvas = cairo.createCanvas(400, 300);
       canvas.clear(CairoColor.white);
 
-      // Match exact AGG test coordinates and colors
-      // AGG uses RoundedRect(left, bottom, right, top, radius)
-      
+      // Match exact DartGraphics test coordinates and colors
+      // DartGraphics uses RoundedRect(left, bottom, right, top, radius)
+
       // rect1: (20, 20, 180, 100) with radius 5
       canvas.setColor(CairoColor.fromRgba(255, 150, 150, 255));
       canvas.fillRoundedRect(20, 20, 180 - 20, 100 - 20, 5);
@@ -237,18 +248,19 @@ void main() {
 
       // Shaft
       canvas.moveTo(x1 + px * shaftWidth / 2, y1 + py * shaftWidth / 2);
-      canvas.lineTo(
-          x2 - ux * headLength + px * shaftWidth / 2, y2 - uy * headLength + py * shaftWidth / 2);
+      canvas.lineTo(x2 - ux * headLength + px * shaftWidth / 2,
+          y2 - uy * headLength + py * shaftWidth / 2);
       // Head base left
-      canvas.lineTo(x2 - ux * headLength + px * headWidth / 2, y2 - uy * headLength + py * headWidth / 2);
+      canvas.lineTo(x2 - ux * headLength + px * headWidth / 2,
+          y2 - uy * headLength + py * headWidth / 2);
       // Head tip
       canvas.lineTo(x2, y2);
       // Head base right
-      canvas.lineTo(
-          x2 - ux * headLength - px * headWidth / 2, y2 - uy * headLength - py * headWidth / 2);
+      canvas.lineTo(x2 - ux * headLength - px * headWidth / 2,
+          y2 - uy * headLength - py * headWidth / 2);
       // Back to shaft
-      canvas.lineTo(
-          x2 - ux * headLength - px * shaftWidth / 2, y2 - uy * headLength - py * shaftWidth / 2);
+      canvas.lineTo(x2 - ux * headLength - px * shaftWidth / 2,
+          y2 - uy * headLength - py * shaftWidth / 2);
       canvas.lineTo(x1 - px * shaftWidth / 2, y1 - py * shaftWidth / 2);
 
       canvas.closePath();
@@ -283,6 +295,50 @@ void main() {
       canvas.dispose();
 
       expect(File('test/golden/shape_pie.png').existsSync(), isTrue);
+    });
+  });
+
+  group('Cairo Golden - Canvas2D Strokes', () {
+    test('Canvas2D stroke triangle', () {
+      final canvas = CairoHtmlCanvas(300, 200, cairo: cairo);
+      final ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0.0, 0.0, 300.0, 200.0);
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#E74C3C';
+      ctx.lineWidth = 3.0;
+      ctx.moveTo(60.0, 40.0);
+      ctx.lineTo(20.0, 160.0);
+      ctx.lineTo(120.0, 160.0);
+      ctx.closePath();
+      ctx.stroke();
+
+      canvas.saveAs('test/golden/canvas2d_stroke_triangle.png');
+      canvas.dispose();
+
+      expect(File('test/golden/canvas2d_stroke_triangle.png').existsSync(),
+          isTrue);
+    });
+
+    test('Canvas2D stroke arc', () {
+      final canvas = CairoHtmlCanvas(300, 200, cairo: cairo);
+      final ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0.0, 0.0, 300.0, 200.0);
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#00BCD4';
+      ctx.lineWidth = 4.0;
+      ctx.arc(150.0, 120.0, 70.0, math.pi * 0.15, math.pi * 0.95);
+      ctx.stroke();
+
+      canvas.saveAs('test/golden/canvas2d_stroke_arc.png');
+      canvas.dispose();
+
+      expect(File('test/golden/canvas2d_stroke_arc.png').existsSync(), isTrue);
     });
   });
 
@@ -402,7 +458,7 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(128, 128, 128, 255));
       canvas.setFontFaceFromFile(_liberationSansRegular);
       canvas.setFontSize(12);
-      canvas.drawText('AGG Typography Port - Dart', 20, 260);
+      canvas.drawText('DartGraphics Typography Port - Dart', 20, 260);
 
       canvas.saveToPng('test/golden/text_mixed_styles.png');
       canvas.dispose();
@@ -754,19 +810,30 @@ CairoColor _hsvToRgb(double h, double s, double v) {
   double r, g, b;
   switch (i % 6) {
     case 0:
-      r = v; g = t; b = p;
+      r = v;
+      g = t;
+      b = p;
     case 1:
-      r = q; g = v; b = p;
+      r = q;
+      g = v;
+      b = p;
     case 2:
-      r = p; g = v; b = t;
+      r = p;
+      g = v;
+      b = t;
     case 3:
-      r = p; g = q; b = v;
+      r = p;
+      g = q;
+      b = v;
     case 4:
-      r = t; g = p; b = v;
+      r = t;
+      g = p;
+      b = v;
     default:
-      r = v; g = p; b = q;
+      r = v;
+      g = p;
+      b = q;
   }
 
   return CairoColor(r, g, b);
 }
-

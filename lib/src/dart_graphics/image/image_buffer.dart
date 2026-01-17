@@ -1,0 +1,293 @@
+import 'dart:typed_data';
+import 'package:dart_graphics/src/dart_graphics/graphics2D.dart';
+import 'package:dart_graphics/src/dart_graphics/image/blender_rgba.dart';
+import 'package:dart_graphics/src/dart_graphics/image/iimage.dart';
+import 'package:dart_graphics/src/dart_graphics/image/rgba.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/vector_math/vector2.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_unpacked8.dart';
+
+/// Simple RGBA8888 image buffer with basic blending operations.
+class ImageBuffer implements IImageByte {
+  @override
+  final int bitDepth = 32;
+
+  @override
+  Vector2 originOffset = Vector2.zero;
+
+  @override
+  final int width;
+  @override
+  final int height;
+  final Uint8List _buffer;
+  final int _stride;
+  IRecieveBlenderByte _blender = BlenderRgba();
+
+  ImageBuffer(this.width, this.height, {IRecieveBlenderByte? blender})
+      : _stride = width * 4,
+        _buffer = Uint8List(width * height * 4) {
+    _blender = blender ?? BlenderRgba();
+  }
+
+  @override
+  RectangleInt getBounds() => RectangleInt(0, 0, width - 1, height - 1);
+
+  @override
+  int getBufferOffsetY(int y) => y * _stride;
+
+  @override
+  int getBufferOffsetXY(int x, int y) => getBufferOffsetY(y) + x * 4;
+
+  @override
+  Graphics2D newGraphics2D() {
+    return BasicGraphics2D(this,
+        rasterizer: ScanlineRasterizer(), scanline: ScanlineUnpacked8());
+  }
+
+  @override
+  void markImageChanged() {}
+
+  @override
+  int strideInBytes() => _stride;
+
+  @override
+  int strideInBytesAbs() => _stride.abs();
+
+  @override
+  IRecieveBlenderByte getRecieveBlender() => _blender;
+
+  @override
+  void setRecieveBlender(IRecieveBlenderByte value) {
+    _blender = value;
+  }
+
+  @override
+  int getBytesBetweenPixelsInclusive() => 4;
+
+  @override
+  Uint8List getBuffer() => _buffer;
+
+  @override
+  Color getPixel(int x, int y) =>
+      _blender.pixelToColor(_buffer, getBufferOffsetXY(x, y));
+
+  @override
+  void copy_pixel(int x, int y, Uint8List c, int byteOffset) {
+    final int o = getBufferOffsetXY(x, y);
+    _buffer[o] = c[byteOffset];
+    _buffer[o + 1] = c[byteOffset + 1];
+    _buffer[o + 2] = c[byteOffset + 2];
+    _buffer[o + 3] = c[byteOffset + 3];
+  }
+
+  @override
+  void CopyFrom(IImageByte sourceImage) {
+    _buffer.setAll(0, sourceImage.getBuffer());
+  }
+
+  @override
+  void CopyFrom2(IImageByte sourceImage, RectangleInt srcRect, int destXOffset,
+      int destYOffset) {
+    for (int y = 0; y <= srcRect.top - srcRect.bottom; y++) {
+      for (int x = 0; x <= srcRect.right - srcRect.left; x++) {
+        final color =
+            sourceImage.getPixel(srcRect.left + x, srcRect.bottom + y);
+        SetPixel(destXOffset + x, destYOffset + y, color);
+      }
+    }
+  }
+
+  @override
+  void SetPixel(int x, int y, Color color) {
+    _blender.copyPixels(_buffer, getBufferOffsetXY(x, y), color, 1);
+  }
+
+  @override
+  void BlendPixel(int x, int y, Color sourceColor, int cover) {
+    final c = Color.fromColor(sourceColor)
+      ..alpha = (sourceColor.alpha * cover + 127) ~/ 255;
+    _blender.blendPixel(_buffer, getBufferOffsetXY(x, y), c);
+  }
+
+  /// Returns `true` if [imageToFind] appears within this image, comparing
+  /// pixels using an optional [maxError] tolerance per channel.
+  bool contains(ImageBuffer imageToFind, {int maxError = 0}) {
+    if (imageToFind.width <= 0 || imageToFind.height <= 0) {
+      return false;
+    }
+
+    if (width < imageToFind.width || height < imageToFind.height) {
+      return false;
+    }
+
+    if (bitDepth != imageToFind.bitDepth) {
+      return false;
+    }
+
+    final searchBuffer = imageToFind.getBuffer();
+    final searchStride = imageToFind.strideInBytes();
+    final searchBytesPerPixel = imageToFind.getBytesBetweenPixelsInclusive();
+
+    for (var offsetY = 0; offsetY <= height - imageToFind.height; offsetY++) {
+      for (var offsetX = 0; offsetX <= width - imageToFind.width; offsetX++) {
+        if (_matchAt(offsetX, offsetY, searchBuffer, searchStride, searchBytesPerPixel, imageToFind.width,
+            imageToFind.height, maxError)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  bool _matchAt(
+    int offsetX,
+    int offsetY,
+    Uint8List searchBuffer,
+    int searchStride,
+    int searchBytesPerPixel,
+    int searchWidth,
+    int searchHeight,
+    int maxError,
+  ) {
+    final baseOffsetY = getBufferOffsetY(offsetY);
+
+    for (var y = 0; y < searchHeight; y++) {
+      final targetBase = baseOffsetY + y * _stride;
+      final sourceBase = y * searchStride;
+
+      for (var x = 0; x < searchWidth; x++) {
+        final aOffset = targetBase + (offsetX + x) * 4;
+        final bOffset = sourceBase + x * searchBytesPerPixel;
+
+        for (var channel = 0; channel < 4; channel++) {
+          final a = _buffer[aOffset + channel];
+          final b = searchBuffer[bOffset + channel];
+          if ((a - b).abs() > maxError) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  @override
+  void copy_hline(int x, int y, int len, Color sourceColor) {
+    _blender.copyPixels(_buffer, getBufferOffsetXY(x, y), sourceColor, len);
+  }
+
+  @override
+  void copy_vline(int x, int y, int len, Color sourceColor) {
+    for (int i = 0; i < len; i++) {
+      SetPixel(x, y + i, sourceColor);
+    }
+  }
+
+  @override
+  void blend_hline(int x, int y, int x2, Color sourceColor, int cover) {
+    if (x2 < x) {
+      return;
+    }
+    final int len = x2 - x + 1;
+    final blended = Color.fromColor(sourceColor)
+      ..alpha = (sourceColor.alpha * cover + 127) ~/ 255;
+    int offset = getBufferOffsetXY(x, y);
+    for (int i = 0; i < len; i++) {
+      _blender.blendPixel(_buffer, offset, blended);
+      offset += 4;
+    }
+  }
+
+  @override
+  void blend_vline(int x, int y1, int y2, Color sourceColor, int cover) {
+    final c = Color.fromColor(sourceColor)
+      ..alpha = (sourceColor.alpha * cover + 127) ~/ 255;
+    for (int y = y1; y <= y2; y++) {
+      _blender.blendPixel(_buffer, getBufferOffsetXY(x, y), c);
+    }
+  }
+
+  @override
+  void copy_color_hspan(
+      int x, int y, int len, List<Color> colors, int colorIndex) {
+    for (int i = 0; i < len; i++) {
+      SetPixel(x + i, y, colors[colorIndex + i]);
+    }
+  }
+
+  @override
+  void copy_color_vspan(
+      int x, int y, int len, List<Color> colors, int colorIndex) {
+    for (int i = 0; i < len; i++) {
+      SetPixel(x, y + i, colors[colorIndex + i]);
+    }
+  }
+
+  @override
+  void blend_solid_hspan(int x, int y, int len, Color sourceColor,
+      Uint8List covers, int coversIndex) {
+    for (int i = 0; i < len; i++) {
+      BlendPixel(x + i, y, sourceColor, covers[coversIndex + i]);
+    }
+  }
+
+  @override
+  void blend_solid_vspan(int x, int y, int len, Color sourceColor,
+      Uint8List covers, int coversIndex) {
+    for (int i = 0; i < len; i++) {
+      BlendPixel(x, y + i, sourceColor, covers[coversIndex + i]);
+    }
+  }
+
+  @override
+  void blend_color_hspan(
+    int x,
+    int y,
+    int len,
+    List<Color> colors,
+    int colorsIndex,
+    Uint8List covers,
+    int coversIndex,
+    bool firstCoverForAll,
+  ) {
+    _blender.blendPixels(
+      _buffer,
+      getBufferOffsetXY(x, y),
+      colors,
+      colorsIndex,
+      covers,
+      coversIndex,
+      firstCoverForAll,
+      len,
+    );
+  }
+
+  @override
+  void blend_color_vspan(
+    int x,
+    int y,
+    int len,
+    List<Color> colors,
+    int colorsIndex,
+    Uint8List covers,
+    int coversIndex,
+    bool firstCoverForAll,
+  ) {
+    for (int i = 0; i < len; i++) {
+      _blender.blendPixels(
+        _buffer,
+        getBufferOffsetXY(x, y + i),
+        colors,
+        colorsIndex + i,
+        covers,
+        coversIndex + (firstCoverForAll ? 0 : i),
+        firstCoverForAll,
+        1,
+      );
+    }
+  }
+}

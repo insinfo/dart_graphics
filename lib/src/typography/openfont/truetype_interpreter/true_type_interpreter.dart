@@ -107,9 +107,9 @@ class TrueTypeInterpreter {
     }
 
     // Vertical hinting hack from C#
-    double aggXScale = 1000.0;
+    double DartGraphicsXScale = 1000.0;
     if (useVerticalHinting) {
-      applyScaleOnlyOnXAxis(newGlyphPoints, aggXScale);
+      applyScaleOnlyOnXAxis(newGlyphPoints, DartGraphicsXScale);
     }
 
     // 4. Set CVT
@@ -131,7 +131,7 @@ class TrueTypeInterpreter {
 
     // 6. Scale back
     if (useVerticalHinting) {
-      applyScaleOnlyOnXAxis(newGlyphPoints, 1.0 / aggXScale);
+      applyScaleOnlyOnXAxis(newGlyphPoints, 1.0 / DartGraphicsXScale);
     }
 
     return newGlyphPoints;
