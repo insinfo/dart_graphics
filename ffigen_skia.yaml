@@ -1,7 +1,7 @@
 # dart run ffigen --config ffigen_skia.yaml
 
 # NOTA: Skia é uma biblioteca C++ e não possui uma API C pura.
-# Para usar Skia com ffigen, você precisa de um wrapper C ou usar
+# Para usar Skia com ffigen, precisa de um wrapper C ou usar
 # uma biblioteca como skia-canvas que fornece bindings C.
 #
 # Alternativas:

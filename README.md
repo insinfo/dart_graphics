@@ -1,1 +1,1 @@
-##### beginning of the work of porting the Agg lib to dart
+##### A pure dart 2D graphic library
