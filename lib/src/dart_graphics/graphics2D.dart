@@ -1055,10 +1055,23 @@ class BasicGraphics2D extends Graphics2D {
     final top = math.max(y1, y2);
 
     const eps = 1e-6;
-    if ((left - left.round()).abs() > eps ||
-        (right - right.round()).abs() > eps ||
-        (bottom - bottom.round()).abs() > eps ||
-        (top - top.round()).abs() > eps) {
+    // Snap values extremely close to integers (float noise after transforms).
+    // Without this, values like 106.0000001 pass the epsilon check but
+    // `ceil()` expands the fill by 1px.
+    double snapNearInt(double v) {
+      final r = v.roundToDouble();
+      return (v - r).abs() <= eps ? r : v;
+    }
+
+    final leftS = snapNearInt(left);
+    final rightS = snapNearInt(right);
+    final bottomS = snapNearInt(bottom);
+    final topS = snapNearInt(top);
+
+    if ((leftS - leftS.round()).abs() > eps ||
+        (rightS - rightS.round()).abs() > eps ||
+        (bottomS - bottomS.round()).abs() > eps ||
+        (topS - topS.round()).abs() > eps) {
       final vs = VertexStorage()
         ..moveTo(x1, y1)
         ..lineTo(x2, y1)
@@ -1069,10 +1082,10 @@ class BasicGraphics2D extends Graphics2D {
       return;
     }
 
-    var l = left.floor();
-    var r = right.ceil();
-    var b = bottom.floor();
-    var tY = top.ceil();
+    var l = leftS.floor();
+    var r = rightS.ceil();
+    var b = bottomS.floor();
+    var tY = topS.ceil();
 
     if (l < 0) l = 0;
     if (b < 0) b = 0;

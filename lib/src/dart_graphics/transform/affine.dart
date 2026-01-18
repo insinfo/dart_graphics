@@ -70,7 +70,10 @@ class Affine implements ITransform {
     ty = 0.0;
   }
 
-  /// Multiply this matrix by another (this = this * m)
+  /// Concatenate transform [m] onto this transform.
+  ///
+  /// In terms of points (using this library's apply convention):
+  /// (a.multiply(b))(p) == b(a(p))  the newly multiplied transform is applied last.
   Affine multiply(Affine m) {
     double t0 = sx * m.sx + shy * m.shx;
     double t2 = shx * m.sx + sy * m.shx;
