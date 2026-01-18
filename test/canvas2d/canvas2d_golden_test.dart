@@ -232,6 +232,49 @@ void main() {
       
       canvas.dispose();
     });
+
+    test('canvas resize recreates buffer', () {
+      final canvas = DartGraphicsCanvas(50, 50);
+      final ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0.0, 0.0, 50.0, 50.0);
+
+      canvas.width = 80;
+      canvas.height = 60;
+      expect(canvas.width, 80);
+      expect(canvas.height, 60);
+
+      final png = canvas.toPng();
+      expect(png.isNotEmpty, isTrue);
+      canvas.dispose();
+    });
+
+    test('toDataURL returns PNG data URL', () {
+      final canvas = DartGraphicsCanvas(10, 10);
+      final url = canvas.toDataURL();
+      expect(url.startsWith('data:image/png;base64,'), isTrue);
+      canvas.dispose();
+    });
+
+    test('toBlob invokes callback with PNG bytes', () {
+      final canvas = DartGraphicsCanvas(10, 10);
+      bool called = false;
+      canvas.toBlob((blob) {
+        called = true;
+        expect(blob, isA<List<int>>());
+      });
+      expect(called, isTrue);
+      canvas.dispose();
+    });
+
+    test('saveAs writes PNG file', () {
+      final canvas = DartGraphicsCanvas(20, 20);
+      final path = 'test/tmp/canvas2d_dartgraphics_saveas.png';
+      final ok = canvas.saveAs(path);
+      expect(ok, isTrue);
+      expect(File(path).existsSync(), isTrue);
+      canvas.dispose();
+    });
   });
 
   group('Canvas 2D Skia', () {

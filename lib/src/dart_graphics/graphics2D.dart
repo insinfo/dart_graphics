@@ -19,7 +19,7 @@ import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke_math.dart'
     as stroke_math;
 import 'package:dart_graphics/src/dart_graphics/vertex_source/apply_transform.dart';
-import 'package:dart_graphics/src/typography/openfont/glyph.dart';
+
 import 'package:dart_graphics/src/typography/openfont/typeface.dart';
 import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
 import 'package:dart_graphics/src/typography/text_layout/glyph_plan.dart';
@@ -841,98 +841,6 @@ abstract class Graphics2D {
       case TextBaseline.alphabetic:
         return y;
     }
-  }
-
-  VertexStorage? _glyphToPath(
-      Glyph glyph, double scale, double dx, double baselineY) {
-    final pts = glyph.glyphPoints;
-    final ends = glyph.contourEndPoints;
-    if (pts == null || pts.isEmpty || ends == null || ends.isEmpty) return null;
-
-    final vs = VertexStorage();
-    int contourStart = 0;
-    for (final end in ends) {
-      final contour = pts.sublist(contourStart, end + 1);
-      contourStart = end + 1;
-      if (contour.isEmpty) continue;
-
-      final count = contour.length;
-      GlyphPointF startPoint;
-      GlyphPointF prevPoint;
-
-      final lastPoint = contour[count - 1];
-      final firstPoint = contour[0];
-      if (firstPoint.onCurve) {
-        startPoint = firstPoint;
-        prevPoint = firstPoint;
-      } else {
-        final prev = lastPoint.onCurve
-            ? lastPoint
-            : GlyphPointF(
-                (lastPoint.x + firstPoint.x) * 0.5,
-                (lastPoint.y + firstPoint.y) * 0.5,
-                true,
-              );
-        startPoint = prev;
-        prevPoint = prev;
-      }
-
-      vs.moveTo(dx + startPoint.x * scale, baselineY - startPoint.y * scale);
-
-      for (int i = 0; i < count; i++) {
-        final curr = contour[(i + 1) % count];
-        if (prevPoint.onCurve && curr.onCurve) {
-          vs.lineTo(dx + curr.x * scale, baselineY - curr.y * scale);
-          prevPoint = curr;
-        } else if (prevPoint.onCurve && !curr.onCurve) {
-          final next = contour[(i + 2) % count];
-          if (next.onCurve) {
-            vs.curve3(
-              curr.x * scale + dx,
-              baselineY - curr.y * scale,
-              next.x * scale + dx,
-              baselineY - next.y * scale,
-            );
-            prevPoint = next;
-            i++; // consumed one extra
-          } else {
-            final mid = GlyphPointF(
-                (curr.x + next.x) * 0.5, (curr.y + next.y) * 0.5, true);
-            vs.curve3(
-              curr.x * scale + dx,
-              baselineY - curr.y * scale,
-              mid.x * scale + dx,
-              baselineY - mid.y * scale,
-            );
-            prevPoint = mid;
-            i++; // consumed next as part of midpoint
-          }
-        } else {
-          // prev off-curve
-          if (curr.onCurve) {
-            vs.curve3(
-              prevPoint.x * scale + dx,
-              baselineY - prevPoint.y * scale,
-              curr.x * scale + dx,
-              baselineY - curr.y * scale,
-            );
-            prevPoint = curr;
-          } else {
-            final mid = GlyphPointF((prevPoint.x + curr.x) * 0.5,
-                (prevPoint.y + curr.y) * 0.5, true);
-            vs.curve3(
-              prevPoint.x * scale + dx,
-              baselineY - prevPoint.y * scale,
-              mid.x * scale + dx,
-              baselineY - mid.y * scale,
-            );
-            prevPoint = mid;
-          }
-        }
-      }
-      vs.closePath();
-    }
-    return vs;
   }
 
   ISpanGenerator? _buildPattern() {

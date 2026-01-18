@@ -1,11 +1,8 @@
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'package:test/test.dart';
 import 'package:image/image.dart' as img;
 import 'package:dart_graphics/dart_graphics.dart';
-import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
-import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
 
 // Constants matching generate_agg_goldens.dart
@@ -302,6 +299,106 @@ void main() {
       canvas.lineTo(160, 145);
       canvas.closePath();
       canvas.fillPath();
+    });
+
+    testGolden('shape_arrow_double', (canvas) {
+      canvas.strokeColor = Color(0, 0, 0, 255);
+      canvas.lineWidth = 6;
+      canvas.lineCap = LineCap.round;
+      canvas.moveTo(60, 125);
+      canvas.lineTo(190, 125);
+      canvas.strokePath();
+
+      canvas.fillColor = Color(0, 0, 0, 255);
+      canvas.moveTo(190, 125);
+      canvas.lineTo(160, 105);
+      canvas.lineTo(160, 145);
+      canvas.closePath();
+      canvas.fillPath();
+
+      canvas.moveTo(60, 125);
+      canvas.lineTo(90, 105);
+      canvas.lineTo(90, 145);
+      canvas.closePath();
+      canvas.fillPath();
+    });
+
+    testGolden('shape_arrow_small_head', (canvas) {
+      canvas.strokeColor = Color(0, 0, 0, 255);
+      canvas.lineWidth = 6;
+      canvas.lineCap = LineCap.round;
+      canvas.moveTo(40, 125);
+      canvas.lineTo(190, 125);
+      canvas.strokePath();
+
+      canvas.fillColor = Color(0, 0, 0, 255);
+      canvas.moveTo(190, 125);
+      canvas.lineTo(170, 113);
+      canvas.lineTo(170, 137);
+      canvas.closePath();
+      canvas.fillPath();
+    });
+
+    testGolden('shape_arrow_large_head', (canvas) {
+      canvas.strokeColor = Color(0, 0, 0, 255);
+      canvas.lineWidth = 6;
+      canvas.lineCap = LineCap.round;
+      canvas.moveTo(40, 125);
+      canvas.lineTo(190, 125);
+      canvas.strokePath();
+
+      canvas.fillColor = Color(0, 0, 0, 255);
+      canvas.moveTo(190, 125);
+      canvas.lineTo(150, 95);
+      canvas.lineTo(150, 155);
+      canvas.closePath();
+      canvas.fillPath();
+    });
+
+    testGolden('stroke_dashed_vertical', (canvas) {
+      canvas.lineWidth = 4;
+      canvas.strokeColor = Color(0, 0, 0, 255);
+      canvas.lineCap = LineCap.butt;
+      const startY = 20.0;
+      const endY = 230.0;
+      const x = 125.0;
+      const dash = 16.0;
+      const gap = 8.0;
+      for (double y = startY; y < endY; y += dash + gap) {
+        final y2 = (y + dash).clamp(startY, endY);
+        canvas.moveTo(x, y);
+        canvas.lineTo(x, y2);
+      }
+      canvas.strokePath();
+    });
+
+    testGolden('stroke_dashed_diagonal', (canvas) {
+      canvas.lineWidth = 4;
+      canvas.strokeColor = Color(0, 0, 0, 255);
+      canvas.lineCap = LineCap.butt;
+      const start = 30.0;
+      const end = 220.0;
+      const dash = 18.0;
+      const gap = 10.0;
+      for (double t = 0; t < (end - start); t += dash + gap) {
+        final t2 = (t + dash).clamp(0.0, end - start);
+        canvas.moveTo(start + t, start + t);
+        canvas.lineTo(start + t2, start + t2);
+      }
+      canvas.strokePath();
+    });
+
+    testGolden('shape_donut', (canvas) {
+      canvas.fillColor = Color(200, 0, 200, 255);
+      if (canvas is BasicGraphics2D) {
+        canvas.rasterizer.fillingRule(FillingRuleE.fillEvenOdd);
+      }
+      canvas.ellipse(125, 125, 90, 90);
+      canvas.ellipse(125, 125, 45, 45);
+      canvas.fillPath();
+      if (canvas is BasicGraphics2D) {
+        canvas.rasterizer.fillingRule(FillingRuleE.fillNonZero);
+      }
     });
 
     testGolden('stroke_rect_rounded', (canvas) {
