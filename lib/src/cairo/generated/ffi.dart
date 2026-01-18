@@ -15,7 +15,8 @@ class CairoBindings {
       _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  CairoBindings(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
+  CairoBindings(ffi.DynamicLibrary dynamicLibrary)
+      : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   CairoBindings.fromLookup(

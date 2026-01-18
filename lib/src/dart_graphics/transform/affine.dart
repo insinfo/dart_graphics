@@ -174,14 +174,29 @@ class Affine implements ITransform {
 
   /// Rotate
   Affine rotate(double angle) {
-    multiply(Affine.rotation(angle));
+    final ca = math.cos(angle);
+    final sa = math.sin(angle);
+    final t0 = sx * ca - shy * sa;
+    final t2 = shx * ca - sy * sa;
+    final t4 = tx * ca - ty * sa;
+    shy = sx * sa + shy * ca;
+    sy = shx * sa + sy * ca;
+    ty = tx * sa + ty * ca;
+    sx = t0;
+    shx = t2;
+    tx = t4;
     return this;
   }
 
   /// Scale
   Affine scale(double scaleX, [double? scaleY]) {
-    scaleY ??= scaleX;
-    multiply(Affine.scaling(scaleX, scaleY));
+    final syVal = scaleY ?? scaleX;
+    sx *= scaleX;
+    shx *= scaleX;
+    tx *= scaleX;
+    shy *= syVal;
+    sy *= syVal;
+    ty *= syVal;
     return this;
   }
 

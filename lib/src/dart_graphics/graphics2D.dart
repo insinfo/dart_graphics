@@ -1,6 +1,7 @@
 import 'package:dart_graphics/src/dart_graphics/image/iimage.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
 import 'dart:math' as math;
+import 'package:dart_graphics/src/dart_graphics/basics.dart';
 import 'package:dart_graphics/src/dart_graphics/line_aa_basics.dart';
 import 'package:dart_graphics/src/dart_graphics/outline_image_renderer.dart';
 import 'package:dart_graphics/src/dart_graphics/rasterizer_compound_aa.dart';
@@ -12,6 +13,7 @@ import 'package:dart_graphics/src/dart_graphics/vertex_source/ivertex_source.dar
 import 'package:dart_graphics/src/dart_graphics/vertex_source/vertex_storage.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/arc.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/ellipse.dart';
+import 'package:dart_graphics/src/dart_graphics/vertex_source/glyph_vertex_source.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/rounded_rect.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/stroke_math.dart'
@@ -126,7 +128,7 @@ abstract class Graphics2D {
   Typeface? _typeface;
   double _fontSize = 16.0;
   TextAlign _textAlign = TextAlign.left;
-  TextBaseline _textBaseline = TextBaseline.top;
+  TextBaseline _textBaseline = TextBaseline.alphabetic;
 
   int get width;
   int get height;
@@ -212,15 +214,15 @@ abstract class Graphics2D {
   }
 
   void translate(double dx, double dy) {
-    _transformStack.last.multiply(Affine.translation(dx, dy));
+    _transformStack.last.translate(dx, dy);
   }
 
   void scale(double sx, [double? sy]) {
-    _transformStack.last.multiply(Affine.scaling(sx, sy));
+    _transformStack.last.scale(sx, sy);
   }
 
   void rotate(double angle) {
-    _transformStack.last.multiply(Affine.rotation(angle));
+    _transformStack.last.rotate(angle);
   }
 
   void skew(double sx, double sy) {
@@ -769,13 +771,38 @@ abstract class Graphics2D {
     final startX = x + _alignOffset(textWidth, align);
     final baselineY = _baselineOffset(y, ascender, descender, baseline);
 
+    // Support for gradient text
+    SpanGradient? gradient;
+    if (_fillStyleType == FillStyleType.gradient) {
+      gradient = _buildGradient();
+    }
+
+    // Text glyphs benefit from even-odd fill to preserve counters
+    final bool useEvenOdd = this is BasicGraphics2D;
+    if (useEvenOdd) {
+      (this as BasicGraphics2D)
+          .rasterizer
+          .fillingRule(FillingRuleE.fillEvenOdd);
+    }
+
     for (final plan in plans.plans) {
       final glyph = typeface.getGlyph(plan.glyphIndex);
-      final path = _glyphToPath(
-          glyph, scale, startX + plan.x, baselineY + plan.y);
-      if (path != null) {
-        renderPath(applyTransform(path), color);
+      final glyphSource = GlyphVertexSource(glyph);
+      final mtx = Affine.identity();
+      mtx.scale(scale, -scale);
+      mtx.translate(startX + plan.x, baselineY - plan.y);
+      final transSource = ApplyTransform(glyphSource, mtx);
+      if (gradient != null) {
+        renderGradientPath(applyTransform(transSource), gradient);
+      } else {
+        renderPath(applyTransform(transSource), color);
       }
+    }
+
+    if (useEvenOdd) {
+      (this as BasicGraphics2D)
+          .rasterizer
+          .fillingRule(FillingRuleE.fillNonZero);
     }
   }
 

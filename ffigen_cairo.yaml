@@ -13,19 +13,19 @@ llvm-path:
 
 headers:
   entry-points:
-    - 'C:/MyDartProjects/agg/referencias/libs/include/cairo/cairo.h'
-    - 'C:/MyDartProjects/agg/referencias/libs/include/cairo/cairo-win32.h'
-    - 'C:/MyDartProjects/agg/referencias/libs/include/cairo/cairo-pdf.h'
-    - 'C:/MyDartProjects/agg/referencias/libs/include/cairo/cairo-svg.h'
-    - 'C:/MyDartProjects/agg/referencias/libs/include/cairo/cairo-ps.h'
-    - 'C:/MyDartProjects/agg/referencias/libs/include/cairo/cairo-ft.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/cairo/cairo.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/cairo/cairo-win32.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/cairo/cairo-pdf.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/cairo/cairo-svg.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/cairo/cairo-ps.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/cairo/cairo-ft.h'
 
 compiler-opts:
   # Cairo includes
-  - '-IC:/MyDartProjects/agg/referencias/libs/include'
-  - '-IC:/MyDartProjects/agg/referencias/libs/include/cairo'
-  - '-IC:/MyDartProjects/agg/referencias/libs/include/freetype'
-  - '-IC:/MyDartProjects/agg/referencias/libs/include/fontconfig'
+  - '-IC:/MyDartProjects/dart_graphics/native/libs/include'
+  - '-IC:/MyDartProjects/dart_graphics/native/libs/include/cairo'
+  - '-IC:/MyDartProjects/dart_graphics/native/libs/include/freetype'
+  - '-IC:/MyDartProjects/dart_graphics/native/libs/include/fontconfig'
   
   # MSVC (ajuste a versão 14.41.34120 se for diferente)
   - '-IC:/Progra~1/MICROS~4/2022/Community/VC/Tools/MSVC/14.41.34120/include'

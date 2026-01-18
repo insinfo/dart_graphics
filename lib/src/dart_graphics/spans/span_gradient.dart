@@ -141,8 +141,8 @@ class SpanGradientLinear extends SpanGradient {
     }
 
     for (int i = 0; i < len; i++) {
-      final px = x + i - _x1;
-      final py = y - _y1;
+      final px = (x + i + 0.5) - _x1;
+      final py = (y + 0.5) - _y1;
 
       // Project point onto gradient line
       final t = (px * _dx + py * _dy) / _length;
@@ -185,8 +185,8 @@ class SpanGradientRadial extends SpanGradient {
     }
 
     for (int i = 0; i < len; i++) {
-      final dx = x + i - _cx;
-      final dy = y - _cy;
+      final dx = (x + i + 0.5) - _cx;
+      final dy = (y + 0.5) - _cy;
 
       final distSquared = dx * dx + dy * dy;
       final t = math.sqrt(distSquared / _radiusSquared).clamp(0.0, 1.0);

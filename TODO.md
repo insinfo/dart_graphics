@@ -1,5 +1,8 @@
 # TODO - Expandir `Graphics2D` para API completa
 
+agora comece a implementar testes em C:\MyDartProjects\dart_graphics\test\dart_graphics\golden_validations usando os goldens criados C:\MyDartProjects\dart_graphics\test\agg_golden para podear validar e corrigir o porte do agg em C:\MyDartProjects\dart_graphics\lib\src\dart_graphics C:\MyDartProjects\dart_graphics\lib\src\dart_graphics\graphics2D.dart e comecar a corrijir a implementação com base no c++ como refercnia C:\MyDartProjects\dart_graphics\referencias\agg-2.6-cpp
+
+
 ## Fase 1 — Estrutura e estados (base do Agg2D)
 - [x] Criar tipos/enums equivalentes ao Agg2D: `LineJoin`, `LineCap`, `BlendMode`, `ImageFilter`, `ImageResample`, `GradientType`.
 - [x] Adicionar estado gráfico em `Graphics2D`/`BasicGraphics2D`: cores de fill/stroke, alpha master, anti-alias gamma, blend mode, line width, join, cap.

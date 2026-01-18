@@ -8,12 +8,12 @@ llvm-path:
 
 headers:
   entry-points:
-    - 'C:/MyDartProjects/agg/referencias/libs/include/freetype/freetype.h'
+    - 'C:/MyDartProjects/dart_graphics/native/libs/include/freetype/freetype.h'
 
 compiler-opts:
   # FreeType includes
-  - '-IC:/MyDartProjects/agg/referencias/libs/include'
-  - '-IC:/MyDartProjects/agg/referencias/libs/include/freetype'
+  - '-IC:/MyDartProjects/dart_graphics/native/libs/include'
+  - '-IC:/MyDartProjects/dart_graphics/native/libs/include/freetype'
   
   # MSVC
   - '-IC:/Progra~1/MICROS~4/2022/Community/VC/Tools/MSVC/14.41.34120/include'

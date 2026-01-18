@@ -25,6 +25,8 @@ class ImageBuffer implements IImageByte {
   final int _stride;
   IRecieveBlenderByte _blender = BlenderRgba();
 
+  Uint8List get buffer => _buffer;
+
   ImageBuffer(this.width, this.height, {IRecieveBlenderByte? blender})
       : _stride = width * 4,
         _buffer = Uint8List(width * height * 4) {

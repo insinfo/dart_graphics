@@ -70,11 +70,7 @@ class Utils {
 
   /// Warn about unimplemented features (for debugging)
   static void warnUnimplemented(String message) {
-    // In debug mode, print warning
-    assert(() {
-      print('!STUB! $message');
-      return true;
-    }());
+    // Intentionally no-op to avoid noisy console output in normal runs.
   }
 }
 

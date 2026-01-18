@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:dart_graphics/src/shared/ref_param.dart';
 import 'ivertex_source.dart';
 import 'path_commands.dart';
@@ -10,9 +12,15 @@ import 'vertex_data.dart';
 class FlattenCurve implements IVertexSource {
   IVertexSource? _source;
   double _approximationScale = 1.0;
+  double _angleTolerance = 0.0;
+  double _cuspLimit = 0.0;
 
   final List<VertexData> _vertices = [];
   int _currentVertex = 0;
+
+  static const double _curveCollinearityEpsilon = 1e-30;
+  static const double _curveAngleToleranceEpsilon = 0.01;
+  static const int _curveRecursionLimit = 32;
 
   FlattenCurve([IVertexSource? source]) {
     _source = source;
@@ -27,6 +35,11 @@ class FlattenCurve implements IVertexSource {
   /// Smaller values = smoother curves but more points.
   void setApproximationScale(double scale) {
     _approximationScale = scale;
+  }
+
+  double get _distanceToleranceSquare {
+    var tolerance = 0.5 / _approximationScale;
+    return tolerance * tolerance;
   }
 
   @override
@@ -112,7 +125,10 @@ class FlattenCurve implements IVertexSource {
         // Get the end point
         cmd = _source!.vertex(x, y);
         if (cmd != FlagsAndCommand.commandStop) {
-          _subdivideQuadratic(lastX, lastY, cp1x, cp1y, x.value, y.value, 0);
+          final distanceToleranceSquare = _distanceToleranceSquare;
+          _subdivideQuadratic(lastX, lastY, cp1x, cp1y, x.value, y.value, 0,
+              distanceToleranceSquare);
+          _addVertex(VertexData(FlagsAndCommand.commandLineTo, x.value, y.value));
           lastX = x.value;
           lastY = y.value;
         }
@@ -129,8 +145,10 @@ class FlattenCurve implements IVertexSource {
         cmd = _source!.vertex(x, y);
         if (cmd == FlagsAndCommand.commandStop) break;
 
-        _subdivideCubic(
-            lastX, lastY, cp1x, cp1y, cp2x, cp2y, x.value, y.value, 0);
+        final distanceToleranceSquare = _distanceToleranceSquare;
+        _subdivideCubic(lastX, lastY, cp1x, cp1y, cp2x, cp2y, x.value, y.value,
+          0, distanceToleranceSquare);
+        _addVertex(VertexData(FlagsAndCommand.commandLineTo, x.value, y.value));
         lastX = x.value;
         lastY = y.value;
       } else if (cmdBase == FlagsAndCommand.commandEndPoly) {
@@ -150,6 +168,12 @@ class FlattenCurve implements IVertexSource {
     _vertices.add(v);
   }
 
+  double _calcSqDistance(double x1, double y1, double x2, double y2) {
+    final dx = x2 - x1;
+    final dy = y2 - y1;
+    return dx * dx + dy * dy;
+  }
+
   /// Subdivides a quadratic Bezier curve into line segments.
   void _subdivideQuadratic(
     double x1,
@@ -159,11 +183,9 @@ class FlattenCurve implements IVertexSource {
     double x3,
     double y3, // End point
     int level,
+    double distanceToleranceSquare,
   ) {
-    if (level > 12) {
-      _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
-      return;
-    }
+    if (level > _curveRecursionLimit) return;
 
     // Calculate the midpoint
     final x12 = (x1 + x2) / 2;
@@ -175,14 +197,51 @@ class FlattenCurve implements IVertexSource {
 
     final dx = x3 - x1;
     final dy = y3 - y1;
-    final d = ((x2 - x3) * dy - (y2 - y3) * dx).abs();
+    var d = ((x2 - x3) * dy - (y2 - y3) * dx).abs();
+    double da;
 
-    if (d > _approximationScale) {
-      _subdivideQuadratic(x1, y1, x12, y12, x123, y123, level + 1);
-      _subdivideQuadratic(x123, y123, x23, y23, x3, y3, level + 1);
+    if (d > _curveCollinearityEpsilon) {
+      if (d * d <= distanceToleranceSquare * (dx * dx + dy * dy)) {
+        if (_angleTolerance < _curveAngleToleranceEpsilon) {
+          _addVertex(VertexData(FlagsAndCommand.commandLineTo, x123, y123));
+          return;
+        }
+
+        da = (math.atan2(y3 - y2, x3 - x2) - math.atan2(y2 - y1, x2 - x1)).abs();
+        if (da >= math.pi) da = 2 * math.pi - da;
+
+        if (da < _angleTolerance) {
+          _addVertex(VertexData(FlagsAndCommand.commandLineTo, x123, y123));
+          return;
+        }
+      }
     } else {
-      _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
+      da = dx * dx + dy * dy;
+      if (da == 0) {
+        d = _calcSqDistance(x1, y1, x2, y2);
+      } else {
+        d = ((x2 - x1) * dx + (y2 - y1) * dy) / da;
+        if (d > 0 && d < 1) {
+          return;
+        }
+        if (d <= 0) {
+          d = _calcSqDistance(x2, y2, x1, y1);
+        } else if (d >= 1) {
+          d = _calcSqDistance(x2, y2, x3, y3);
+        } else {
+          d = _calcSqDistance(x2, y2, x1 + d * dx, y1 + d * dy);
+        }
+      }
+      if (d < distanceToleranceSquare) {
+        _addVertex(VertexData(FlagsAndCommand.commandLineTo, x2, y2));
+        return;
+      }
     }
+
+    _subdivideQuadratic(
+        x1, y1, x12, y12, x123, y123, level + 1, distanceToleranceSquare);
+    _subdivideQuadratic(
+        x123, y123, x23, y23, x3, y3, level + 1, distanceToleranceSquare);
   }
 
   /// Subdivides a cubic Bezier curve into line segments.
@@ -196,11 +255,9 @@ class FlattenCurve implements IVertexSource {
     double x4,
     double y4, // End point
     int level,
+    double distanceToleranceSquare,
   ) {
-    if (level > 12) {
-      _addVertex(VertexData(FlagsAndCommand.commandLineTo, x4, y4));
-      return;
-    }
+    if (level > _curveRecursionLimit) return;
 
     // De Casteljau's algorithm
     final x12 = (x1 + x2) / 2;
@@ -218,14 +275,148 @@ class FlattenCurve implements IVertexSource {
 
     final dx = x4 - x1;
     final dy = y4 - y1;
-    final d2 = ((x2 - x4) * dy - (y2 - y4) * dx).abs();
-    final d3 = ((x3 - x4) * dy - (y3 - y4) * dx).abs();
+    var d2 = ((x2 - x4) * dy - (y2 - y4) * dx).abs();
+    var d3 = ((x3 - x4) * dy - (y3 - y4) * dx).abs();
+    double da1;
+    double da2;
+    double k;
 
-    if ((d2 + d3) * (d2 + d3) > _approximationScale * (dx * dx + dy * dy)) {
-      _subdivideCubic(x1, y1, x12, y12, x123, y123, x1234, y1234, level + 1);
-      _subdivideCubic(x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1);
-    } else {
-      _addVertex(VertexData(FlagsAndCommand.commandLineTo, x4, y4));
+    final caseId = ((d2 > _curveCollinearityEpsilon) ? 2 : 0) |
+        ((d3 > _curveCollinearityEpsilon) ? 1 : 0);
+
+    switch (caseId) {
+      case 0:
+        k = dx * dx + dy * dy;
+        if (k == 0) {
+          d2 = _calcSqDistance(x1, y1, x2, y2);
+          d3 = _calcSqDistance(x4, y4, x3, y3);
+        } else {
+          k = 1 / k;
+          da1 = x2 - x1;
+          da2 = y2 - y1;
+          d2 = k * (da1 * dx + da2 * dy);
+          da1 = x3 - x1;
+          da2 = y3 - y1;
+          d3 = k * (da1 * dx + da2 * dy);
+          if (d2 > 0 && d2 < 1 && d3 > 0 && d3 < 1) {
+            return;
+          }
+          if (d2 <= 0) {
+            d2 = _calcSqDistance(x2, y2, x1, y1);
+          } else if (d2 >= 1) {
+            d2 = _calcSqDistance(x2, y2, x4, y4);
+          } else {
+            d2 = _calcSqDistance(x2, y2, x1 + d2 * dx, y1 + d2 * dy);
+          }
+
+          if (d3 <= 0) {
+            d3 = _calcSqDistance(x3, y3, x1, y1);
+          } else if (d3 >= 1) {
+            d3 = _calcSqDistance(x3, y3, x4, y4);
+          } else {
+            d3 = _calcSqDistance(x3, y3, x1 + d3 * dx, y1 + d3 * dy);
+          }
+        }
+        if (d2 > d3) {
+          if (d2 < distanceToleranceSquare) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x2, y2));
+            return;
+          }
+        } else {
+          if (d3 < distanceToleranceSquare) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
+            return;
+          }
+        }
+        break;
+
+      case 1:
+        if (d3 * d3 <= distanceToleranceSquare * (dx * dx + dy * dy)) {
+          if (_angleTolerance < _curveAngleToleranceEpsilon) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x23, y23));
+            return;
+          }
+
+          da1 = (math.atan2(y4 - y3, x4 - x3) -
+                  math.atan2(y3 - y2, x3 - x2))
+              .abs();
+          if (da1 >= math.pi) da1 = 2 * math.pi - da1;
+
+          if (da1 < _angleTolerance) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x2, y2));
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
+            return;
+          }
+
+          if (_cuspLimit != 0.0 && da1 > _cuspLimit) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
+            return;
+          }
+        }
+        break;
+
+      case 2:
+        if (d2 * d2 <= distanceToleranceSquare * (dx * dx + dy * dy)) {
+          if (_angleTolerance < _curveAngleToleranceEpsilon) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x23, y23));
+            return;
+          }
+
+          da1 = (math.atan2(y3 - y2, x3 - x2) -
+                  math.atan2(y2 - y1, x2 - x1))
+              .abs();
+          if (da1 >= math.pi) da1 = 2 * math.pi - da1;
+
+          if (da1 < _angleTolerance) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x2, y2));
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
+            return;
+          }
+
+          if (_cuspLimit != 0.0 && da1 > _cuspLimit) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x2, y2));
+            return;
+          }
+        }
+        break;
+
+      case 3:
+        if ((d2 + d3) * (d2 + d3) <=
+            distanceToleranceSquare * (dx * dx + dy * dy)) {
+          if (_angleTolerance < _curveAngleToleranceEpsilon) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x23, y23));
+            return;
+          }
+
+          k = math.atan2(y3 - y2, x3 - x2);
+          da1 = (k - math.atan2(y2 - y1, x2 - x1)).abs();
+          da2 = (math.atan2(y4 - y3, x4 - x3) - k).abs();
+          if (da1 >= math.pi) da1 = 2 * math.pi - da1;
+          if (da2 >= math.pi) da2 = 2 * math.pi - da2;
+
+          if (da1 + da2 < _angleTolerance) {
+            _addVertex(VertexData(FlagsAndCommand.commandLineTo, x23, y23));
+            return;
+          }
+
+          if (_cuspLimit != 0.0) {
+            if (da1 > _cuspLimit) {
+              _addVertex(VertexData(FlagsAndCommand.commandLineTo, x2, y2));
+              return;
+            }
+
+            if (da2 > _cuspLimit) {
+              _addVertex(VertexData(FlagsAndCommand.commandLineTo, x3, y3));
+              return;
+            }
+          }
+        }
+        break;
     }
+
+    _subdivideCubic(x1, y1, x12, y12, x123, y123, x1234, y1234, level + 1,
+        distanceToleranceSquare);
+    _subdivideCubic(x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1,
+        distanceToleranceSquare);
   }
 }

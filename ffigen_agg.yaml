@@ -1,0 +1,47 @@
+# dart run ffigen --config ffigen_agg.yaml
+
+name: AggBindings
+description: Bindings to a small C wrapper over AGG for Dart.
+output: 'lib/src/agg/generated/ffi.dart'
+llvm-path:
+  - 'C:/LLVM'
+
+headers:
+  entry-points:
+    - 'referencias/agg-2.6-cpp/agg-src/agg_ffi.h'
+  include-directives:
+    - 'referencias/agg-2.6-cpp/agg-src/agg_ffi.h'
+
+compiler-opts:
+  - '-Ireferencias/agg-2.6-cpp/agg-src'
+  - '-Ireferencias/agg-2.6-cpp/agg-src/include'
+
+  # MSVC
+  - '-IC:/Progra~1/MICROS~4/2022/Community/VC/Tools/MSVC/14.41.34120/include'
+
+  # Windows SDK / UCRT
+  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/ucrt'
+  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/shared'
+  - '-IC:/PROGRA~2/WI3CF2~1/10/Include/10.0.26100.0/um'
+
+  - '-Wno-everything'
+
+preamble: |
+  // ignore_for_file: camel_case_types, non_constant_identifier_names, unused_element
+  // ignore_for_file: constant_identifier_names, public_member_api_docs
+  // ignore_for_file: unused_field, lines_longer_than_80_chars
+
+functions:
+  include:
+    - agg_.*
+
+structs:
+  include:
+    - Agg.*
+
+enums:
+  include:
+    - Agg.*
+
+silence-enum-warning: true
+
