@@ -1,94 +1,161 @@
-import 'package:dart_graphics/src/dart_graphics/gamma_functions.dart';
-import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
-import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
-import 'package:dart_graphics/src/dart_graphics/vertex_source/apply_transform.dart';
-import 'package:dart_graphics/src/dart_graphics/vertex_source/glyph_vertex_source.dart';
-import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
-import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
-import 'package:dart_graphics/src/dart_graphics/scanline_packed8.dart';
-import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
-import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
-import 'package:dart_graphics/src/typography/text_layout/glyph_layout.dart';
-import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
 import 'dart:io';
+import 'dart:math' as math;
+
+import 'package:dart_graphics/src/dart_graphics/graphics2D.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
+import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/typography/openfont/open_font_reader.dart';
+import 'package:dart_graphics/src/typography/openfont/typeface.dart';
 
 void main() async {
-  // 1. Load Font
-  final fontPath = 'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
+  final width = 1200;
+  final height = 700;
+  final buffer = ImageBuffer(width, height);
+  final g = buffer.newGraphics2D() as BasicGraphics2D;
+
+  g.clear(Color.white);
+  g.textBaseline = TextBaseline.alphabetic;
+
+  final samples = <_TextSample>[
+    _TextSample(
+      text: 'DartGraphics - Sans Regular',
+      fontPath:
+          'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf',
+      size: 48,
+      color: Color(22, 44, 120),
+      x: 80,
+      y: 120,
+      rotation: 0.0,
+      align: TextAlign.left,
+      baseline: TextBaseline.alphabetic,
+    ),
+    _TextSample(
+      text: 'Serif Bold / rotate -12°',
+      fontPath:
+          'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Bold.ttf',
+      size: 42,
+      color: Color(180, 40, 40),
+      x: 720,
+      y: 140,
+      rotation: -12 * math.pi / 180,
+      align: TextAlign.left,
+      baseline: TextBaseline.alphabetic,
+    ),
+    _TextSample(
+      text: 'Mono Italic / rotate 20°',
+      fontPath:
+          'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationMono-Italic.ttf',
+      size: 34,
+      color: Color(25, 120, 75),
+      x: 140,
+      y: 260,
+      rotation: 20 * math.pi / 180,
+      align: TextAlign.left,
+      baseline: TextBaseline.alphabetic,
+    ),
+    _TextSample(
+      text: 'Comic Relief / rotate 8°',
+      fontPath: 'resources/fonts/Comic_Relief/ComicRelief-Regular.ttf',
+      size: 40,
+      color: Color(110, 65, 180),
+      x: 760,
+      y: 320,
+      rotation: 8 * math.pi / 180,
+      align: TextAlign.left,
+      baseline: TextBaseline.alphabetic,
+    ),
+    _TextSample(
+      text: 'Liberation Sans Narrow',
+      fontPath:
+          'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSansNarrow-BoldItalic.ttf',
+      size: 56,
+      color: Color(200, 110, 0),
+      x: 160,
+      y: 470,
+      rotation: -18 * math.pi / 180,
+      align: TextAlign.left,
+      baseline: TextBaseline.alphabetic,
+    ),
+    _TextSample(
+      text: 'Serif Italic / rotate 30°',
+      fontPath:
+          'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSerif-Italic.ttf',
+      size: 30,
+      color: Color(0, 120, 150),
+      x: 780,
+      y: 560,
+      rotation: 30 * math.pi / 180,
+      align: TextAlign.left,
+      baseline: TextBaseline.alphabetic,
+    ),
+  ];
+
+  final typefaces = <String, Typeface>{};
+  for (final path in samples.map((s) => s.fontPath).toSet()) {
+    final typeface = await _loadTypeface(path);
+    if (typeface != null) {
+      typefaces[path] = typeface;
+    }
+  }
+
+  for (final sample in samples) {
+    final typeface = typefaces[sample.fontPath];
+    if (typeface == null) continue;
+
+    g.save();
+    g.translate(sample.x, sample.y);
+    g.rotate(sample.rotation);
+    g.textAlign = sample.align;
+    g.textBaseline = sample.baseline;
+    g.setFont(typeface, sample.size);
+    g.fillColor = sample.color;
+    g.drawTextCurrent(sample.text, x: 0, y: 0);
+    g.restore();
+  }
+
+  const outputPath = 'render_text_example.png';
+  PngEncoder.saveImage(buffer, outputPath);
+  print('PNG salvo em: $outputPath');
+}
+
+Future<Typeface?> _loadTypeface(String fontPath) async {
   final file = File(fontPath);
   if (!file.existsSync()) {
     print('Font file not found: $fontPath');
-    // Try to find it relative to current dir if running from root
-    return;
+    return null;
   }
-  
-  final bytes = await file.readAsBytes();
-  final reader = OpenFontReader();
-  final typeface = reader.read(bytes);
-  
-  if (typeface == null) {
-    print('Failed to load typeface');
-    return;
+
+  try {
+    final bytes = await file.readAsBytes();
+    final reader = OpenFontReader();
+    return reader.read(bytes);
+  } catch (e) {
+    print('Failed to load font $fontPath: $e');
+    return null;
   }
-  
-  print('Loaded font: ${typeface.name}');
-  
-  // 2. Layout Text
-  final text = "Hello World!";
-  final fontSize = 48.0;
-  final scale = typeface.calculateScaleToPixel(fontSize);
-  
-  final layout = GlyphLayout();
-  layout.typeface = typeface;
-  layout.layout(text);
-  final scaledPlans = layout.generateGlyphPlans(scale);
-  
-  print('Layout: "$text" (${scaledPlans.count} glyphs)');
-  
-  // 3. Setup 
-  final width = 400;
-  final height = 100;
-  final buffer = ImageBuffer(width, height);
-  
-  // Clear to white
-  for (var y = 0; y < height; y++) {
-    for (var x = 0; x < width; x++) {
-      buffer.setPixel(x, y, Color(255, 255, 255));
-    }
-  }
-  
-  final ras = ScanlineRasterizer();
-  ras.gamma(GammaPower(2.0)); // Apply gamma correction
-  final sl = ScanlineCachePacked8(); 
-  
-  // 4. Render
-  final startX = 20.0;
-  final startY = 70.0; // Baseline
-  
-  for (var i = 0; i < scaledPlans.count; i++) {
-    final plan = scaledPlans[i];
-    final glyph = typeface.getGlyph(plan.glyphIndex);
-    
-    final glyphSource = GlyphVertexSource(glyph);
-    
-    // Transform: Scale -> Translate
-    final mtx = Affine.identity();
-    // Scale font units to pixels and flip Y (because image Y is down)
-    mtx.scale(scale, -scale);
-    
-    // Position
-    // plan.x is relative to start of text.
-    // plan.y is offset from baseline.
-    mtx.translate(startX + plan.x, startY - plan.y);
-    
-    final transSource = ApplyTransform(glyphSource, mtx);
-    
-    ras.addPath(transSource);
-    
-    // Render to scanlines (Black text)
-    ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0));
-  }
-  
-  // 5. Save
-  PngEncoder.saveImage(buffer, 'hello_world.png');
+}
+
+class _TextSample {
+  final String text;
+  final String fontPath;
+  final double size;
+  final Color color;
+  final double x;
+  final double y;
+  final double rotation;
+  final TextAlign align;
+  final TextBaseline baseline;
+
+  const _TextSample({
+    required this.text,
+    required this.fontPath,
+    required this.size,
+    required this.color,
+    required this.x,
+    required this.y,
+    required this.rotation,
+    required this.align,
+    required this.baseline,
+  });
 }

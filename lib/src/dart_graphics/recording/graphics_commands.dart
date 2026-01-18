@@ -265,12 +265,6 @@ class CommandBuffer {
     final renderStack = <bool>[];
     var currentTransform = Affine.identity();
 
-    void markRender() {
-      for (var i = 0; i < renderStack.length; i++) {
-        renderStack[i] = true;
-      }
-    }
-
     for (final command in _commands) {
       if (command is SaveCommand || command is SaveLayerCommand) {
         saveIndexStack.add(optimized.length);
@@ -294,6 +288,9 @@ class CommandBuffer {
         final saveIndex = saveIndexStack.removeLast();
 
         if (rendered) {
+          if (renderStack.isNotEmpty) {
+            renderStack[renderStack.length - 1] = true;
+          }
           optimized.add(command);
         } else {
           optimized.removeRange(saveIndex, optimized.length);
@@ -314,7 +311,9 @@ class CommandBuffer {
           command is DrawPathCommand ||
           command is DrawImageCommand ||
           command is DrawTextRunCommand) {
-        markRender();
+        if (renderStack.isNotEmpty) {
+          renderStack[renderStack.length - 1] = true;
+        }
       }
 
       optimized.add(command);

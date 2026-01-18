@@ -547,13 +547,26 @@ class DartGraphicsPath2D implements IPath2D {
       vs.lineTo(startX, startY);
     }
 
-    // Draw arc as line segments (can be improved with bezier curves)
-    for (int i = 1; i <= segments; i++) {
-      final angle = startAngle + step * i;
-      final x = cx + radius * math.cos(angle);
-      final y = cy + radius * math.sin(angle);
-      vs.lineTo(x, y);
+    // Draw arc as line segments using incremental trig
+    if (segments > 1) {
+      final cosStep = math.cos(step);
+      final sinStep = math.sin(step);
+      var cosA = math.cos(startAngle);
+      var sinA = math.sin(startAngle);
+
+      for (int i = 1; i < segments; i++) {
+        final nextCos = cosA * cosStep - sinA * sinStep;
+        final nextSin = sinA * cosStep + cosA * sinStep;
+        cosA = nextCos;
+        sinA = nextSin;
+
+        vs.lineTo(cx + radius * cosA, cy + radius * sinA);
+      }
     }
+
+    final endCos = math.cos(startAngle + step * segments);
+    final endSin = math.sin(startAngle + step * segments);
+    vs.lineTo(cx + radius * endCos, cy + radius * endSin);
   }
 
   void _addArcToPathToVertexStorage(VertexStorage vs, double x0, double y0,
@@ -640,10 +653,18 @@ class DartGraphicsPath2D implements IPath2D {
     final cosRot = math.cos(rotation);
     final sinRot = math.sin(rotation);
 
-    for (int i = 0; i <= segments; i++) {
-      final angle = startAngle + step * i;
-      final ex = rx * math.cos(angle);
-      final ey = ry * math.sin(angle);
+    if (segments <= 0) {
+      return;
+    }
+
+    final cosStep = math.cos(step);
+    final sinStep = math.sin(step);
+    var cosA = math.cos(startAngle);
+    var sinA = math.sin(startAngle);
+
+    for (int i = 0; i < segments; i++) {
+      final ex = rx * cosA;
+      final ey = ry * sinA;
 
       // Apply rotation
       final x = cx + ex * cosRot - ey * sinRot;
@@ -654,7 +675,20 @@ class DartGraphicsPath2D implements IPath2D {
       } else {
         vs.lineTo(x, y);
       }
+
+      final nextCos = cosA * cosStep - sinA * sinStep;
+      final nextSin = sinA * cosStep + cosA * sinStep;
+      cosA = nextCos;
+      sinA = nextSin;
     }
+
+    final endCos = math.cos(startAngle + step * segments);
+    final endSin = math.sin(startAngle + step * segments);
+    final endEx = rx * endCos;
+    final endEy = ry * endSin;
+    final endX = cx + endEx * cosRot - endEy * sinRot;
+    final endY = cy + endEx * sinRot + endEy * cosRot;
+    vs.lineTo(endX, endY);
   }
 
   void _addRoundRectToVertexStorage(VertexStorage vs, double x, double y,

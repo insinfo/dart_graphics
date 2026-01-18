@@ -100,6 +100,7 @@ class DartGraphicsCanvasRenderingContext2D
   // Current path being built
   DartGraphicsPath2D _currentPath;
 
+
   // Style stacks
   final List<_ContextState> _stateStack = [];
   _ContextState _state;

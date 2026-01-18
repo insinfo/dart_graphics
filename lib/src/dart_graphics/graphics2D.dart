@@ -1036,6 +1036,66 @@ class BasicGraphics2D extends Graphics2D {
     }
   }
 
+  void fillRect(double x1, double y1, double x2, double y2, Color color) {
+    final t = transform;
+    if (!_isIdentity(t)) {
+      final vs = VertexStorage()
+        ..moveTo(x1, y1)
+        ..lineTo(x2, y1)
+        ..lineTo(x2, y2)
+        ..lineTo(x1, y2)
+        ..closePath();
+      render(vs, color);
+      return;
+    }
+
+    final left = math.min(x1, x2);
+    final right = math.max(x1, x2);
+    final bottom = math.min(y1, y2);
+    final top = math.max(y1, y2);
+
+    const eps = 1e-6;
+    if ((left - left.round()).abs() > eps ||
+        (right - right.round()).abs() > eps ||
+        (bottom - bottom.round()).abs() > eps ||
+        (top - top.round()).abs() > eps) {
+      final vs = VertexStorage()
+        ..moveTo(x1, y1)
+        ..lineTo(x2, y1)
+        ..lineTo(x2, y2)
+        ..lineTo(x1, y2)
+        ..closePath();
+      render(vs, color);
+      return;
+    }
+
+    var l = left.floor();
+    var r = right.ceil();
+    var b = bottom.floor();
+    var tY = top.ceil();
+
+    if (l < 0) l = 0;
+    if (b < 0) b = 0;
+    if (r > destImage.width) r = destImage.width;
+    if (tY > destImage.height) tY = destImage.height;
+
+    final width = r - l;
+    final height = tY - b;
+    if (width <= 0 || height <= 0) return;
+
+    final paint = applyMasterAlpha(color);
+    if (paint.alpha == 255) {
+      for (var y = b; y < tY; y++) {
+        destImage.copyHline(l, y, width, paint);
+      }
+    } else {
+      for (var y = b; y < tY; y++) {
+        destImage.blendHline(l, y, r - 1, paint, 255);
+      }
+    }
+    destImage.markImageChanged();
+  }
+
   @override
   void renderPath(IVertexSource src, Color color) {
     rasterizer.reset();
@@ -1130,17 +1190,6 @@ class BasicGraphics2D extends Graphics2D {
     return math.Point(tx, ty);
   }
 
-  /// Fill an axis-aligned rectangle.
-  void fillRect(double x1, double y1, double x2, double y2, Color color) {
-    final vs = VertexStorage()
-      ..moveTo(x1, y1)
-      ..lineTo(x2, y1)
-      ..lineTo(x2, y2)
-      ..lineTo(x1, y2)
-      ..closePath();
-    render(vs, color);
-  }
-
   /// Stroke an axis-aligned rectangle using AA lines.
   void strokeRect(double x1, double y1, double x2, double y2, Color color,
       {double thickness = 1.0}) {
@@ -1215,18 +1264,43 @@ class BasicGraphics2D extends Graphics2D {
   VertexStorage _arcPath(
       double cx, double cy, double rx, double ry, double start, double end,
       {bool closeToCenter = false}) {
-    final arc = Arc(cx, cy, rx, ry, start, end);
     final vs = VertexStorage();
-    var first = true;
-    for (final v in arc.vertices()) {
-      if (v.command.isStop) continue;
-      if (first) {
-        vs.moveTo(v.x, v.y);
-        first = false;
-      } else {
-        vs.lineTo(v.x, v.y);
+    final avgRadius = (rx.abs() + ry.abs()) * 0.5;
+    final deltaAngle = math.acos(avgRadius / (avgRadius + 0.125)) * 2;
+
+    var currentEnd = end;
+    while (currentEnd < start) {
+      currentEnd += math.pi * 2.0;
+    }
+
+    final span = currentEnd - start;
+    final steps = span <= 0 ? 0 : (span / deltaAngle).toInt();
+
+    final sinDelta = math.sin(deltaAngle);
+    final cosDelta = math.cos(deltaAngle);
+
+    var angle = start;
+    var cosA = math.cos(angle);
+    var sinA = math.sin(angle);
+
+    vs.moveTo(cx + cosA * rx, cy + sinA * ry);
+
+    for (var i = 0; i <= steps; i++) {
+      if (angle < currentEnd) {
+        vs.lineTo(cx + cosA * rx, cy + sinA * ry);
+
+        final nextCos = cosA * cosDelta - sinA * sinDelta;
+        final nextSin = sinA * cosDelta + cosA * sinDelta;
+        cosA = nextCos;
+        sinA = nextSin;
+        angle += deltaAngle;
       }
     }
+
+    final endCos = math.cos(currentEnd);
+    final endSin = math.sin(currentEnd);
+    vs.lineTo(cx + endCos * rx, cy + endSin * ry);
+
     if (closeToCenter) {
       vs.lineTo(cx, cy);
       vs.closePath();

@@ -9,3 +9,5 @@ agg-rust/
 .agent/
 
 referencias/
+
+canvas2d_benchmark.exe

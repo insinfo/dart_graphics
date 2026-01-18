@@ -44,6 +44,11 @@
 	- [x] Adicionar benchmarks de `PathUtils` (flatten/simplify/boolean ops)
 	- [x] Adicionar testes para `clipper` e `recording`
 	- [x] Adicionar benchmarks de `CommandBuffer` (record/optimize)
+	- [x] Adicionar benchmarks de `clipper` (boolean ops)
+	- [x] Otimizar `CommandBuffer.optimize` (render stack O(1))
+	- [x] Fast path `fillRect` em `BasicGraphics2D`
+	- [x] Otimizar `_arcPath` (incremental trig)
+	- [x] Otimizar Path2D arcs/ellipses (incremental trig)
 
 ---
 ## Progresso atual

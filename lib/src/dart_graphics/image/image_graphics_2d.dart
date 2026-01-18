@@ -199,6 +199,7 @@ class ImageGraphics2D extends Graphics2D {
     render(rect, fillColor);
   }
 
+
   /// Clears a rectangular area with a color.
   void clearRect(RectangleDouble bounds, Color color) {
     final intBounds = RectangleInt(
