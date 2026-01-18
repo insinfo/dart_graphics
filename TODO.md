@@ -42,6 +42,8 @@
 - [x] `PathUtils`: flatten adaptativo (tolerância geométrica)
 - [ ] Otimizar hot paths com benchmarks e perf regressions
 	- [x] Adicionar benchmarks de `PathUtils` (flatten/simplify/boolean ops)
+	- [x] Adicionar testes para `clipper` e `recording`
+	- [x] Adicionar benchmarks de `CommandBuffer` (record/optimize)
 
 ---
 ## Progresso atual
