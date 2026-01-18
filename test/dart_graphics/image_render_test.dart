@@ -28,7 +28,7 @@ void main() {
       ..lineTo(0, 3)
       ..closePath();
 
-    ras.add_path(path);
+    ras.addPath(path);
     ScanlineRenderer.renderSolid(ras, sl, img, Color(255, 0, 0));
 
     expect(img.getPixel(1, 1).red, greaterThan(0));
@@ -237,7 +237,7 @@ void main() {
       ..lineTo(0, 4)
       ..closePath();
 
-    ras.add_path(path);
+    ras.addPath(path);
     ScanlineRenderer.generateAndRender(ras, sl, img, alloc, gen);
 
     final center = img.getPixel(2, 2);

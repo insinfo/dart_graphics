@@ -1103,12 +1103,9 @@ void main() {
     });
   });
 
-  // TODO: SKTextBlobBuilder not exposed in new OOP API
-  // group('SKTextBlobBuilder', () {
-  //   test('should create text blob builder', () {
-  //     final builder = SKTextBlobBuilder();
-  //     expect(builder.isDisposed, isFalse);
-  //     builder.dispose();
-  //   });
-  // });
+  group('SKTextBlobBuilder', () {
+    test('not available in OOP API', () {
+      expect(true, isTrue);
+    }, skip: 'SKTextBlobBuilder not exposed in new OOP API');
+  });
 }

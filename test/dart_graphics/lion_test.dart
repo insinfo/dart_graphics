@@ -109,7 +109,7 @@ void main() {
     // Clear to white
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        buffer.SetPixel(x, y, Color(255, 255, 255, 255));
+        buffer.setPixel(x, y, Color(255, 255, 255, 255));
       }
     }
     
@@ -153,7 +153,7 @@ void main() {
       
       var transformedPath = ApplyTransform(p, mtx);
       
-      ras.add_path(transformedPath);
+      ras.addPath(transformedPath);
       ScanlineRenderer.renderSolid(ras, sl, buffer, c);
     }
     

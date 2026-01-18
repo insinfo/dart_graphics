@@ -222,7 +222,7 @@ void main() {
 
       for (int i = 0; i < 3; i++) {
         final ellipse = Ellipse(positions[i].x, positions[i].y, 60, 60);
-        ras.add_path(ellipse);
+        ras.addPath(ellipse);
         ScanlineRenderer.renderSolid(ras, sl, buffer, colors[i]);
       }
 
@@ -239,17 +239,17 @@ void main() {
 
       // Background rectangle
       final rect1 = RoundedRect(20, 20, 180, 180, 10);
-      ras.add_path(rect1);
+      ras.addPath(rect1);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(100, 150, 200, 255));
 
       // Overlapping semi-transparent rectangle
       final rect2 = RoundedRect(100, 40, 280, 160, 10);
-      ras.add_path(rect2);
+      ras.addPath(rect2);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 200, 100, 180));
 
       // Another layer
       final ellipse = Ellipse(150, 100, 80, 50);
-      ras.add_path(ellipse);
+      ras.addPath(ellipse);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(150, 50, 200, 150));
 
       PngEncoder.saveImage(buffer, 'test/tmp/layered_transparency.png');
@@ -268,7 +268,7 @@ void main() {
           final color = checker == 0 
               ? Color(200, 200, 200, 255) 
               : Color(100, 100, 100, 255);
-          buffer.SetPixel(x, y, color);
+          buffer.setPixel(x, y, color);
         }
       }
 
@@ -286,7 +286,7 @@ void main() {
           final color = stripe == 0 
               ? Color(50, 100, 200, 255) 
               : Color(200, 150, 50, 255);
-          buffer.SetPixel(x, y, color);
+          buffer.setPixel(x, y, color);
         }
       }
 
@@ -308,7 +308,7 @@ void main() {
           final color = ring == 0 
               ? Color(255, 100, 100, 255) 
               : Color(100, 100, 255, 255);
-          buffer.SetPixel(x, y, color);
+          buffer.setPixel(x, y, color);
         }
       }
 
@@ -324,7 +324,7 @@ void main() {
       // Draw a slice of the RGB cube where B varies with Y
       for (int y = 0; y < buffer.height; y++) {
         for (int x = 0; x < buffer.width; x++) {
-          buffer.SetPixel(x, y, Color(x, y, 128, 255));
+          buffer.setPixel(x, y, Color(x, y, 128, 255));
         }
       }
 
@@ -351,7 +351,7 @@ void main() {
             final hue = (angle + math.pi) / (2 * math.pi);
             final saturation = dist / radius;
             final color = _hsvToRgb(hue, saturation, 1.0);
-            buffer.SetPixel(x, y, color);
+            buffer.setPixel(x, y, color);
           }
         }
       }
@@ -365,7 +365,7 @@ void main() {
 
       for (int y = 0; y < buffer.height; y++) {
         for (int x = 0; x < buffer.width; x++) {
-          buffer.SetPixel(x, y, Color(x, x, x, 255));
+          buffer.setPixel(x, y, Color(x, x, x, 255));
         }
       }
 
@@ -378,7 +378,7 @@ void main() {
 void _clearBuffer(ImageBuffer buffer, Color color) {
   for (var y = 0; y < buffer.height; y++) {
     for (var x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, color);
+      buffer.setPixel(x, y, color);
     }
   }
 }
@@ -416,7 +416,7 @@ void _fillWithLinearGradient(
   for (int y = 0; y < buffer.height; y++) {
     gradient.generate(span, 0, 0, y, buffer.width);
     for (int x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, span[x]);
+      buffer.setPixel(x, y, span[x]);
     }
   }
 }
@@ -436,7 +436,7 @@ void _fillWithRadialGradient(
   for (int y = 0; y < buffer.height; y++) {
     gradient.generate(span, 0, 0, y, buffer.width);
     for (int x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, span[x]);
+      buffer.setPixel(x, y, span[x]);
     }
   }
 }
@@ -487,7 +487,7 @@ void _renderGouraudTriangle(
         final newColor = span[i];
         // Alpha blending
         final blended = _blendColors(current, newColor);
-        buffer.SetPixel(x, y, blended);
+        buffer.setPixel(x, y, blended);
       }
     }
   }

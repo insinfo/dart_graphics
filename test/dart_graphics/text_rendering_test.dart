@@ -280,7 +280,7 @@ Future<Typeface> _loadFont(String path) async {
 void _clearBuffer(ImageBuffer buffer, Color color) {
   for (var y = 0; y < buffer.height; y++) {
     for (var x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, color);
+      buffer.setPixel(x, y, color);
     }
   }
 }
@@ -316,7 +316,7 @@ void _renderText(
 
     final transSource = ApplyTransform(glyphSource, mtx);
 
-    ras.add_path(transSource);
+    ras.addPath(transSource);
     ScanlineRenderer.renderSolid(ras, sl, buffer, color);
   }
 }
@@ -355,7 +355,7 @@ void _renderTextOutlined(
     final stroke = Stroke(transSource);
     stroke.width = strokeWidth;
 
-    ras.add_path(stroke);
+    ras.addPath(stroke);
     ScanlineRenderer.renderSolid(ras, sl, buffer, color);
   }
 }
@@ -409,7 +409,7 @@ void _renderTextWithTransform(
 
     final transSource = ApplyTransform(glyphSource, mtx);
 
-    ras.add_path(transSource);
+    ras.addPath(transSource);
     ScanlineRenderer.renderSolid(ras, sl, buffer, color);
   }
 }
@@ -447,7 +447,7 @@ void _renderTextWithGamma(
 
     final transSource = ApplyTransform(glyphSource, mtx);
 
-    ras.add_path(transSource);
+    ras.addPath(transSource);
     ScanlineRenderer.renderSolid(ras, sl, buffer, color);
   }
 }

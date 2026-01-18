@@ -444,27 +444,27 @@ class Perspective implements ITransform {
   }
 
   bool isIdentity([double epsilon = affineEpsilon]) {
-    return DartGraphics_basics.is_equal_eps(sx, 1.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(shy, 0.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(w0, 0.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(shx, 0.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(sy, 1.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(w1, 0.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(tx, 0.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(ty, 0.0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(w2, 1.0, epsilon);
+    return DartGraphicsBasics.is_equal_eps(sx, 1.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(shy, 0.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(w0, 0.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(shx, 0.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(sy, 1.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(w1, 0.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(tx, 0.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(ty, 0.0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(w2, 1.0, epsilon);
   }
 
   bool isEqual(Perspective m, [double epsilon = affineEpsilon]) {
-    return DartGraphics_basics.is_equal_eps(sx, m.sx, epsilon) &&
-        DartGraphics_basics.is_equal_eps(shy, m.shy, epsilon) &&
-        DartGraphics_basics.is_equal_eps(w0, m.w0, epsilon) &&
-        DartGraphics_basics.is_equal_eps(shx, m.shx, epsilon) &&
-        DartGraphics_basics.is_equal_eps(sy, m.sy, epsilon) &&
-        DartGraphics_basics.is_equal_eps(w1, m.w1, epsilon) &&
-        DartGraphics_basics.is_equal_eps(tx, m.tx, epsilon) &&
-        DartGraphics_basics.is_equal_eps(ty, m.ty, epsilon) &&
-        DartGraphics_basics.is_equal_eps(w2, m.w2, epsilon);
+    return DartGraphicsBasics.is_equal_eps(sx, m.sx, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(shy, m.shy, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(w0, m.w0, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(shx, m.shx, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(sy, m.sy, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(w1, m.w1, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(tx, m.tx, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(ty, m.ty, epsilon) &&
+        DartGraphicsBasics.is_equal_eps(w2, m.w2, epsilon);
   }
 
   double calcScale() {

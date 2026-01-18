@@ -21,7 +21,7 @@ abstract class IRasterizer {
   void gamma(IGammaFunction gamma_function);
   bool sweep_scanline(IScanlineCache sl);
   void reset();
-  void add_path(IVertexSource vs);
+  void addPath(IVertexSource vs);
   bool rewind_scanlines();
 }
 
@@ -30,7 +30,7 @@ class ScanlineRasterizer implements IRasterizer {
   final VectorClipper _clipper;
   final List<int> _gamma =
       List<int>.filled(_AaScale.aa_scale, 0, growable: false);
-  filling_rule_e _fillingRule = filling_rule_e.fill_non_zero;
+  FillingRuleE _fillingRule = FillingRuleE.fillNonZero;
   bool _autoClose = true;
   int _startX = 0;
   int _startY = 0;
@@ -69,7 +69,7 @@ class ScanlineRasterizer implements IRasterizer {
     );
   }
 
-  void filling_rule(filling_rule_e rule) {
+  void fillingRule(FillingRuleE rule) {
     _fillingRule = rule;
   }
 
@@ -80,7 +80,7 @@ class ScanlineRasterizer implements IRasterizer {
   @override
   void gamma(IGammaFunction gamma_function) {
     for (int i = 0; i < _AaScale.aa_scale; i++) {
-      _gamma[i] = DartGraphics_basics.uround(
+      _gamma[i] = DartGraphicsBasics.uround(
         gamma_function
                 .getGamma(i / _AaScale.aa_mask)
                 .clamp(0.0, 1.0) *
@@ -123,7 +123,7 @@ class ScanlineRasterizer implements IRasterizer {
   }
 
   @override
-  void add_path(IVertexSource vs) {
+  void addPath(IVertexSource vs) {
     final x = RefParam(0.0);
     final y = RefParam(0.0);
     
@@ -186,11 +186,11 @@ class ScanlineRasterizer implements IRasterizer {
 
   int calculate_alpha(int area) {
     int cover = area >>
-        ((poly_subpixel_scale_e.poly_subpixel_shift * 2 + 1) -
+        ((polySubpixelScaleE.poly_subpixel_shift * 2 + 1) -
             _AaScale.aa_shift);
     if (cover < 0) cover = -cover;
 
-    if (_fillingRule == filling_rule_e.fill_even_odd) {
+    if (_fillingRule == FillingRuleE.fillEvenOdd) {
       cover &= _AaScale.aa_mask2;
       if (cover > _AaScale.aa_scale) {
         cover = _AaScale.aa_scale2 - cover;
@@ -235,7 +235,7 @@ class ScanlineRasterizer implements IRasterizer {
 
         if (area != 0) {
           final int alpha = calculate_alpha(
-            (cover << (poly_subpixel_scale_e.poly_subpixel_shift + 1)) - area,
+            (cover << (polySubpixelScaleE.poly_subpixel_shift + 1)) - area,
           );
           if (alpha != 0) {
             scanlineCache.add_cell(x, alpha);
@@ -245,7 +245,7 @@ class ScanlineRasterizer implements IRasterizer {
 
         if (numCells != 0 && cur.x > x) {
           final int alpha = calculate_alpha(
-            cover << (poly_subpixel_scale_e.poly_subpixel_shift + 1),
+            cover << (polySubpixelScaleE.poly_subpixel_shift + 1),
           );
           if (alpha != 0) {
             scanlineCache.add_span(x, cur.x - x, alpha);

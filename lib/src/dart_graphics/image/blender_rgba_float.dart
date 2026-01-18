@@ -11,7 +11,7 @@ class BlenderRgbaFloat implements IRecieveBlenderFloat {
   int get numPixelBits => 32 * _componentsPerPixel;
 
   @override
-  ColorF PixelToColorRGBA_Floats(List<double> buffer, int bufferOffset) {
+  ColorF pixelToColorRGBAFloats(List<double> buffer, int bufferOffset) {
     return ColorF(
       buffer[bufferOffset + 0],
       buffer[bufferOffset + 1],
@@ -21,7 +21,7 @@ class BlenderRgbaFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void CopyPixels(List<double> buffer, int bufferOffset, ColorF sourceColor, int count) {
+  void copyPixels(List<double> buffer, int bufferOffset, ColorF sourceColor, int count) {
     final r = sourceColor.red;
     final g = sourceColor.green;
     final b = sourceColor.blue;
@@ -36,7 +36,7 @@ class BlenderRgbaFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void BlendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor) {
+  void blendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor) {
     final srcA = sourceColor.alpha.clamp(0.0, 1.0);
     final dstA = buffer[bufferOffset + 3].clamp(0.0, 1.0);
     final invSrcA = 1.0 - srcA;
@@ -61,7 +61,7 @@ class BlenderRgbaFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void BlendPixels(
+  void blendPixels(
     List<double> buffer,
     int bufferOffset,
     List<ColorF> sourceColors,
@@ -81,7 +81,7 @@ class BlenderRgbaFloat implements IRecieveBlenderFloat {
         color.blue * factor,
         math.min(1.0, color.alpha * factor),
       );
-      BlendPixel(buffer, bufferOffset + i * _componentsPerPixel, modulated);
+      blendPixel(buffer, bufferOffset + i * _componentsPerPixel, modulated);
     }
   }
 }

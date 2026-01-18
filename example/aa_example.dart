@@ -16,7 +16,7 @@ void main() {
   // Clear to black
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      buffer.SetPixel(x, y, Color(0, 0, 0, 255));
+      buffer.setPixel(x, y, Color(0, 0, 0, 255));
     }
   }
   
@@ -32,11 +32,11 @@ void main() {
   // Render control circles
   final e = Ellipse();
   e.init(x1, y1, 3, 3, 16);
-  ras.add_path(e);
+  ras.addPath(e);
   ScanlineRenderer.renderSolid(ras, sl, buffer, Color(127, 127, 127));
   
   e.init(x2, y2, 3, 3, 16);
-  ras.add_path(e);
+  ras.addPath(e);
   ScanlineRenderer.renderSolid(ras, sl, buffer, Color(127, 127, 127));
   
   // Rounded Rectangle
@@ -46,7 +46,7 @@ void main() {
   // Outline
   final p = Stroke(r);
   p.width = 1.0;
-  ras.add_path(p);
+  ras.addPath(p);
   
   // Render with red color
   ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 1, 1));

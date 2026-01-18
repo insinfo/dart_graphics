@@ -15,7 +15,7 @@ class LineAAVertex {
   bool compare(LineAAVertex val) {
     final double dx = (val.x - x).toDouble();
     final double dy = (val.y - y).toDouble();
-    len = DartGraphics_basics.uround(math.sqrt(dx * dx + dy * dy));
+    len = DartGraphicsBasics.uround(math.sqrt(dx * dx + dy * dy));
     return len >
         (LineAABasics.line_subpixel_scale +
             LineAABasics.line_subpixel_scale ~/ 2);

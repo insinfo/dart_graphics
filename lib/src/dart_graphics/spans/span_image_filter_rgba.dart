@@ -41,12 +41,12 @@ class SpanImageFilterRgbaNnStepXby1 extends SpanImageFilter {
     Uint8List fgPtr = sourceRenderingBuffer.getBuffer();
 
     do {
-      span[spanIndex++] = Color.fromRgba(
-          fgPtr[bufferIndex + 2], // R
+        span[spanIndex++] = Color.fromRgba(
+          fgPtr[bufferIndex + 0], // R
           fgPtr[bufferIndex + 1], // G
-          fgPtr[bufferIndex + 0], // B
+          fgPtr[bufferIndex + 2], // B
           fgPtr[bufferIndex + 3]  // A
-      );
+        );
       bufferIndex += 4;
     } while (--len != 0);
   }
@@ -83,12 +83,12 @@ class SpanImageFilterRgbaNn extends SpanImageFilter {
       
       int bufferIndex = sourceRenderingBuffer.getBufferOffsetXY(xLr, yLr);
       
-      span[spanIndex] = Color.fromRgba(
-          fgPtr[bufferIndex + 2], // R
+        span[spanIndex] = Color.fromRgba(
+          fgPtr[bufferIndex + 0], // R
           fgPtr[bufferIndex + 1], // G
-          fgPtr[bufferIndex + 0], // B
+          fgPtr[bufferIndex + 2], // B
           fgPtr[bufferIndex + 3]  // A
-      );
+        );
       spanIndex++;
       spanInterpolator.next();
     } while (--len != 0);
@@ -144,29 +144,29 @@ class SpanImageFilterRgbaBilinear extends SpanImageFilter {
 
       weight = ((ImageSubpixelScale.imageSubpixelScale - xHr) *
                (ImageSubpixelScale.imageSubpixelScale - yHr));
-      tempR += weight * fgPtr[bufferIndex + 2]; // R
+      tempR += weight * fgPtr[bufferIndex + 0]; // R
       tempG += weight * fgPtr[bufferIndex + 1]; // G
-      tempB += weight * fgPtr[bufferIndex + 0]; // B
+      tempB += weight * fgPtr[bufferIndex + 2]; // B
       bufferIndex += 4;
 
       weight = (xHr * (ImageSubpixelScale.imageSubpixelScale - yHr));
-      tempR += weight * fgPtr[bufferIndex + 2];
+      tempR += weight * fgPtr[bufferIndex + 0];
       tempG += weight * fgPtr[bufferIndex + 1];
-      tempB += weight * fgPtr[bufferIndex + 0];
+      tempB += weight * fgPtr[bufferIndex + 2];
 
       yLr++;
       bufferIndex = sourceRenderingBuffer.getBufferOffsetXY(xLr, yLr);
 
       weight = ((ImageSubpixelScale.imageSubpixelScale - xHr) * yHr);
-      tempR += weight * fgPtr[bufferIndex + 2];
+      tempR += weight * fgPtr[bufferIndex + 0];
       tempG += weight * fgPtr[bufferIndex + 1];
-      tempB += weight * fgPtr[bufferIndex + 0];
+      tempB += weight * fgPtr[bufferIndex + 2];
       bufferIndex += 4;
 
       weight = (xHr * yHr);
-      tempR += weight * fgPtr[bufferIndex + 2];
+      tempR += weight * fgPtr[bufferIndex + 0];
       tempG += weight * fgPtr[bufferIndex + 1];
-      tempB += weight * fgPtr[bufferIndex + 0];
+      tempB += weight * fgPtr[bufferIndex + 2];
 
       tempR >>= ImageSubpixelScale.imageSubpixelShift * 2;
       tempG >>= ImageSubpixelScale.imageSubpixelShift * 2;
@@ -258,18 +258,18 @@ class SpanImageFilterRgbaBilinearClip extends SpanImageFilter {
         weight = ((ImageSubpixelScale.imageSubpixelScale - xHr) *
                  (ImageSubpixelScale.imageSubpixelScale - yHr));
         if (weight > baseMask) {
-          accumulatedColor[0] += weight * fgPtr[bufferIndex + 2]; // R
+          accumulatedColor[0] += weight * fgPtr[bufferIndex + 0]; // R
           accumulatedColor[1] += weight * fgPtr[bufferIndex + 1]; // G
-          accumulatedColor[2] += weight * fgPtr[bufferIndex + 0]; // B
+          accumulatedColor[2] += weight * fgPtr[bufferIndex + 2]; // B
           accumulatedColor[3] += weight * fgPtr[bufferIndex + 3]; // A
         }
 
         weight = (xHr * (ImageSubpixelScale.imageSubpixelScale - yHr));
         if (weight > baseMask) {
           bufferIndex += distanceBetweenPixelsInclusive;
-          accumulatedColor[0] += weight * fgPtr[bufferIndex + 2];
+          accumulatedColor[0] += weight * fgPtr[bufferIndex + 0];
           accumulatedColor[1] += weight * fgPtr[bufferIndex + 1];
-          accumulatedColor[2] += weight * fgPtr[bufferIndex + 0];
+          accumulatedColor[2] += weight * fgPtr[bufferIndex + 2];
           accumulatedColor[3] += weight * fgPtr[bufferIndex + 3];
         }
 
@@ -308,18 +308,18 @@ class SpanImageFilterRgbaBilinearClip extends SpanImageFilter {
           
           // This matches.
           
-          accumulatedColor[0] += weight * fgPtr[bufferIndex + 2];
+          accumulatedColor[0] += weight * fgPtr[bufferIndex + 0];
           accumulatedColor[1] += weight * fgPtr[bufferIndex + 1];
-          accumulatedColor[2] += weight * fgPtr[bufferIndex + 0];
+          accumulatedColor[2] += weight * fgPtr[bufferIndex + 2];
           accumulatedColor[3] += weight * fgPtr[bufferIndex + 3];
         }
         
         weight = (xHr * yHr);
         if (weight > baseMask) {
           bufferIndex += distanceBetweenPixelsInclusive;
-          accumulatedColor[0] += weight * fgPtr[bufferIndex + 2];
+          accumulatedColor[0] += weight * fgPtr[bufferIndex + 0];
           accumulatedColor[1] += weight * fgPtr[bufferIndex + 1];
-          accumulatedColor[2] += weight * fgPtr[bufferIndex + 0];
+          accumulatedColor[2] += weight * fgPtr[bufferIndex + 2];
           accumulatedColor[3] += weight * fgPtr[bufferIndex + 3];
         }
         
@@ -392,9 +392,9 @@ class SpanImageFilterRgbaBilinearClip extends SpanImageFilter {
       int bufferIndex = sourceRenderingBuffer.getBufferOffsetXY(xLr, yLr);
       Uint8List fgPtr = sourceRenderingBuffer.getBuffer();
 
-      accumulatedColor[0] += weight * fgPtr[bufferIndex + 2]; // R
+      accumulatedColor[0] += weight * fgPtr[bufferIndex + 0]; // R
       accumulatedColor[1] += weight * fgPtr[bufferIndex + 1]; // G
-      accumulatedColor[2] += weight * fgPtr[bufferIndex + 0]; // B
+      accumulatedColor[2] += weight * fgPtr[bufferIndex + 2]; // B
       accumulatedColor[3] += weight * fgPtr[bufferIndex + 3]; // A
     } else {
       accumulatedColor[0] += backR * weight;
@@ -468,9 +468,9 @@ class SpanImageFilterRgba extends SpanImageFilter {
                        ImageFilterScale.imageFilterScale ~/ 2) >>
                        ImageFilterScale.imageFilterShift;
 
-          fR += weight * fgPtr[bufferIndex + 2]; // R
+          fR += weight * fgPtr[bufferIndex + 0]; // R
           fG += weight * fgPtr[bufferIndex + 1]; // G
-          fB += weight * fgPtr[bufferIndex + 0]; // B
+          fB += weight * fgPtr[bufferIndex + 2]; // B
           fA += weight * fgPtr[bufferIndex + 3]; // A
 
           if (--xCount == 0) break;

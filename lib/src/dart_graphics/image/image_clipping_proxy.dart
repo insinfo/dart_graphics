@@ -64,15 +64,15 @@ class ImageClippingProxy extends ImageProxy {
   void clear(Color in_c) {
     if (width != 0) {
       for (int y = 0; y < height; y++) {
-        super.copy_hline(0, y, width, in_c);
+        super.copyHline(0, y, width, in_c);
       }
     }
   }
 
   @override
-  void copy_pixel(int x, int y, Uint8List c, int ByteOffset) {
+  void copyPixel(int x, int y, Uint8List c, int byteOffset) {
     if (inbox(x, y)) {
-      super.copy_pixel(x, y, c, ByteOffset);
+      super.copyPixel(x, y, c, byteOffset);
     }
   }
 
@@ -82,7 +82,7 @@ class ImageClippingProxy extends ImageProxy {
   }
 
   @override
-  void copy_hline(int x1, int y, int x2, Color c) {
+  void copyHline(int x1, int y, int x2, Color c) {
     if (x1 > x2) { int t = x2; x2 = x1; x1 = t; }
     if (y > ymax()) return;
     if (y < ymin()) return;
@@ -92,11 +92,11 @@ class ImageClippingProxy extends ImageProxy {
     if (x1 < xmin()) x1 = xmin();
     if (x2 > xmax()) x2 = xmax();
 
-    super.copy_hline(x1, y, (x2 - x1 + 1), c);
+    super.copyHline(x1, y, (x2 - x1 + 1), c);
   }
 
   @override
-  void copy_vline(int x, int y1, int y2, Color c) {
+  void copyVline(int x, int y1, int y2, Color c) {
     if (y1 > y2) { int t = y2; y2 = y1; y1 = t; }
     if (x > xmax()) return;
     if (x < xmin()) return;
@@ -106,11 +106,11 @@ class ImageClippingProxy extends ImageProxy {
     if (y1 < ymin()) y1 = ymin();
     if (y2 > ymax()) y2 = ymax();
 
-    super.copy_vline(x, y1, (y2 - y1 + 1), c);
+    super.copyVline(x, y1, (y2 - y1 + 1), c);
   }
 
   @override
-  void blend_hline(int x1, int y, int x2, Color c, int cover) {
+  void blendHline(int x1, int y, int x2, Color c, int cover) {
     if (x1 > x2) { int t = x2; x2 = x1; x1 = t; }
     if (y > ymax()) return;
     if (y < ymin()) return;
@@ -120,11 +120,11 @@ class ImageClippingProxy extends ImageProxy {
     if (x1 < xmin()) x1 = xmin();
     if (x2 > xmax()) x2 = xmax();
 
-    super.blend_hline(x1, y, x2, c, cover);
+    super.blendHline(x1, y, x2, c, cover);
   }
 
   @override
-  void blend_vline(int x, int y1, int y2, Color c, int cover) {
+  void blendVline(int x, int y1, int y2, Color c, int cover) {
     if (y1 > y2) { int t = y2; y2 = y1; y1 = t; }
     if (x > xmax()) return;
     if (x < xmin()) return;
@@ -134,11 +134,11 @@ class ImageClippingProxy extends ImageProxy {
     if (y1 < ymin()) y1 = ymin();
     if (y2 > ymax()) y2 = ymax();
 
-    super.blend_vline(x, y1, y2, c, cover);
+    super.blendVline(x, y1, y2, c, cover);
   }
 
   @override
-  void blend_solid_hspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
+  void blendSolidHspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
     if (y > ymax()) return;
     if (y < ymin()) return;
 
@@ -152,11 +152,11 @@ class ImageClippingProxy extends ImageProxy {
       len = xmax() - x + 1;
       if (len <= 0) return;
     }
-    super.blend_solid_hspan(x, y, len, c, covers, coversIndex);
+    super.blendSolidHspan(x, y, len, c, covers, coversIndex);
   }
 
   @override
-  void blend_solid_vspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
+  void blendSolidVspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
     if (x > xmax()) return;
     if (x < xmin()) return;
 
@@ -170,11 +170,11 @@ class ImageClippingProxy extends ImageProxy {
       len = (ymax() - y + 1);
       if (len <= 0) return;
     }
-    super.blend_solid_vspan(x, y, len, c, covers, coversIndex);
+    super.blendSolidVspan(x, y, len, c, covers, coversIndex);
   }
 
   @override
-  void copy_color_hspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
+  void copyColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
     if (y > ymax()) return;
     if (y < ymin()) return;
 
@@ -189,11 +189,11 @@ class ImageClippingProxy extends ImageProxy {
       len = (xmax() - x + 1);
       if (len <= 0) return;
     }
-    super.copy_color_hspan(x, y, len, colors, colorsIndex);
+    super.copyColorHspan(x, y, len, colors, colorsIndex);
   }
 
   @override
-  void copy_color_vspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
+  void copyColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
     if (x > xmax()) return;
     if (x < xmin()) return;
 
@@ -208,11 +208,11 @@ class ImageClippingProxy extends ImageProxy {
       len = (ymax() - y + 1);
       if (len <= 0) return;
     }
-    super.copy_color_vspan(x, y, len, colors, colorsIndex);
+    super.copyColorVspan(x, y, len, colors, colorsIndex);
   }
 
   @override
-  void blend_color_hspan(int x, int y, int in_len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
+  void blendColorHspan(int x, int y, int in_len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
     int len = in_len;
     if (y > ymax()) return;
     if (y < ymin()) return;
@@ -230,11 +230,11 @@ class ImageClippingProxy extends ImageProxy {
       if (len <= 0) return;
     }
 
-    super.blend_color_hspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
+    super.blendColorHspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
   }
 
   @override
-  void blend_color_vspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
+  void blendColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
     if (x > xmax()) return;
     if (x < xmin()) return;
 
@@ -250,22 +250,22 @@ class ImageClippingProxy extends ImageProxy {
       len = (ymax() - y + 1);
       if (len <= 0) return;
     }
-    super.blend_color_vspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
+    super.blendColorVspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
   }
 
   void copyFrom(IImageByte src) {
-    CopyFrom2(src, RectangleInt(0, 0, src.width, src.height), 0, 0);
+    copyFromRect(src, RectangleInt(0, 0, src.width, src.height), 0, 0);
   }
 
   @override
-  void SetPixel(int x, int y, Color color) {
+  void setPixel(int x, int y, Color color) {
     if (x >= 0 && x < width && y >= 0 && y < height) {
-      super.SetPixel(x, y, color);
+      super.setPixel(x, y, color);
     }
   }
 
   @override
-  void CopyFrom2(IImageByte sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset) {
+  void copyFromRect(IImageByte sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset) {
     RectangleInt destRect = sourceImageRect;
     destRect.Offset(destXOffset, destYOffset);
 
@@ -274,7 +274,7 @@ class ImageClippingProxy extends ImageProxy {
       // move it back relative to the source
       clippedSourceRect.Offset(-destXOffset, -destYOffset);
 
-      super.CopyFrom2(sourceImage, clippedSourceRect, destXOffset, destYOffset);
+      super.copyFromRect(sourceImage, clippedSourceRect, destXOffset, destYOffset);
     }
   }
 }

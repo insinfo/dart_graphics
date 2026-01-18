@@ -62,7 +62,7 @@ class _ScanlineCells {
 /// Core AA cell accumulator. Sorts cells by y/x for scanline use.
 class RasterizerCellsAa {
   static const int _dxLimit =
-      16384 << poly_subpixel_scale_e.poly_subpixel_shift;
+      16384 << polySubpixelScaleE.poly_subpixel_shift;
 
   final List<PixelCellAa> _cells = <PixelCellAa>[];
   final List<PixelCellAa> _sortedCells = <PixelCellAa>[];
@@ -95,9 +95,9 @@ class RasterizerCellsAa {
   }
 
   void line(int x1, int y1, int x2, int y2) {
-    final int polyShift = poly_subpixel_scale_e.poly_subpixel_shift;
-    final int polyMask = poly_subpixel_scale_e.poly_subpixel_mask;
-    final int polyScale = poly_subpixel_scale_e.poly_subpixel_scale;
+    final int polyShift = polySubpixelScaleE.poly_subpixel_shift;
+    final int polyMask = polySubpixelScaleE.poly_subpixel_mask;
+    final int polyScale = polySubpixelScaleE.poly_subpixel_scale;
     int dx = x2 - x1;
 
     if (dx >= _dxLimit || dx <= -_dxLimit) {
@@ -274,10 +274,10 @@ class RasterizerCellsAa {
   }
 
   void _renderHLine(int ey, int x1, int y1, int x2, int y2) {
-    int ex1 = x1 >> poly_subpixel_scale_e.poly_subpixel_shift;
-    int ex2 = x2 >> poly_subpixel_scale_e.poly_subpixel_shift;
-    int fx1 = x1 & poly_subpixel_scale_e.poly_subpixel_mask;
-    int fx2 = x2 & poly_subpixel_scale_e.poly_subpixel_mask;
+    int ex1 = x1 >> polySubpixelScaleE.poly_subpixel_shift;
+    int ex2 = x2 >> polySubpixelScaleE.poly_subpixel_shift;
+    int fx1 = x1 & polySubpixelScaleE.poly_subpixel_mask;
+    int fx2 = x2 & polySubpixelScaleE.poly_subpixel_mask;
 
     int delta, p, first, dx;
     int incr, lift, mod, rem;
@@ -296,8 +296,8 @@ class RasterizerCellsAa {
       return;
     }
 
-    p = (poly_subpixel_scale_e.poly_subpixel_scale - fx1) * (y2 - y1);
-    first = poly_subpixel_scale_e.poly_subpixel_scale;
+    p = (polySubpixelScaleE.poly_subpixel_scale - fx1) * (y2 - y1);
+    first = polySubpixelScaleE.poly_subpixel_scale;
     incr = 1;
     dx = x2 - x1;
 
@@ -322,7 +322,7 @@ class RasterizerCellsAa {
     y1 += delta;
 
     if (ex1 != ex2) {
-      p = poly_subpixel_scale_e.poly_subpixel_scale * (y2 - y1 + delta);
+      p = polySubpixelScaleE.poly_subpixel_scale * (y2 - y1 + delta);
       lift = p ~/ dx;
       rem = p % dx;
       if (rem < 0) {
@@ -340,7 +340,7 @@ class RasterizerCellsAa {
         }
         _currCell.cover += delta;
         _currCell.area +=
-            poly_subpixel_scale_e.poly_subpixel_scale * delta;
+            polySubpixelScaleE.poly_subpixel_scale * delta;
         y1 += delta;
         ex1 += incr;
         _setCurrCell(ex1, ey);
@@ -350,7 +350,7 @@ class RasterizerCellsAa {
     delta = y2 - y1;
     _currCell.cover += delta;
     _currCell.area +=
-        (fx2 + poly_subpixel_scale_e.poly_subpixel_scale - first) * delta;
+        (fx2 + polySubpixelScaleE.poly_subpixel_scale - first) * delta;
   }
 
   void sortCells() {

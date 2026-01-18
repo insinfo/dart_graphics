@@ -10,13 +10,13 @@ void drawBlackFrame(ImageBuffer pix) {
   final black = Color(0, 0, 0, 255);
   
   for (var i = 0; i < h; i++) {
-    pix.SetPixel(0, i, black);
-    pix.SetPixel(w - 1, i, black);
+    pix.setPixel(0, i, black);
+    pix.setPixel(w - 1, i, black);
   }
   
   for (var k in [0, h - 1]) {
     for (var i = 0; i < w; i++) {
-      pix.SetPixel(i, k, black);
+      pix.setPixel(i, k, black);
     }
   }
 }
@@ -31,7 +31,7 @@ void main() {
     // Clear to white
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        buffer.SetPixel(x, y, Color(255, 255, 255, 255));
+        buffer.setPixel(x, y, Color(255, 255, 255, 255));
       }
     }
     
@@ -39,7 +39,7 @@ void main() {
     
     final c = Color(127, 200, 98, 255);
     for (var i = 0; i < height ~/ 2; i++) {
-      buffer.SetPixel(i, i, c);
+      buffer.setPixel(i, i, c);
     }
     
     // Save image

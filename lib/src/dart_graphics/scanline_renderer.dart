@@ -81,9 +81,9 @@ class ScanlineRenderer {
     if (len <= 0) return;
 
     if (hasCovers) {
-      img.blend_solid_hspan(startX, y, len, color, covers, startCover);
+      img.blendSolidHspan(startX, y, len, color, covers, startCover);
     } else {
-      img.blend_hline(startX, y, startX + len - 1, color, 255);
+      img.blendHline(startX, y, startX + len - 1, color, 255);
     }
   }
 
@@ -94,7 +94,7 @@ class ScanlineRenderer {
     int endX = x + len - 1;
     if (startX < 0) startX = 0;
     if (endX >= img.width) endX = img.width - 1;
-    if (endX >= startX) img.blend_hline(startX, y, endX, color, cover);
+    if (endX >= startX) img.blendHline(startX, y, endX, color, cover);
   }
 
   static void _generateAndRenderSingleScanline(
@@ -154,11 +154,11 @@ class ScanlineRenderer {
     if (len <= 0) return;
 
     if (hasCovers) {
-      img.blend_color_hspan(
+      img.blendColorHspan(
           startX, y, len, colors, 0, covers, startCoverIndex, firstCoverForAll);
     } else {
       final Uint8List fullCover = Uint8List(1)..[0] = 255;
-      img.blend_color_hspan(startX, y, len, colors, 0, fullCover, 0, true);
+      img.blendColorHspan(startX, y, len, colors, 0, fullCover, 0, true);
     }
   }
 }

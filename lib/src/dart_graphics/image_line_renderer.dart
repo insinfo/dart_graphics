@@ -26,12 +26,12 @@ class LineImagePattern extends ImageBuffer {
   }
 
   void create(IImageByte src) {
-    _patternHeight = DartGraphics_basics.uceil(src.height.toDouble());
-    _patternWidth = DartGraphics_basics.uceil(src.width.toDouble());
-    _widthHr = DartGraphics_basics.uround(
+    _patternHeight = DartGraphicsBasics.uceil(src.height.toDouble());
+    _patternWidth = DartGraphicsBasics.uceil(src.width.toDouble());
+    _widthHr = DartGraphicsBasics.uround(
         src.width * LineAABasics.line_subpixel_scale.toDouble());
     _halfHeightHr =
-        DartGraphics_basics.uround(src.height * LineAABasics.line_subpixel_scale / 2);
+        DartGraphicsBasics.uround(src.height * LineAABasics.line_subpixel_scale / 2);
     _offsetYHr =
         _dilationHr + _halfHeightHr - LineAABasics.line_subpixel_scale ~/ 2;
     _halfHeightHr += LineAABasics.line_subpixel_scale ~/ 2;
@@ -136,7 +136,7 @@ class DistanceInterpolator4 {
     _dxEnd = LineAABasics.line_mr(ex) - LineAABasics.line_mr(x2);
     _dyEnd = LineAABasics.line_mr(ey) - LineAABasics.line_mr(y2);
 
-    _dist = DartGraphics_basics.iround(
+    _dist = DartGraphicsBasics.iround(
       (x + LineAABasics.line_subpixel_scale / 2 - x2) * _dy -
           (y + LineAABasics.line_subpixel_scale / 2 - y2) * _dx,
     );
@@ -157,13 +157,13 @@ class DistanceInterpolator4 {
                     LineAABasics.line_mr(ey)) *
                 _dxEnd;
 
-    _len = DartGraphics_basics.uround(len / scale);
+    _len = DartGraphicsBasics.uround(len / scale);
 
     double d = len * scale;
     int dx =
-        DartGraphics_basics.iround(((x2 - x1) << LineAABasics.line_subpixel_shift) / d);
+        DartGraphicsBasics.iround(((x2 - x1) << LineAABasics.line_subpixel_shift) / d);
     int dy =
-        DartGraphics_basics.iround(((y2 - y1) << LineAABasics.line_subpixel_shift) / d);
+        DartGraphicsBasics.iround(((y2 - y1) << LineAABasics.line_subpixel_shift) / d);
     _dxPict = -dy;
     _dyPict = dx;
     _distPict =

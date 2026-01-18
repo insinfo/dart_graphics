@@ -15,9 +15,9 @@ void main() {
     final shapes = SvgParserNew.parse(svg);
     expect(shapes.length, equals(3));
 
-    expect(shapes[0].fillRule, equals(filling_rule_e.fill_even_odd));
-    expect(shapes[1].fillRule, equals(filling_rule_e.fill_non_zero));
-    expect(shapes[2].fillRule, equals(filling_rule_e.fill_non_zero)); // Default
+    expect(shapes[0].fillRule, equals(FillingRuleE.fillEvenOdd));
+    expect(shapes[1].fillRule, equals(FillingRuleE.fillNonZero));
+    expect(shapes[2].fillRule, equals(FillingRuleE.fillNonZero)); // Default
   });
 
   test('SVG Parser parses brasao_editado_1.svg structure', () {
@@ -31,6 +31,6 @@ void main() {
 ''';
     final shapes = SvgParserNew.parse(svg);
     expect(shapes.length, equals(1));
-    expect(shapes[0].fillRule, equals(filling_rule_e.fill_non_zero));
+    expect(shapes[0].fillRule, equals(FillingRuleE.fillNonZero));
   });
 }

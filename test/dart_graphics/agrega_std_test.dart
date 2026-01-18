@@ -36,7 +36,7 @@ void main() {
       path.lineTo(90.0, 10.0);
       path.closePath();
 
-      ras.add_path(path);
+      ras.addPath(path);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_11.png');
@@ -62,7 +62,7 @@ void main() {
       path.lineTo(90.0, 10.0);
       path.closePath();
 
-      ras.add_path(path);
+      ras.addPath(path);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_12.png');
@@ -87,7 +87,7 @@ void main() {
       path.lineTo(90.0, 10.0);
       path.closePath();
 
-      ras.add_path(path);
+      ras.addPath(path);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_13.png');
@@ -112,7 +112,7 @@ void main() {
       path.lineTo(90.0, 10.0);
       path.closePath();
 
-      ras.add_path(path);
+      ras.addPath(path);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_14.png');
@@ -138,7 +138,7 @@ void main() {
       fillPath.lineTo(90.0, 10.0);
       fillPath.closePath();
       
-      ras.add_path(fillPath);
+      ras.addPath(fillPath);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 0, 255));
 
       // Stroke the triangle outline
@@ -152,7 +152,7 @@ void main() {
       stroke.width = 2.0;
 
       ras.reset();
-      ras.add_path(stroke);
+      ras.addPath(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_15.png');
@@ -176,7 +176,7 @@ void main() {
       fillPath.lineTo(90.0, 10.0);
       fillPath.closePath();
       
-      ras.add_path(fillPath);
+      ras.addPath(fillPath);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 0, 255));
 
       // Stroke the triangle outline
@@ -190,7 +190,7 @@ void main() {
       stroke.width = 2.0;
 
       ras.reset();
-      ras.add_path(stroke);
+      ras.addPath(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_16.png');
@@ -224,7 +224,7 @@ void main() {
         path.closePath();
 
         ras.gamma(GammaPower(gamma * 2.0));
-        ras.add_path(path);
+        ras.addPath(path);
 
         ScanlineRenderer.renderSolid(
           ras, sl, buffer,
@@ -244,7 +244,7 @@ void main() {
         path.closePath();
 
         ras.gamma(GammaThreshold(gamma));
-        ras.add_path(path);
+        ras.addPath(path);
 
         ScanlineRenderer.renderSolid(
           ras, sl, buffer,
@@ -289,7 +289,7 @@ void main() {
         stroke.lineJoin = joins[i];
 
         ras.reset();
-        ras.add_path(stroke);
+        ras.addPath(stroke);
         ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
       }
 
@@ -330,7 +330,7 @@ void main() {
         stroke.innerJoin = joins[i];
 
         ras.reset();
-        ras.add_path(stroke);
+        ras.addPath(stroke);
         ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
       }
 
@@ -352,7 +352,7 @@ void main() {
 void _clearBuffer(ImageBuffer buffer, Color color) {
   for (var y = 0; y < buffer.height; y++) {
     for (var x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, color);
+      buffer.setPixel(x, y, color);
     }
   }
 }

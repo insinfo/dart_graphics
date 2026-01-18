@@ -24,7 +24,7 @@ class RasterizerCompoundAa {
   final ScanlineUnpacked8 _scanline = ScanlineUnpacked8();
 
   CompoundLayerOrder layerOrder = CompoundLayerOrder.direct;
-  filling_rule_e fillingRule = filling_rule_e.fill_non_zero;
+  FillingRuleE fillingRule = FillingRuleE.fillNonZero;
 
   /// Registers or updates a style with the given [styleId] and [fill] color.
   /// Styles must be defined before they can host paths.
@@ -70,9 +70,9 @@ class RasterizerCompoundAa {
       if (style.paths.isEmpty) continue;
 
       _rasterizer.reset();
-      _rasterizer.filling_rule(fillingRule);
+      _rasterizer.fillingRule(fillingRule);
       for (final path in style.paths) {
-        _rasterizer.add_path(path);
+        _rasterizer.addPath(path);
       }
       if (_rasterizer.rewind_scanlines()) {
         ScanlineRenderer.renderSolid(

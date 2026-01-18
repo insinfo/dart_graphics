@@ -12,9 +12,9 @@ class VectorClipper {
   bool _clipping = false;
 
   int upscale(double v) =>
-      DartGraphics_basics.iround(v * poly_subpixel_scale_e.poly_subpixel_scale);
+      DartGraphicsBasics.iround(v * polySubpixelScaleE.poly_subpixel_scale);
 
-  int downscale(int v) => v ~/ poly_subpixel_scale_e.poly_subpixel_scale;
+  int downscale(int v) => v ~/ polySubpixelScaleE.poly_subpixel_scale;
 
   void reset_clipping() {
     _clipping = false;
@@ -155,5 +155,5 @@ class VectorClipper {
     _y1 = y2;
   }
 
-  int _mulDiv(int a, int b, int c) => DartGraphics_basics.iround(a * b / c);
+  int _mulDiv(int a, int b, int c) => DartGraphicsBasics.iround(a * b / c);
 }

@@ -38,68 +38,67 @@ class AlphaMaskAdaptor extends ImageProxy {
   void attachAlphaMask(IAlphaMask mask) {
     m_mask = mask;
   }
-
-  void copyPixel(int x, int y, Color c) {
-    linkedImage.BlendPixel(x, y, c, m_mask.pixel(x, y));
+  void blendPixelMasked(int x, int y, Color c) {
+    linkedImage.blendPixel(x, y, c, m_mask.pixel(x, y));
   }
 
   @override
-  void copy_hline(int x, int y, int len, Color c) {
+  void copyHline(int x, int y, int len, Color c) {
     throw UnimplementedError();
   }
 
   @override
-  void blend_hline(int x1, int y, int x2, Color c, int cover) {
+  void blendHline(int x1, int y, int x2, Color c, int cover) {
     int len = x2 - x1 + 1;
     if (cover == coverFull) {
       reallocSpan(len);
       m_mask.combineHspanFullCover(x1, y, m_span, 0, len);
-      linkedImage.blend_solid_hspan(x1, y, len, c, m_span, 0);
+      linkedImage.blendSolidHspan(x1, y, len, c, m_span, 0);
     } else {
       initSpan(len, cover);
       m_mask.combineHspan(x1, y, m_span, 0, len);
-      linkedImage.blend_solid_hspan(x1, y, len, c, m_span, 0);
+      linkedImage.blendSolidHspan(x1, y, len, c, m_span, 0);
     }
   }
 
   @override
-  void copy_vline(int x, int y, int len, Color c) {
+  void copyVline(int x, int y, int len, Color c) {
     throw UnimplementedError();
   }
 
   @override
-  void blend_vline(int x, int y1, int y2, Color c, int cover) {
+  void blendVline(int x, int y1, int y2, Color c, int cover) {
     throw UnimplementedError();
   }
 
   @override
-  void blend_solid_hspan(int x, int y, int len, Color color, Uint8List covers, int coversIndex) {
+  void blendSolidHspan(int x, int y, int len, Color color, Uint8List covers, int coversIndex) {
     m_mask.combineHspan(x, y, covers, coversIndex, len);
-    linkedImage.blend_solid_hspan(x, y, len, color, covers, coversIndex);
+    linkedImage.blendSolidHspan(x, y, len, color, covers, coversIndex);
   }
 
   @override
-  void blend_solid_vspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
+  void blendSolidVspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
     throw UnimplementedError();
   }
 
   @override
-  void copy_color_hspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
+  void copyColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
     throw UnimplementedError();
   }
 
   @override
-  void copy_color_vspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
+  void copyColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
     throw UnimplementedError();
   }
 
   @override
-  void blend_color_hspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
+  void blendColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
     throw UnimplementedError();
   }
 
   @override
-  void blend_color_vspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
+  void blendColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
     throw UnimplementedError();
   }
 }

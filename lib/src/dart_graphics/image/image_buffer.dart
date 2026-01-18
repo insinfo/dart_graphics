@@ -74,7 +74,7 @@ class ImageBuffer implements IImageByte {
       _blender.pixelToColor(_buffer, getBufferOffsetXY(x, y));
 
   @override
-  void copy_pixel(int x, int y, Uint8List c, int byteOffset) {
+  void copyPixel(int x, int y, Uint8List c, int byteOffset) {
     final int o = getBufferOffsetXY(x, y);
     _buffer[o] = c[byteOffset];
     _buffer[o + 1] = c[byteOffset + 1];
@@ -83,29 +83,29 @@ class ImageBuffer implements IImageByte {
   }
 
   @override
-  void CopyFrom(IImageByte sourceImage) {
+  void copyFrom(IImageByte sourceImage) {
     _buffer.setAll(0, sourceImage.getBuffer());
   }
 
   @override
-  void CopyFrom2(IImageByte sourceImage, RectangleInt srcRect, int destXOffset,
+  void copyFromRect(IImageByte sourceImage, RectangleInt srcRect, int destXOffset,
       int destYOffset) {
     for (int y = 0; y <= srcRect.top - srcRect.bottom; y++) {
       for (int x = 0; x <= srcRect.right - srcRect.left; x++) {
         final color =
             sourceImage.getPixel(srcRect.left + x, srcRect.bottom + y);
-        SetPixel(destXOffset + x, destYOffset + y, color);
+        setPixel(destXOffset + x, destYOffset + y, color);
       }
     }
   }
 
   @override
-  void SetPixel(int x, int y, Color color) {
+  void setPixel(int x, int y, Color color) {
     _blender.copyPixels(_buffer, getBufferOffsetXY(x, y), color, 1);
   }
 
   @override
-  void BlendPixel(int x, int y, Color sourceColor, int cover) {
+  void blendPixel(int x, int y, Color sourceColor, int cover) {
     final c = Color.fromColor(sourceColor)
       ..alpha = (sourceColor.alpha * cover + 127) ~/ 255;
     _blender.blendPixel(_buffer, getBufferOffsetXY(x, y), c);
@@ -176,19 +176,19 @@ class ImageBuffer implements IImageByte {
   }
 
   @override
-  void copy_hline(int x, int y, int len, Color sourceColor) {
+  void copyHline(int x, int y, int len, Color sourceColor) {
     _blender.copyPixels(_buffer, getBufferOffsetXY(x, y), sourceColor, len);
   }
 
   @override
-  void copy_vline(int x, int y, int len, Color sourceColor) {
+  void copyVline(int x, int y, int len, Color sourceColor) {
     for (int i = 0; i < len; i++) {
-      SetPixel(x, y + i, sourceColor);
+      setPixel(x, y + i, sourceColor);
     }
   }
 
   @override
-  void blend_hline(int x, int y, int x2, Color sourceColor, int cover) {
+  void blendHline(int x, int y, int x2, Color sourceColor, int cover) {
     if (x2 < x) {
       return;
     }
@@ -203,7 +203,7 @@ class ImageBuffer implements IImageByte {
   }
 
   @override
-  void blend_vline(int x, int y1, int y2, Color sourceColor, int cover) {
+  void blendVline(int x, int y1, int y2, Color sourceColor, int cover) {
     final c = Color.fromColor(sourceColor)
       ..alpha = (sourceColor.alpha * cover + 127) ~/ 255;
     for (int y = y1; y <= y2; y++) {
@@ -212,39 +212,39 @@ class ImageBuffer implements IImageByte {
   }
 
   @override
-  void copy_color_hspan(
+  void copyColorHspan(
       int x, int y, int len, List<Color> colors, int colorIndex) {
     for (int i = 0; i < len; i++) {
-      SetPixel(x + i, y, colors[colorIndex + i]);
+      setPixel(x + i, y, colors[colorIndex + i]);
     }
   }
 
   @override
-  void copy_color_vspan(
+  void copyColorVspan(
       int x, int y, int len, List<Color> colors, int colorIndex) {
     for (int i = 0; i < len; i++) {
-      SetPixel(x, y + i, colors[colorIndex + i]);
+      setPixel(x, y + i, colors[colorIndex + i]);
     }
   }
 
   @override
-  void blend_solid_hspan(int x, int y, int len, Color sourceColor,
+  void blendSolidHspan(int x, int y, int len, Color sourceColor,
       Uint8List covers, int coversIndex) {
     for (int i = 0; i < len; i++) {
-      BlendPixel(x + i, y, sourceColor, covers[coversIndex + i]);
+      blendPixel(x + i, y, sourceColor, covers[coversIndex + i]);
     }
   }
 
   @override
-  void blend_solid_vspan(int x, int y, int len, Color sourceColor,
+  void blendSolidVspan(int x, int y, int len, Color sourceColor,
       Uint8List covers, int coversIndex) {
     for (int i = 0; i < len; i++) {
-      BlendPixel(x, y + i, sourceColor, covers[coversIndex + i]);
+      blendPixel(x, y + i, sourceColor, covers[coversIndex + i]);
     }
   }
 
   @override
-  void blend_color_hspan(
+  void blendColorHspan(
     int x,
     int y,
     int len,
@@ -267,7 +267,7 @@ class ImageBuffer implements IImageByte {
   }
 
   @override
-  void blend_color_vspan(
+  void blendColorVspan(
     int x,
     int y,
     int len,

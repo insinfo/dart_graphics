@@ -540,7 +540,7 @@ class DartGraphicsCanvasRenderingContext2D
 
         final shadowPixel = shadowBuffer.getPixel(x, y);
         if (shadowPixel.alpha > 0) {
-          _buffer.BlendPixel(destX, destY, shadowPixel, shadowPixel.alpha);
+          _buffer.blendPixel(destX, destY, shadowPixel, shadowPixel.alpha);
         }
       }
     }
@@ -1264,7 +1264,7 @@ class DartGraphicsCanvasRenderingContext2D
       if (py < 0) continue;
       for (int px = x1; px < x2 && px < _buffer.width; px++) {
         if (px < 0) continue;
-        _buffer.SetPixel(px, py, Color.transparent);
+        _buffer.setPixel(px, py, Color.transparent);
       }
     }
   }
@@ -1452,7 +1452,7 @@ class DartGraphicsCanvasRenderingContext2D
 
           final color = image.getPixel(sx2, sy2);
           if (color.alpha > 0) {
-            _buffer.BlendPixel(dstX + x, dstY + y, color, color.alpha);
+            _buffer.blendPixel(dstX + x, dstY + y, color, color.alpha);
           }
         }
       }
@@ -1516,7 +1516,7 @@ class DartGraphicsCanvasRenderingContext2D
           imageData.data[offset + 2],
           imageData.data[offset + 3],
         );
-        _buffer.SetPixel(dstX, dstY, color);
+        _buffer.setPixel(dstX, dstY, color);
       }
     }
   }

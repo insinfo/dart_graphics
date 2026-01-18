@@ -7,8 +7,8 @@ import 'package:test/test.dart';
 void main() {
   test('ImageBufferAccessorCommon walks spans and offsets', () {
     final img = ImageBuffer(2, 1);
-    img.SetPixel(0, 0, Color(1, 2, 3, 255));
-    img.SetPixel(1, 0, Color(4, 5, 6, 255));
+    img.setPixel(0, 0, Color(1, 2, 3, 255));
+    img.setPixel(1, 0, Color(4, 5, 6, 255));
 
     final acc = ImageBufferAccessorCommon(img);
     final offset = RefParam<int>(0);

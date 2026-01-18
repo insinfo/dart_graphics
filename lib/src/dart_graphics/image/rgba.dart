@@ -36,14 +36,14 @@ abstract class IRecieveBlenderByte {
 abstract class IRecieveBlenderFloat {
   int get numPixelBits;
 
-  ColorF PixelToColorRGBA_Floats(List<double> buffer, int bufferOffset);
+  ColorF pixelToColorRGBAFloats(List<double> buffer, int bufferOffset);
 
-  void CopyPixels(
+  void copyPixels(
       List<double> buffer, int bufferOffset, ColorF sourceColor, int count);
 
-  void BlendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor);
+  void blendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor);
 
-  void BlendPixels(
+  void blendPixels(
       List<double> buffer,
       int bufferOffset,
       List<ColorF> sourceColors,

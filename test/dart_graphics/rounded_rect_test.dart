@@ -20,7 +20,7 @@ void main() {
     // Clear to white
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        buffer.SetPixel(x, y, Color(255, 255, 255, 255));
+        buffer.setPixel(x, y, Color(255, 255, 255, 255));
       }
     }
     
@@ -34,7 +34,7 @@ void main() {
     for (var i = 0; i < 2; i++) {
       final e = Ellipse(mX[i], mY[i], 3.0, 3.0, 16);
       ras.reset();
-      ras.add_path(e);
+      ras.addPath(e);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(54, 54, 54, 255));
     }
     
@@ -49,7 +49,7 @@ void main() {
     stroke.width = 7.0;
     
     ras.reset();
-    ras.add_path(stroke);
+    ras.addPath(stroke);
     ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
     
     // Save image

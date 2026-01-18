@@ -38,7 +38,7 @@ class ImageBufferFloat implements IImageFloat {
 
   /// Clear the entire buffer to the given floating color.
   void clear(ColorF color) {
-    _blender.CopyPixels(_buffer, 0, color, width * height);
+    _blender.copyPixels(_buffer, 0, color, width * height);
   }
 
   @override
@@ -79,10 +79,10 @@ class ImageBufferFloat implements IImageFloat {
   Float32List getBuffer() => _buffer;
 
   @override
-  ColorF getPixel(int x, int y) => _blender.PixelToColorRGBA_Floats(_buffer, getBufferOffsetXY(x, y));
+  ColorF getPixel(int x, int y) => _blender.pixelToColorRGBAFloats(_buffer, getBufferOffsetXY(x, y));
 
   @override
-  void copy_pixel(int x, int y, Float32List c, int floatOffset) {
+  void copyPixel(int x, int y, Float32List c, int floatOffset) {
     final dest = getBufferOffsetXY(x, y);
     for (var i = 0; i < _componentsPerPixel; i++) {
       _buffer[dest + i] = c[floatOffset + i];
@@ -90,27 +90,27 @@ class ImageBufferFloat implements IImageFloat {
   }
 
   @override
-  void CopyFrom(IImageFloat sourceImage) {
+  void copyFrom(IImageFloat sourceImage) {
     _buffer.setAll(0, sourceImage.getBuffer());
   }
 
   @override
-  void CopyFrom2(IImageFloat sourceImage, RectangleInt srcRect, int destXOffset, int destYOffset) {
+  void copyFromRect(IImageFloat sourceImage, RectangleInt srcRect, int destXOffset, int destYOffset) {
     for (var y = 0; y <= srcRect.top - srcRect.bottom; y++) {
       for (var x = 0; x <= srcRect.right - srcRect.left; x++) {
         final color = sourceImage.getPixel(srcRect.left + x, srcRect.bottom + y);
-        SetPixel(destXOffset + x, destYOffset + y, color);
+        setPixel(destXOffset + x, destYOffset + y, color);
       }
     }
   }
 
   @override
-  void SetPixel(int x, int y, ColorF color) {
-    _blender.CopyPixels(_buffer, getBufferOffsetXY(x, y), color, 1);
+  void setPixel(int x, int y, ColorF color) {
+    _blender.copyPixels(_buffer, getBufferOffsetXY(x, y), color, 1);
   }
 
   @override
-  void BlendPixel(int x, int y, ColorF sourceColor, int cover) {
+  void blendPixel(int x, int y, ColorF sourceColor, int cover) {
     final factor = (cover + 1) / 256.0;
     final c = ColorF(
       sourceColor.red,
@@ -118,23 +118,23 @@ class ImageBufferFloat implements IImageFloat {
       sourceColor.blue,
       math.min(1.0, sourceColor.alpha * factor),
     );
-    _blender.BlendPixel(_buffer, getBufferOffsetXY(x, y), c);
+    _blender.blendPixel(_buffer, getBufferOffsetXY(x, y), c);
   }
 
   @override
-  void copy_hline(int x, int y, int len, ColorF sourceColor) {
-    _blender.CopyPixels(_buffer, getBufferOffsetXY(x, y), sourceColor, len);
+  void copyHline(int x, int y, int len, ColorF sourceColor) {
+    _blender.copyPixels(_buffer, getBufferOffsetXY(x, y), sourceColor, len);
   }
 
   @override
-  void copy_vline(int x, int y, int len, ColorF sourceColor) {
+  void copyVline(int x, int y, int len, ColorF sourceColor) {
     for (var i = 0; i < len; i++) {
-      SetPixel(x, y + i, sourceColor);
+      setPixel(x, y + i, sourceColor);
     }
   }
 
   @override
-  void blend_hline(int x, int y, int x2, ColorF sourceColor, int cover) {
+  void blendHline(int x, int y, int x2, ColorF sourceColor, int cover) {
     if (x2 < x) {
       return;
     }
@@ -148,13 +148,13 @@ class ImageBufferFloat implements IImageFloat {
     );
     var offset = getBufferOffsetXY(x, y);
     for (var i = 0; i < len; i++) {
-      _blender.BlendPixel(_buffer, offset, blended);
+      _blender.blendPixel(_buffer, offset, blended);
       offset += _componentsPerPixel;
     }
   }
 
   @override
-  void blend_vline(int x, int y1, int y2, ColorF sourceColor, int cover) {
+  void blendVline(int x, int y1, int y2, ColorF sourceColor, int cover) {
     final factor = (cover + 1) / 256.0;
     final blended = ColorF(
       sourceColor.red,
@@ -163,40 +163,40 @@ class ImageBufferFloat implements IImageFloat {
       math.min(1.0, sourceColor.alpha * factor),
     );
     for (var y = y1; y <= y2; y++) {
-      _blender.BlendPixel(_buffer, getBufferOffsetXY(x, y), blended);
+      _blender.blendPixel(_buffer, getBufferOffsetXY(x, y), blended);
     }
   }
 
   @override
-  void copy_color_hspan(int x, int y, int len, List<ColorF> colors, int colorIndex) {
+  void copyColorHspan(int x, int y, int len, List<ColorF> colors, int colorIndex) {
     for (var i = 0; i < len; i++) {
-      SetPixel(x + i, y, colors[colorIndex + i]);
+      setPixel(x + i, y, colors[colorIndex + i]);
     }
   }
 
   @override
-  void copy_color_vspan(int x, int y, int len, List<ColorF> colors, int colorIndex) {
+  void copyColorVspan(int x, int y, int len, List<ColorF> colors, int colorIndex) {
     for (var i = 0; i < len; i++) {
-      SetPixel(x, y + i, colors[colorIndex + i]);
+      setPixel(x, y + i, colors[colorIndex + i]);
     }
   }
 
   @override
-  void blend_solid_hspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) {
+  void blendSolidHspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) {
     for (var i = 0; i < len; i++) {
-      BlendPixel(x + i, y, sourceColor, covers[coversIndex + i]);
+      blendPixel(x + i, y, sourceColor, covers[coversIndex + i]);
     }
   }
 
   @override
-  void blend_solid_vspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) {
+  void blendSolidVspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) {
     for (var i = 0; i < len; i++) {
-      BlendPixel(x, y + i, sourceColor, covers[coversIndex + i]);
+      blendPixel(x, y + i, sourceColor, covers[coversIndex + i]);
     }
   }
 
   @override
-  void blend_color_hspan(
+  void blendColorHspan(
     int x,
     int y,
     int len,
@@ -206,7 +206,7 @@ class ImageBufferFloat implements IImageFloat {
     int coversIndex,
     bool firstCoverForAll,
   ) {
-    _blender.BlendPixels(
+    _blender.blendPixels(
       _buffer,
       getBufferOffsetXY(x, y),
       colors,
@@ -219,7 +219,7 @@ class ImageBufferFloat implements IImageFloat {
   }
 
   @override
-  void blend_color_vspan(
+  void blendColorVspan(
     int x,
     int y,
     int len,
@@ -230,7 +230,7 @@ class ImageBufferFloat implements IImageFloat {
     bool firstCoverForAll,
   ) {
     for (var i = 0; i < len; i++) {
-      _blender.BlendPixels(
+      _blender.blendPixels(
         _buffer,
         getBufferOffsetXY(x, y + i),
         colors,

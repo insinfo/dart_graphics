@@ -10,11 +10,11 @@ void drawBlackFrame(ImageBuffer pix) {
   final h = pix.height;
   final black = Color(0, 0, 0, 255);
   
-  pix.copy_hline(0, 0, w, black);
-  pix.copy_hline(0, h - 1, w, black);
+  pix.copyHline(0, 0, w, black);
+  pix.copyHline(0, h - 1, w, black);
   
-  pix.copy_vline(0, 0, h, black);
-  pix.copy_vline(w - 1, 0, h, black);
+  pix.copyVline(0, 0, h, black);
+  pix.copyVline(w - 1, 0, h, black);
 }
 
 void main() {
@@ -29,7 +29,7 @@ void main() {
     // Let's assume white.
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        buffer.SetPixel(x, y, Color(255, 255, 255, 255));
+        buffer.setPixel(x, y, Color(255, 255, 255, 255));
       }
     }
     
@@ -114,7 +114,7 @@ void main() {
     
     final covers = Uint8List.fromList([255]);
     for (var i = 0; i < h; i++) {
-      buffer.blend_color_hspan(0, i, w, span, 0, covers, 0, true);
+      buffer.blendColorHspan(0, i, w, span, 0, covers, 0, true);
     }
     
     // Save image

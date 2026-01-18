@@ -2,7 +2,7 @@ import 'package:dart_graphics/src/dart_graphics/image_filters.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color_f.dart';
 
 import '../image/raster_buffer_accessors.dart';
-import 'package:dart_graphics/src/dart_graphics/spans/ispan_generator.dart';
+import 'package:dart_graphics/src/dart_graphics/spans/span_generator.dart';
 import 'package:dart_graphics/src/dart_graphics/spans/span_interpolator_linear.dart';
 import 'package:dart_graphics/src/dart_graphics/util.dart';
 

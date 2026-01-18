@@ -44,38 +44,38 @@ abstract class IImageByte extends IImage {
 
   Color getPixel(int x, int y);
 
-  void copy_pixel(int x, int y, Uint8List c, int ByteOffset);
+  void copyPixel(int x, int y, Uint8List c, int byteOffset);
 
-  void CopyFrom(IImageByte sourceImage);
+  void copyFrom(IImageByte sourceImage);
 
-  void CopyFrom2(IImageByte sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset);
+  void copyFromRect(IImageByte sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset);
 
-  void SetPixel(int x, int y, Color color);
+  void setPixel(int x, int y, Color color);
 
-  void BlendPixel(int x, int y, Color sourceColor, int cover);
+  void blendPixel(int x, int y, Color sourceColor, int cover);
 
   // line stuff
-  void copy_hline(int x, int y, int len, Color sourceColor);
+  void copyHline(int x, int y, int len, Color sourceColor);
 
-  void copy_vline(int x, int y, int len, Color sourceColor);
+  void copyVline(int x, int y, int len, Color sourceColor);
 
-  void blend_hline(int x, int y, int x2, Color sourceColor, int cover);
+  void blendHline(int x, int y, int x2, Color sourceColor, int cover);
 
-  void blend_vline(int x, int y1, int y2, Color sourceColor, int cover);
+  void blendVline(int x, int y1, int y2, Color sourceColor, int cover);
 
   // color stuff
-  void copy_color_hspan(int x, int y, int len, List<Color> colors, int colorIndex);
+    void copyColorHspan(int x, int y, int len, List<Color> colors, int colorIndex);
 
-  void copy_color_vspan(int x, int y, int len, List<Color> colors, int colorIndex);
+    void copyColorVspan(int x, int y, int len, List<Color> colors, int colorIndex);
 
-  void blend_solid_hspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex);
+    void blendSolidHspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex);
 
-  void blend_solid_vspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex);
+    void blendSolidVspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex);
 
-  void blend_color_hspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex,
+    void blendColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex,
       bool firstCoverForAll);
 
-  void blend_color_vspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex,
+    void blendColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex,
       bool firstCoverForAll);
 }
 
@@ -94,37 +94,37 @@ abstract class IImageFloat extends IImage {
 
   ColorF getPixel(int x, int y);
 
-  void copy_pixel(int x, int y, Float32List c, int floatOffset);
+  void copyPixel(int x, int y, Float32List c, int floatOffset);
 
-  void CopyFrom(IImageFloat sourceImage);
+  void copyFrom(IImageFloat sourceImage);
 
-  void CopyFrom2(IImageFloat sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset);
+  void copyFromRect(IImageFloat sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset);
 
-  void SetPixel(int x, int y, ColorF color);
+  void setPixel(int x, int y, ColorF color);
 
-  void BlendPixel(int x, int y, ColorF sourceColor, int cover);
+  void blendPixel(int x, int y, ColorF sourceColor, int cover);
 
   // line stuff
-  void copy_hline(int x, int y, int len, ColorF sourceColor);
+  void copyHline(int x, int y, int len, ColorF sourceColor);
 
-  void copy_vline(int x, int y, int len, ColorF sourceColor);
+  void copyVline(int x, int y, int len, ColorF sourceColor);
 
-  void blend_hline(int x, int y, int x2, ColorF sourceColor, int cover);
+  void blendHline(int x, int y, int x2, ColorF sourceColor, int cover);
 
-  void blend_vline(int x, int y1, int y2, ColorF sourceColor, int cover);
+  void blendVline(int x, int y1, int y2, ColorF sourceColor, int cover);
 
   // color stuff
-  void copy_color_hspan(int x, int y, int len, List<ColorF> colors, int colorIndex);
+    void copyColorHspan(int x, int y, int len, List<ColorF> colors, int colorIndex);
 
-  void copy_color_vspan(int x, int y, int len, List<ColorF> colors, int colorIndex);
+    void copyColorVspan(int x, int y, int len, List<ColorF> colors, int colorIndex);
 
-  void blend_solid_hspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex);
+    void blendSolidHspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex);
 
-  void blend_solid_vspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex);
+    void blendSolidVspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex);
 
-  void blend_color_hspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex,
+    void blendColorHspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex,
       bool firstCoverForAll);
 
-  void blend_color_vspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex,
+    void blendColorVspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex,
       bool firstCoverForAll);
 }

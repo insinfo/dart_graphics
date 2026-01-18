@@ -112,7 +112,7 @@ class ImageLineRenderer extends LineRenderer {
           if (math.sqrt(dx * dx + dy * dy) > radius) continue;
         }
         if (xx >= 0 && yy >= 0 && xx < _image.width && yy < _image.height) {
-          _image.SetPixel(xx, yy, color);
+          _image.setPixel(xx, yy, color);
         }
       }
     }
@@ -121,7 +121,7 @@ class ImageLineRenderer extends LineRenderer {
   void _plot(int x, int y, double c) {
     if (x < 0 || y < 0 || x >= _image.width || y >= _image.height) return;
     final int cov = (c.clamp(0.0, 1.0) * color.alpha).round();
-    _image.BlendPixel(x, y, color, cov);
+    _image.blendPixel(x, y, color, cov);
   }
 
   void _wuLine(double x0, double y0, double x1, double y1) {
@@ -302,7 +302,7 @@ class ProfileLineRenderer extends LineRenderer {
 
         final int cover = profile.value((dist * _subpixelScale).round());
         if (cover > 0) {
-          _image.BlendPixel(x, y, color, cover);
+          _image.blendPixel(x, y, color, cover);
         }
       }
     }

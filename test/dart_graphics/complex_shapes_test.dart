@@ -33,7 +33,7 @@ void main() {
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(star);
+      ras.addPath(star);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 200, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_star.png');
@@ -52,7 +52,7 @@ void main() {
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(stroke);
+      ras.addPath(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 100, 200, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_spiral.png');
@@ -79,7 +79,7 @@ void main() {
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(stroke);
+      ras.addPath(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(200, 0, 100, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_bezier.png');
@@ -102,7 +102,7 @@ void main() {
             ? Color(100, 150, 200, 255)
             : Color(200, 150, 100, 255);
 
-        ras.add_path(ellipse);
+        ras.addPath(ellipse);
         ScanlineRenderer.renderSolid(ras, sl, buffer, color);
       }
 
@@ -132,7 +132,7 @@ void main() {
         final sweepAngle = values[i] / 100.0 * 2 * math.pi;
         final slice = _createPieSlice(150, 150, 100, startAngle, sweepAngle);
 
-        ras.add_path(slice);
+        ras.addPath(slice);
         ScanlineRenderer.renderSolid(ras, sl, buffer, colors[i]);
 
         startAngle += sweepAngle;
@@ -151,7 +151,7 @@ void main() {
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(arrow);
+      ras.addPath(arrow);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 128, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_arrow.png');
@@ -179,10 +179,10 @@ void main() {
       path.closePath();
 
       final ras = ScanlineRasterizer();
-      ras.filling_rule(filling_rule_e.fill_even_odd);
+      ras.fillingRule(FillingRuleE.fillEvenOdd);
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(path);
+      ras.addPath(path);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(100, 100, 200, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_hole.png');
@@ -202,16 +202,16 @@ void main() {
       final rect3 = RoundedRect(20, 120, 180, 200, 25);
       final rect4 = RoundedRect(200, 120, 380, 200, 35);
 
-      ras.add_path(rect1);
+      ras.addPath(rect1);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 150, 150, 255));
 
-      ras.add_path(rect2);
+      ras.addPath(rect2);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(150, 255, 150, 255));
 
-      ras.add_path(rect3);
+      ras.addPath(rect3);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(150, 150, 255, 255));
 
-      ras.add_path(rect4);
+      ras.addPath(rect4);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 255, 150, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_rounded_rects.png');
@@ -231,7 +231,7 @@ void main() {
         final stroke = Stroke(ellipse);
         stroke.width = (i + 1) * 2.0;
 
-        ras.add_path(stroke);
+        ras.addPath(stroke);
         ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
       }
 
@@ -266,7 +266,7 @@ void main() {
         final hue = (i / 12.0);
         final color = _hsvToRgb(hue, 0.7, 0.9);
 
-        ras.add_path(transformed);
+        ras.addPath(transformed);
         ScanlineRenderer.renderSolid(ras, sl, buffer, color);
       }
 
@@ -283,7 +283,7 @@ void main() {
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(heart);
+      ras.addPath(heart);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(255, 0, 80, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/shape_heart.png');
@@ -310,7 +310,7 @@ void main() {
       final ras = ScanlineRasterizer();
       final sl = ScanlineCachePacked8();
 
-      ras.add_path(stroke);
+      ras.addPath(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
 
       PngEncoder.saveImage(buffer, 'test/tmp/aa_diagonals.png');
@@ -329,7 +329,7 @@ void main() {
         for (var j = 0; j < 5; j++) {
           final radius = (i + 1) * 2.0;
           final ellipse = Ellipse(20.0 + i * 40, 20.0 + j * 40, radius, radius);
-          ras.add_path(ellipse);
+          ras.addPath(ellipse);
           ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
         }
       }
@@ -356,7 +356,7 @@ void main() {
         final stroke = Stroke(path);
         stroke.width = widths[i];
 
-        ras.add_path(stroke);
+        ras.addPath(stroke);
         ScanlineRenderer.renderSolid(ras, sl, buffer, Color(0, 0, 0, 255));
       }
 
@@ -369,7 +369,7 @@ void main() {
 void _clearBuffer(ImageBuffer buffer, Color color) {
   for (var y = 0; y < buffer.height; y++) {
     for (var x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, color);
+      buffer.setPixel(x, y, color);
     }
   }
 }

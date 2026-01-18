@@ -23,7 +23,7 @@ void main() {
       // Clear background to white
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(255, 255, 255, 255));
+          img.setPixel(x, y, Color(255, 255, 255, 255));
         }
       }
 
@@ -35,7 +35,7 @@ void main() {
         ..lineTo(20, 80)
         ..closePath();
 
-      ras.add_path(path);
+      ras.addPath(path);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(255, 0, 0, 255));
 
       // Verify the rectangle was rendered
@@ -60,13 +60,13 @@ void main() {
       // Clear to white
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(255, 255, 255, 255));
+          img.setPixel(x, y, Color(255, 255, 255, 255));
         }
       }
 
       // Draw a blue filled circle
       final ellipse = Ellipse(50, 50, 30, 30);
-      ras.add_path(ellipse);
+      ras.addPath(ellipse);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(0, 0, 255, 255));
 
       // Verify center is blue
@@ -89,13 +89,13 @@ void main() {
       // Clear to white
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(255, 255, 255, 255));
+          img.setPixel(x, y, Color(255, 255, 255, 255));
         }
       }
 
       // Draw a green filled rounded rectangle
       final roundedRect = RoundedRect(20, 20, 80, 80, 10);
-      ras.add_path(roundedRect);
+      ras.addPath(roundedRect);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(0, 255, 0, 255));
 
       // Verify center is green
@@ -111,7 +111,7 @@ void main() {
       // Clear to white
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(255, 255, 255, 255));
+          img.setPixel(x, y, Color(255, 255, 255, 255));
         }
       }
 
@@ -146,7 +146,7 @@ void main() {
       // Clear to white
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(255, 255, 255, 255));
+          img.setPixel(x, y, Color(255, 255, 255, 255));
         }
       }
 
@@ -158,7 +158,7 @@ void main() {
         ..lineTo(20, 60)
         ..closePath();
 
-      ras.add_path(rect1);
+      ras.addPath(rect1);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(255, 0, 0, 128));
 
       // Draw a semi-transparent blue rectangle overlapping
@@ -170,7 +170,7 @@ void main() {
         ..lineTo(40, 80)
         ..closePath();
 
-      ras.add_path(rect2);
+      ras.addPath(rect2);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(0, 0, 255, 128));
 
       // Check the overlap area - should have both red and blue components
@@ -197,7 +197,7 @@ void main() {
       // Clear to white
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(255, 255, 255, 255));
+          img.setPixel(x, y, Color(255, 255, 255, 255));
         }
       }
 
@@ -223,7 +223,7 @@ void main() {
       }
       star.closePath();
 
-      ras.add_path(star);
+      ras.addPath(star);
       ScanlineRenderer.renderSolid(
           ras, sl, img, Color(255, 215, 0, 255)); // Gold color
 
@@ -244,7 +244,7 @@ void main() {
       // Clear to light gray background
       for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-          img.SetPixel(x, y, Color(240, 240, 240, 255));
+          img.setPixel(x, y, Color(240, 240, 240, 255));
         }
       }
 
@@ -256,19 +256,19 @@ void main() {
         ..lineTo(120, 120)
         ..lineTo(20, 120)
         ..closePath();
-      ras.add_path(rect);
+      ras.addPath(rect);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(255, 0, 0, 255));
 
       // 2. Filled ellipse
       ras.reset();
       final ellipse = Ellipse(220, 70, 50, 50);
-      ras.add_path(ellipse);
+      ras.addPath(ellipse);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(0, 255, 0, 255));
 
       // 3. Rounded rectangle
       ras.reset();
       final roundedRect = RoundedRect(280, 20, 380, 120, 15);
-      ras.add_path(roundedRect);
+      ras.addPath(roundedRect);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(0, 0, 255, 255));
 
       // 4. Triangle
@@ -278,7 +278,7 @@ void main() {
         ..lineTo(120, 150)
         ..lineTo(20, 150)
         ..closePath();
-      ras.add_path(triangle);
+      ras.addPath(triangle);
       ScanlineRenderer.renderSolid(ras, sl, img, Color(255, 0, 255, 255));
 
       // 5. Outlined rectangle with AA

@@ -104,7 +104,7 @@ class RecursiveBlur {
         m_sum2[x]!.toPix(m_buf[x]);
       }
 
-      img.copy_color_hspan(0, y, w, m_buf, 0);
+      img.copyColorHspan(0, y, w, m_buf, 0);
     }
   }
 

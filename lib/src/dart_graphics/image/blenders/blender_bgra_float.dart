@@ -39,7 +39,7 @@ class BlenderBgraFloat implements IRecieveBlenderFloat {
   int get numPixelBits => 32 * _componentsPerPixel; // 128 bits for 4 floats
 
   @override
-  ColorF PixelToColorRGBA_Floats(List<double> buffer, int bufferOffset) {
+  ColorF pixelToColorRGBAFloats(List<double> buffer, int bufferOffset) {
     return ColorF(
       buffer[bufferOffset + orderR],
       buffer[bufferOffset + orderG],
@@ -49,7 +49,7 @@ class BlenderBgraFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void CopyPixels(
+  void copyPixels(
       List<double> buffer, int bufferOffset, ColorF sourceColor, int count) {
     while (count-- > 0) {
       buffer[bufferOffset + orderR] = sourceColor.red;
@@ -61,7 +61,7 @@ class BlenderBgraFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void BlendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor) {
+  void blendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor) {
     final srcAlpha = sourceColor.alpha;
 
     if (srcAlpha == 1.0) {
@@ -89,7 +89,7 @@ class BlenderBgraFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void BlendPixels(
+  void blendPixels(
     List<double> buffer,
     int bufferOffset,
     List<ColorF> sourceColors,
@@ -111,7 +111,7 @@ class BlenderBgraFloat implements IRecieveBlenderFloat {
           color.blue,
           color.alpha * coverFactor,
         );
-        BlendPixel(buffer, bufferOffset, modulated);
+        blendPixel(buffer, bufferOffset, modulated);
         bufferOffset += _componentsPerPixel;
       }
     } else {
@@ -125,7 +125,7 @@ class BlenderBgraFloat implements IRecieveBlenderFloat {
           color.blue,
           color.alpha * coverFactor,
         );
-        BlendPixel(buffer, bufferOffset, modulated);
+        blendPixel(buffer, bufferOffset, modulated);
         bufferOffset += _componentsPerPixel;
       }
     }
@@ -149,7 +149,7 @@ class BlenderPreMultBgraFloat implements IRecieveBlenderFloat {
   int get numPixelBits => 32 * _componentsPerPixel;
 
   @override
-  ColorF PixelToColorRGBA_Floats(List<double> buffer, int bufferOffset) {
+  ColorF pixelToColorRGBAFloats(List<double> buffer, int bufferOffset) {
     final a = buffer[bufferOffset + orderA];
     if (a > 0.0) {
       return ColorF(
@@ -163,7 +163,7 @@ class BlenderPreMultBgraFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void CopyPixels(
+  void copyPixels(
       List<double> buffer, int bufferOffset, ColorF sourceColor, int count) {
     // Premultiply the source color
     final a = sourceColor.alpha;
@@ -181,7 +181,7 @@ class BlenderPreMultBgraFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void BlendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor) {
+  void blendPixel(List<double> buffer, int bufferOffset, ColorF sourceColor) {
     final srcAlpha = sourceColor.alpha;
 
     if (srcAlpha > 0.0) {
@@ -204,7 +204,7 @@ class BlenderPreMultBgraFloat implements IRecieveBlenderFloat {
   }
 
   @override
-  void BlendPixels(
+  void blendPixels(
     List<double> buffer,
     int bufferOffset,
     List<ColorF> sourceColors,
@@ -226,7 +226,7 @@ class BlenderPreMultBgraFloat implements IRecieveBlenderFloat {
           color.blue,
           color.alpha * coverFactor,
         );
-        BlendPixel(buffer, bufferOffset, modulated);
+        blendPixel(buffer, bufferOffset, modulated);
         bufferOffset += _componentsPerPixel;
       }
     } else {
@@ -240,7 +240,7 @@ class BlenderPreMultBgraFloat implements IRecieveBlenderFloat {
           color.blue,
           color.alpha * coverFactor,
         );
-        BlendPixel(buffer, bufferOffset, modulated);
+        blendPixel(buffer, bufferOffset, modulated);
         bufferOffset += _componentsPerPixel;
       }
     }

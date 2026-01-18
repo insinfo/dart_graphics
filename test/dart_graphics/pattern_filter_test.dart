@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 void main() {
   test('PatternFilterBilinearRGBA clamps at image edges', () {
     final img = ImageBuffer(1, 1);
-    img.SetPixel(0, 0, Color(10, 20, 30, 255));
+    img.setPixel(0, 0, Color(10, 20, 30, 255));
 
     final filter = PatternFilterBilinearRGBA();
     final dest = List<Color>.filled(1, Color(0, 0, 0, 0));

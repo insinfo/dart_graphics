@@ -46,7 +46,7 @@ void _renderComponentScene(_ComponentCase testCase) {
   // Clear to white so each channel blend behaves as in the original DartGraphics test.
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      buffer.SetPixel(x, y, Color(255, 255, 255));
+      buffer.setPixel(x, y, Color(255, 255, 255));
     }
   }
 
@@ -56,7 +56,7 @@ void _renderComponentScene(_ComponentCase testCase) {
   void drawEllipse(double cx, double cy, int channelIndex) {
     ras.reset();
     final ellipse = Ellipse(cx, cy, 100.0, 100.0, 100);
-    ras.add_path(ellipse);
+    ras.addPath(ellipse);
     buffer.setRecieveBlender(BlenderSingleChannel(channelIndex));
     ScanlineRenderer.renderSolid(
         ras, sl, buffer, Color(0, 0, 0, testCase.alpha));

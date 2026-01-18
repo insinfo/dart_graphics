@@ -67,47 +67,47 @@ abstract class ImageProxy extends IImageByte {
   Color getPixel(int x, int y) => linkedImage.getPixel(x, y);
 
   @override
-  void copy_pixel(int x, int y, Uint8List c, int ByteOffset) => linkedImage.copy_pixel(x, y, c, ByteOffset);
+  void copyPixel(int x, int y, Uint8List c, int byteOffset) => linkedImage.copyPixel(x, y, c, byteOffset);
 
   @override
-  void CopyFrom(IImageByte sourceImage) => linkedImage.CopyFrom(sourceImage);
+  void copyFrom(IImageByte sourceImage) => linkedImage.copyFrom(sourceImage);
 
   @override
-  void CopyFrom2(IImageByte sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset) => linkedImage.CopyFrom2(sourceImage, sourceImageRect, destXOffset, destYOffset);
+  void copyFromRect(IImageByte sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset) => linkedImage.copyFromRect(sourceImage, sourceImageRect, destXOffset, destYOffset);
 
   @override
-  void SetPixel(int x, int y, Color color) => linkedImage.SetPixel(x, y, color);
+  void setPixel(int x, int y, Color color) => linkedImage.setPixel(x, y, color);
 
   @override
-  void BlendPixel(int x, int y, Color sourceColor, int cover) => linkedImage.BlendPixel(x, y, sourceColor, cover);
+  void blendPixel(int x, int y, Color sourceColor, int cover) => linkedImage.blendPixel(x, y, sourceColor, cover);
 
   @override
-  void copy_hline(int x, int y, int len, Color sourceColor) => linkedImage.copy_hline(x, y, len, sourceColor);
+  void copyHline(int x, int y, int len, Color sourceColor) => linkedImage.copyHline(x, y, len, sourceColor);
 
   @override
-  void copy_vline(int x, int y, int len, Color sourceColor) => linkedImage.copy_vline(x, y, len, sourceColor);
+  void copyVline(int x, int y, int len, Color sourceColor) => linkedImage.copyVline(x, y, len, sourceColor);
 
   @override
-  void blend_hline(int x, int y, int x2, Color sourceColor, int cover) => linkedImage.blend_hline(x, y, x2, sourceColor, cover);
+  void blendHline(int x, int y, int x2, Color sourceColor, int cover) => linkedImage.blendHline(x, y, x2, sourceColor, cover);
 
   @override
-  void blend_vline(int x, int y1, int y2, Color sourceColor, int cover) => linkedImage.blend_vline(x, y1, y2, sourceColor, cover);
+  void blendVline(int x, int y1, int y2, Color sourceColor, int cover) => linkedImage.blendVline(x, y1, y2, sourceColor, cover);
 
   @override
-  void copy_color_hspan(int x, int y, int len, List<Color> colors, int colorIndex) => linkedImage.copy_color_hspan(x, y, len, colors, colorIndex);
+  void copyColorHspan(int x, int y, int len, List<Color> colors, int colorIndex) => linkedImage.copyColorHspan(x, y, len, colors, colorIndex);
 
   @override
-  void copy_color_vspan(int x, int y, int len, List<Color> colors, int colorIndex) => linkedImage.copy_color_vspan(x, y, len, colors, colorIndex);
+  void copyColorVspan(int x, int y, int len, List<Color> colors, int colorIndex) => linkedImage.copyColorVspan(x, y, len, colors, colorIndex);
 
   @override
-  void blend_solid_hspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex) => linkedImage.blend_solid_hspan(x, y, len, sourceColor, covers, coversIndex);
+  void blendSolidHspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex) => linkedImage.blendSolidHspan(x, y, len, sourceColor, covers, coversIndex);
 
   @override
-  void blend_solid_vspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex) => linkedImage.blend_solid_vspan(x, y, len, sourceColor, covers, coversIndex);
+  void blendSolidVspan(int x, int y, int len, Color sourceColor, Uint8List covers, int coversIndex) => linkedImage.blendSolidVspan(x, y, len, sourceColor, covers, coversIndex);
 
   @override
-  void blend_color_hspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => linkedImage.blend_color_hspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
+  void blendColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => linkedImage.blendColorHspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
 
   @override
-  void blend_color_vspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => linkedImage.blend_color_vspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
+  void blendColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => linkedImage.blendColorVspan(x, y, len, colors, colorsIndex, covers, coversIndex, firstCoverForAll);
 }

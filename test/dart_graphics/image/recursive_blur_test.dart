@@ -10,7 +10,7 @@ void main() {
       // Fill with some data
       for (int y = 0; y < 100; y++) {
         for (int x = 0; x < 100; x++) {
-          img.SetPixel(x, y, Color(x % 255, y % 255, (x + y) % 255, 255));
+          img.setPixel(x, y, Color(x % 255, y % 255, (x + y) % 255, 255));
         }
       }
 
@@ -26,7 +26,7 @@ void main() {
       // Fill with some data
       for (int y = 0; y < 100; y++) {
         for (int x = 0; x < 100; x++) {
-          img.SetPixel(x, y, Color(x % 255, y % 255, (x + y) % 255, 255));
+          img.setPixel(x, y, Color(x % 255, y % 255, (x + y) % 255, 255));
         }
       }
 
@@ -40,7 +40,7 @@ void main() {
       final img = ImageBuffer(50, 50);
       for (int y = 0; y < 50; y++) {
         for (int x = 0; x < 50; x++) {
-          img.SetPixel(x, y, Color(255, 0, 0, 255));
+          img.setPixel(x, y, Color(255, 0, 0, 255));
         }
       }
 

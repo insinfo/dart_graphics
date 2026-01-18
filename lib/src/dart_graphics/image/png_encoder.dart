@@ -9,7 +9,7 @@ class PngEncoder {
     final file = File(filename);
     final bytes = encode(image);
     file.writeAsBytesSync(bytes);
-    print('Saved $filename');
+   
   }
 
   /// Encodes an ImageBuffer to PNG bytes.

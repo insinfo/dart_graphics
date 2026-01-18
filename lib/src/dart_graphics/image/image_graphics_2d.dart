@@ -11,7 +11,6 @@ import '../primitives/rectangle_double.dart';
 import '../primitives/rectangle_int.dart';
 import '../transform/affine.dart';
 import '../vertex_source/ivertex_source.dart';
-import '../vertex_source/apply_transform.dart';
 import '../vertex_source/vertex_storage.dart';
 import '../vertex_source/rounded_rect.dart';
 import '../vertex_source/stroke.dart';
@@ -20,6 +19,8 @@ import '../scanline_renderer.dart';
 import '../interfaces/iscanline.dart';
 import '../scanline_unpacked8.dart';
 import '../spans/span_allocator.dart';
+import '../spans/span_gradient.dart';
+import '../spans/span_generator.dart';
 import 'iimage.dart';
 
 /// Graphics2D context specialized for rendering to image buffers.
@@ -41,7 +42,6 @@ class ImageGraphics2D extends Graphics2D {
   IImageFloat? _destImageFloat;
   ScanlineRasterizer? _rasterizer;
 
-  final List<Affine> _affineTransformStack = [Affine.identity()];
 
   /// Creates an empty ImageGraphics2D. Must call [initialize] before use.
   ImageGraphics2D();
@@ -89,25 +89,17 @@ class ImageGraphics2D extends Graphics2D {
   @override
   int get height => _destImageByte?.height ?? _destImageFloat?.height ?? 0;
 
-  /// Number of transforms on the stack.
-  int get transformStackCount => _affineTransformStack.length;
-
   /// Gets the current transformation matrix.
   Affine getTransform() {
-    return _affineTransformStack.last;
+    final t = transform;
+    return Affine(t.sx, t.shy, t.shx, t.sy, t.tx, t.ty);
   }
 
   /// Pushes a new transformation onto the stack.
-  void pushTransform() {
-    _affineTransformStack.add(getTransform().clone());
-  }
+  void pushTransform() => save();
 
   /// Pops the top transformation from the stack.
-  void popTransform() {
-    if (_affineTransformStack.length > 1) {
-      _affineTransformStack.removeLast();
-    }
-  }
+  void popTransform() => restore();
 
   /// Sets the clipping rectangle for rendering.
   void setClippingRect(RectangleDouble clippingRect) {
@@ -128,13 +120,47 @@ class ImageGraphics2D extends Graphics2D {
   void render(IVertexSource vertexSource, Color color) {
     rasterizer.reset();
 
-    final transform = getTransform();
-    IVertexSource source = vertexSource;
-    if (!_isIdentity(transform)) {
-      source = ApplyTransform(vertexSource, transform);
-    }
+    final source = applyTransform(vertexSource);
+    rasterizer.addPath(source);
 
-    rasterizer.add_path(source);
+    if (_destImageByte != null && _scanlineCache != null) {
+      ScanlineRenderer.renderSolid(
+        rasterizer,
+        _scanlineCache!,
+        _destImageByte!,
+        applyMasterAlpha(color),
+      );
+      _destImageByte!.markImageChanged();
+    }
+  }
+
+  @override
+  void renderSpanPath(IVertexSource src, ISpanGenerator generator) {
+    rasterizer.reset();
+    rasterizer.addPath(src);
+
+    if (_destImageByte != null && _scanlineCache != null) {
+      final allocator = SpanAllocator();
+      ScanlineRenderer.generateAndRender(
+        rasterizer,
+        _scanlineCache!,
+        _destImageByte!,
+        allocator,
+        generator,
+      );
+      _destImageByte!.markImageChanged();
+    }
+  }
+
+  @override
+  void renderGradientPath(IVertexSource src, SpanGradient gradient) {
+    renderSpanPath(src, gradient);
+  }
+
+  @override
+  void renderPath(IVertexSource src, Color color) {
+    rasterizer.reset();
+    rasterizer.addPath(src);
 
     if (_destImageByte != null && _scanlineCache != null) {
       ScanlineRenderer.renderSolid(
@@ -145,17 +171,6 @@ class ImageGraphics2D extends Graphics2D {
       );
       _destImageByte!.markImageChanged();
     }
-  }
-
-  /// Checks if an affine transform is identity.
-  bool _isIdentity(Affine a) {
-    const eps = 1e-10;
-    return (a.sx - 1.0).abs() < eps &&
-        a.shy.abs() < eps &&
-        a.shx.abs() < eps &&
-        (a.sy - 1.0).abs() < eps &&
-        a.tx.abs() < eps &&
-        a.ty.abs() < eps;
   }
 
   /// Draws a rectangle outline.

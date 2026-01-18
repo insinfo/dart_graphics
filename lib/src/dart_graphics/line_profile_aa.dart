@@ -36,7 +36,7 @@ class LineProfileAA {
 
   void gamma(IGammaFunction gammaFunction) {
     for (int i = 0; i < _aaScale; i++) {
-      _gamma[i] = DartGraphics_basics.uround(
+      _gamma[i] = DartGraphicsBasics.uround(
         (gammaFunction.getGamma(i / _aaMask).clamp(0.0, 1.0) * _aaMask),
       );
     }
@@ -75,7 +75,7 @@ class LineProfileAA {
   }
 
   Uint8List _profileBuffer(double w) {
-    _subpixelWidth = DartGraphics_basics.uround(w * _subpixelScale);
+    _subpixelWidth = DartGraphicsBasics.uround(w * _subpixelScale);
     final int size = _subpixelWidth + _subpixelScale * 6;
     if (size > _profile.length) {
       final Uint8List expanded = Uint8List(size);

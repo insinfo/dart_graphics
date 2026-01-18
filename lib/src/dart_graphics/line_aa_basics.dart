@@ -6,13 +6,13 @@ import 'package:dart_graphics/src/shared/ref_param.dart';
 /// Coordinate helpers for line AA math.
 class LineCoord {
   static int conv(double x) {
-    return DartGraphics_basics.iround(x * LineAABasics.line_subpixel_scale);
+    return DartGraphicsBasics.iround(x * LineAABasics.line_subpixel_scale);
   }
 }
 
 class LineCoordSat {
   static int conv(double x) {
-    return DartGraphics_basics.iround2(
+    return DartGraphicsBasics.iround2(
       x * LineAABasics.line_subpixel_scale,
       LineAABasics.line_max_coord,
     );
@@ -95,8 +95,8 @@ class LineAABasics {
       return;
     }
 
-    x.value = DartGraphics_basics.iround(tx);
-    y.value = DartGraphics_basics.iround(ty);
+    x.value = DartGraphicsBasics.iround(tx);
+    y.value = DartGraphicsBasics.iround(ty);
   }
 
   static void fix_degenerate_bisectrix_start(LineParameters lp, RefParam<int> x, RefParam<int> y) {

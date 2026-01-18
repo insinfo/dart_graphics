@@ -21,7 +21,7 @@ void main() {
     // Clear to white
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        buffer.SetPixel(x, y, Color(255, 255, 255, 255));
+        buffer.setPixel(x, y, Color(255, 255, 255, 255));
       }
     }
     
@@ -46,7 +46,7 @@ void main() {
       stroke.innerJoin = joins[i];
       
       ras.reset();
-      ras.add_path(stroke);
+      ras.addPath(stroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, black);
     }
     
@@ -62,7 +62,7 @@ void main() {
       txtStroke.width = 1.0;
       
       ras.reset();
-      ras.add_path(txtStroke);
+      ras.addPath(txtStroke);
       ScanlineRenderer.renderSolid(ras, sl, buffer, black);
     }
     

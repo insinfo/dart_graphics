@@ -17,7 +17,7 @@ class SvgShape {
   final StrokeLineCap strokeLineCap;
   final StrokeLineJoin strokeLineJoin;
   final double strokeMiterLimit;
-  final filling_rule_e fillRule;
+  final FillingRuleE fillRule;
 
   SvgShape(
     this.path, {
@@ -30,6 +30,6 @@ class SvgShape {
     this.strokeLineCap = StrokeLineCap.butt,
     this.strokeLineJoin = StrokeLineJoin.miter,
     this.strokeMiterLimit = 4.0,
-    this.fillRule = filling_rule_e.fill_non_zero,
+    this.fillRule = FillingRuleE.fillNonZero,
   });
 }

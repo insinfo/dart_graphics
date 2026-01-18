@@ -121,7 +121,7 @@ class DartGraphicsCanvas implements IHtmlCanvas {
     
     for (int y = 0; y < _height; y++) {
       for (int x = 0; x < _width; x++) {
-        _buffer!.SetPixel(x, y, color);
+        _buffer!.setPixel(x, y, color);
       }
     }
   }

@@ -434,9 +434,9 @@ class SvgContext {
         break;
       case 'fill-rule':
         if (value == 'evenodd') {
-          state.fillRule = filling_rule_e.fill_even_odd;
+          state.fillRule = FillingRuleE.fillEvenOdd;
         } else {
-          state.fillRule = filling_rule_e.fill_non_zero;
+          state.fillRule = FillingRuleE.fillNonZero;
         }
         break;
     }
@@ -561,7 +561,7 @@ class SvgState {
   StrokeLineCap strokeLineCap = StrokeLineCap.butt;
   StrokeLineJoin strokeLineJoin = StrokeLineJoin.miter;
   double strokeMiterLimit = 4.0;
-  filling_rule_e fillRule = filling_rule_e.fill_non_zero;
+  FillingRuleE fillRule = FillingRuleE.fillNonZero;
 
   SvgState clone() {
     return SvgState()

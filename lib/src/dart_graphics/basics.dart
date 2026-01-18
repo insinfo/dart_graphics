@@ -1,17 +1,17 @@
-//----------------------------------------------------------filling_rule_e
+
 import 'dart:typed_data';
 import 'package:dart_graphics/src/shared/ref_param.dart';
 import 'dart:math' as math;
 
-enum filling_rule_e { fill_non_zero, fill_even_odd }
+enum FillingRuleE { fillNonZero, fillEvenOdd }
 
-//----------------------------------------------------poly_subpixel_scale_e
+
 // These constants determine the subpixel accuracy, to be more precise,
 // the number of bits of the fractional part of the coordinates.
 // The possible coordinate capacity in bits can be calculated by formula:
 // sizeof(int) * 8 - poly_subpixel_shift, i.e, for 32-bit integers and
 // 8-bits fractional part the capacity is 24 bits.
-class poly_subpixel_scale_e {
+class polySubpixelScaleE {
   static const int poly_subpixel_shift = 8; //----poly_subpixel_shift
   static const int poly_subpixel_scale =
       1 << poly_subpixel_shift; //----poly_subpixel_scale
@@ -19,7 +19,7 @@ class poly_subpixel_scale_e {
       poly_subpixel_scale - 1; //----poly_subpixel_mask
 }
 
-class DartGraphics_basics {
+class DartGraphicsBasics {
   static void memcpy(Uint8List dest, int destIndex, Uint8List source,
       int sourceIndex, int count) {
     for (int i = 0; i < count; i++) {

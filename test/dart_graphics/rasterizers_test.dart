@@ -29,7 +29,7 @@ VertexStorage _triangle(List<double> xs, List<double> ys) {
 void _clearTo(ImageBuffer buffer, Color color) {
   for (var y = 0; y < buffer.height; y++) {
     for (var x = 0; x < buffer.width; x++) {
-      buffer.SetPixel(x, y, color);
+      buffer.setPixel(x, y, color);
     }
   }
 }
@@ -50,7 +50,7 @@ void main() {
     final scanlineBin = ScanlineBin();
 
     rasterizer.reset();
-    rasterizer.add_path(_triangle(mx, my));
+    rasterizer.addPath(_triangle(mx, my));
     ScanlineRenderer.renderSolid(
       rasterizer,
       scanlineAA,
@@ -59,7 +59,7 @@ void main() {
     );
 
     rasterizer.reset();
-    rasterizer.add_path(_triangle(
+    rasterizer.addPath(_triangle(
       [mx[0] - 200.0, mx[1] - 200.0, mx[2] - 200.0],
       my,
     ));

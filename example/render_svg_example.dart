@@ -17,7 +17,7 @@ void main() {
   // Clear to white
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      buffer.SetPixel(x, y, Color(255, 255, 255));
+      buffer.setPixel(x, y, Color(255, 255, 255));
     }
   }
 
@@ -38,7 +38,7 @@ void main() {
 
   // 4. Render Shapes
   for (final shape in shapes) {
-    ras.add_path(shape.vertices);
+    ras.addPath(shape.vertices);
     if (shape.fill is SvgPaintSolid) {
       ScanlineRenderer.renderSolid(ras, sl, buffer, (shape.fill as SvgPaintSolid).color);
     }

@@ -66,49 +66,49 @@ class _FloatImage implements IImageFloat {
   ColorF getPixel(int x, int y) => throw UnimplementedError();
 
   @override
-  void copy_pixel(int x, int y, Float32List c, int floatOffset) => throw UnimplementedError();
+  void copyPixel(int x, int y, Float32List c, int floatOffset) => throw UnimplementedError();
 
   @override
-  void CopyFrom(IImageFloat sourceImage) => throw UnimplementedError();
+  void copyFrom(IImageFloat sourceImage) => throw UnimplementedError();
 
   @override
-  void CopyFrom2(IImageFloat sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset) => throw UnimplementedError();
+  void copyFromRect(IImageFloat sourceImage, RectangleInt sourceImageRect, int destXOffset, int destYOffset) => throw UnimplementedError();
 
   @override
-  void SetPixel(int x, int y, ColorF color) => throw UnimplementedError();
+  void setPixel(int x, int y, ColorF color) => throw UnimplementedError();
 
   @override
-  void BlendPixel(int x, int y, ColorF sourceColor, int cover) => throw UnimplementedError();
+  void blendPixel(int x, int y, ColorF sourceColor, int cover) => throw UnimplementedError();
 
   @override
-  void copy_hline(int x, int y, int len, ColorF sourceColor) => throw UnimplementedError();
+  void copyHline(int x, int y, int len, ColorF sourceColor) => throw UnimplementedError();
 
   @override
-  void copy_vline(int x, int y, int len, ColorF sourceColor) => throw UnimplementedError();
+  void copyVline(int x, int y, int len, ColorF sourceColor) => throw UnimplementedError();
 
   @override
-  void blend_hline(int x, int y, int x2, ColorF sourceColor, int cover) => throw UnimplementedError();
+  void blendHline(int x, int y, int x2, ColorF sourceColor, int cover) => throw UnimplementedError();
 
   @override
-  void blend_vline(int x, int y1, int y2, ColorF sourceColor, int cover) => throw UnimplementedError();
+  void blendVline(int x, int y1, int y2, ColorF sourceColor, int cover) => throw UnimplementedError();
 
   @override
-  void copy_color_hspan(int x, int y, int len, List<ColorF> colors, int colorIndex) => throw UnimplementedError();
+  void copyColorHspan(int x, int y, int len, List<ColorF> colors, int colorIndex) => throw UnimplementedError();
 
   @override
-  void copy_color_vspan(int x, int y, int len, List<ColorF> colors, int colorIndex) => throw UnimplementedError();
+  void copyColorVspan(int x, int y, int len, List<ColorF> colors, int colorIndex) => throw UnimplementedError();
 
   @override
-  void blend_solid_hspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) => throw UnimplementedError();
+  void blendSolidHspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) => throw UnimplementedError();
 
   @override
-  void blend_solid_vspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) => throw UnimplementedError();
+  void blendSolidVspan(int x, int y, int len, ColorF sourceColor, Uint8List covers, int coversIndex) => throw UnimplementedError();
 
   @override
-  void blend_color_hspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => throw UnimplementedError();
+  void blendColorHspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => throw UnimplementedError();
 
   @override
-  void blend_color_vspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => throw UnimplementedError();
+  void blendColorVspan(int x, int y, int len, List<ColorF> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) => throw UnimplementedError();
 }
 
 void main() {

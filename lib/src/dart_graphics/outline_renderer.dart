@@ -100,7 +100,7 @@ class DistanceInterpolator1 {
   DistanceInterpolator1.init(int x1, int y1, int x2, int y2, int x, int y) {
     _dx = x2 - x1;
     _dy = y2 - y1;
-    _dist = DartGraphics_basics.iround(
+    _dist = DartGraphicsBasics.iround(
       (x + LineAABasics.line_subpixel_scale / 2 - x2) * _dy -
           (y + LineAABasics.line_subpixel_scale / 2 - y2) * _dx,
     );
@@ -178,7 +178,7 @@ class DistanceInterpolator2 {
     _dxStart = LineAABasics.line_mr(sx) - LineAABasics.line_mr(x1);
     _dyStart = LineAABasics.line_mr(sy) - LineAABasics.line_mr(y1);
 
-    _dist = DartGraphics_basics.iround(
+    _dist = DartGraphicsBasics.iround(
       (x + LineAABasics.line_subpixel_scale / 2 - x2) * _dy -
           (y + LineAABasics.line_subpixel_scale / 2 - y2) * _dx,
     );
@@ -212,7 +212,7 @@ class DistanceInterpolator2 {
     _dxStart = LineAABasics.line_mr(ex) - LineAABasics.line_mr(x2);
     _dyStart = LineAABasics.line_mr(ey) - LineAABasics.line_mr(y2);
 
-    _dist = DartGraphics_basics.iround(
+    _dist = DartGraphicsBasics.iround(
       (x + LineAABasics.line_subpixel_scale / 2 - x2) * _dy -
           (y + LineAABasics.line_subpixel_scale / 2 - y2) * _dx,
     );
@@ -345,7 +345,7 @@ class DistanceInterpolator3 {
     _dxEnd = LineAABasics.line_mr(ex) - LineAABasics.line_mr(x2);
     _dyEnd = LineAABasics.line_mr(ey) - LineAABasics.line_mr(y2);
 
-    _dist = DartGraphics_basics.iround(
+    _dist = DartGraphicsBasics.iround(
       (x + LineAABasics.line_subpixel_scale / 2 - x2) * _dy -
           (y + LineAABasics.line_subpixel_scale / 2 - y2) * _dx,
     );
@@ -1233,7 +1233,7 @@ class OutlineRenderer implements LineRenderer {
       len = _image.width - x;
       if (len <= 0) return;
     }
-    _image.blend_solid_hspan(x, y, len, _color, covers, coversIdx);
+    _image.blendSolidHspan(x, y, len, _color, covers, coversIdx);
   }
 
   void blendSolidVspan(int x, int y, int len, Uint8List covers, int coversIdx) {
@@ -1266,7 +1266,7 @@ class OutlineRenderer implements LineRenderer {
       len = _image.height - y;
       if (len <= 0) return;
     }
-    _image.blend_solid_vspan(x, y, len, _color, covers, coversIdx);
+    _image.blendSolidVspan(x, y, len, _color, covers, coversIdx);
   }
 
   void _semidotHline(CompareFunction cmp, int xc1, int yc1, int xc2, int yc2,

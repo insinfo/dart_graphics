@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dart_graphics/skia.dart';
 
 /// Global Skia instance
@@ -100,8 +101,13 @@ void testSvg(String svgString, String outputFile) {
   final image = surface.snapshot();
   if (image != null) {
     print('  ✓ Rendered image: ${image.width}x${image.height}');
-    // TODO: Add image encoding support
-    // For now, we just verify the rendering succeeds
+    File(outputFile).parent.createSync(recursive: true);
+    final saved = image.saveToPng(outputFile);
+    if (saved) {
+      print('  ✓ Saved image: $outputFile');
+    } else {
+      print('  ❌ Failed to encode image');
+    }
     image.dispose();
   } else {
     print('  ❌ Failed to snapshot image');
