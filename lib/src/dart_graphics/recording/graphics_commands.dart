@@ -3,6 +3,7 @@ import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/rectangle_double.dart';
 import 'package:dart_graphics/src/dart_graphics/recording/clip_stack.dart';
 import 'package:dart_graphics/src/dart_graphics/recording/layer_stack.dart';
+import 'package:dart_graphics/src/dart_graphics/recording/path_utils.dart';
 import 'package:dart_graphics/src/dart_graphics/recording/text_runs.dart';
 import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/ivertex_source.dart';
@@ -16,7 +17,7 @@ abstract class GraphicsBackend {
   void restore();
   void setTransform(Affine transform);
   void saveLayer(Layer layer, {RectangleDouble? bounds});
-  void clipPath(IVertexSource path, {Affine? transform, ClipOp op = ClipOp.intersect, bool antialias = true});
+  void clipPath(IVertexSource path, {Affine? transform, ClipOp op = ClipOp.intersect, bool antialias = true, PathFillRule fillRule = PathFillRule.nonZero});
 
   void clear(Color color);
   void drawPath(IVertexSource path, Paint paint, {StrokeStyle? stroke});
@@ -155,16 +156,18 @@ class ClipPathCommand extends DrawCommand {
   final Affine? transform;
   final ClipOp op;
   final bool antialias;
+  final PathFillRule fillRule;
 
   const ClipPathCommand(
     this.path, {
     this.transform,
     this.op = ClipOp.intersect,
     this.antialias = true,
+    this.fillRule = PathFillRule.nonZero,
   });
 
   @override
-  void execute(GraphicsBackend backend) => backend.clipPath(path, transform: transform, op: op, antialias: antialias);
+  void execute(GraphicsBackend backend) => backend.clipPath(path, transform: transform, op: op, antialias: antialias, fillRule: fillRule);
 }
 
 class DrawPathCommand extends DrawCommand {
@@ -236,8 +239,21 @@ class CommandBuffer {
     add(TransformCommand(transform.clone()));
   }
 
-  void clipPath(IVertexSource path, {ClipOp op = ClipOp.intersect, bool antialias = true}) {
-    add(ClipPathCommand(path, transform: _currentTransform.clone(), op: op, antialias: antialias));
+  void clipPath(
+    IVertexSource path, {
+    ClipOp op = ClipOp.intersect,
+    bool antialias = true,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    add(
+      ClipPathCommand(
+        path,
+        transform: _currentTransform.clone(),
+        op: op,
+        antialias: antialias,
+        fillRule: fillRule,
+      ),
+    );
   }
 
   void clear(Color color) => add(ClearCommand(color));

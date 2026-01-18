@@ -1,5 +1,6 @@
 import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/ivertex_source.dart';
+import 'path_utils.dart';
 
 enum ClipOp { intersect, difference }
 
@@ -8,12 +9,14 @@ class ClipEntry {
   final Affine transform;
   final ClipOp op;
   final bool antialias;
+  final PathFillRule fillRule;
 
   ClipEntry(
     this.path, {
     Affine? transform,
     this.op = ClipOp.intersect,
     this.antialias = true,
+    this.fillRule = PathFillRule.nonZero,
   }) : transform = transform ?? Affine.identity();
 }
 
@@ -26,8 +29,22 @@ class ClipStack {
 
   int get length => _stack.length;
 
-  void push(IVertexSource path, {Affine? transform, ClipOp op = ClipOp.intersect, bool antialias = true}) {
-    _stack.add(ClipEntry(path, transform: transform, op: op, antialias: antialias));
+  void push(
+    IVertexSource path, {
+    Affine? transform,
+    ClipOp op = ClipOp.intersect,
+    bool antialias = true,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    _stack.add(
+      ClipEntry(
+        path,
+        transform: transform,
+        op: op,
+        antialias: antialias,
+        fillRule: fillRule,
+      ),
+    );
   }
 
   ClipEntry? pop() => _stack.isEmpty ? null : _stack.removeLast();
