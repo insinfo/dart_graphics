@@ -1,6 +1,11 @@
+import '../../clipper/clipper.dart' as clipper;
 import 'package:dart_graphics/src/dart_graphics/vertex_source/flatten_curve.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/ivertex_source.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/vertex_storage.dart';
+
+enum PathBooleanOp { union, intersection, difference, xor }
+
+enum PathFillRule { nonZero, evenOdd }
 
 /// Utility helpers for backend-agnostic path processing.
 class PathUtils {
@@ -167,6 +172,73 @@ class PathUtils {
       dest.addVertex(v.x, v.y, v.command);
     }
     return dest;
+  }
+
+  /// Boolean operations between two paths.
+  static VertexStorage booleanOp(
+    IVertexSource subject,
+    IVertexSource clip,
+    PathBooleanOp op, {
+    double tolerance = 0.25,
+    double scale = 1024.0,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    final subjectFlat = flattenAdaptive(subject, tolerance: tolerance);
+    final clipFlat = flattenAdaptive(clip, tolerance: tolerance);
+
+    final subjectPaths = _toClipperPaths(subjectFlat, scale);
+    final clipPaths = _toClipperPaths(clipFlat, scale);
+
+    if (subjectPaths.isEmpty) return VertexStorage();
+
+    final solution = clipper.Clipper.booleanOp(
+      clipType: _clipTypeForOp(op),
+      subject: subjectPaths,
+      clip: clipPaths,
+      fillRule: _fillRuleFor(fillRule),
+    );
+
+    return _fromClipperPaths(solution, scale);
+  }
+
+  static VertexStorage union(
+    IVertexSource a,
+    IVertexSource b, {
+    double tolerance = 0.25,
+    double scale = 1024.0,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    return booleanOp(a, b, PathBooleanOp.union, tolerance: tolerance, scale: scale, fillRule: fillRule);
+  }
+
+  static VertexStorage intersection(
+    IVertexSource a,
+    IVertexSource b, {
+    double tolerance = 0.25,
+    double scale = 1024.0,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    return booleanOp(a, b, PathBooleanOp.intersection, tolerance: tolerance, scale: scale, fillRule: fillRule);
+  }
+
+  static VertexStorage difference(
+    IVertexSource a,
+    IVertexSource b, {
+    double tolerance = 0.25,
+    double scale = 1024.0,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    return booleanOp(a, b, PathBooleanOp.difference, tolerance: tolerance, scale: scale, fillRule: fillRule);
+  }
+
+  static VertexStorage xor(
+    IVertexSource a,
+    IVertexSource b, {
+    double tolerance = 0.25,
+    double scale = 1024.0,
+    PathFillRule fillRule = PathFillRule.nonZero,
+  }) {
+    return booleanOp(a, b, PathBooleanOp.xor, tolerance: tolerance, scale: scale, fillRule: fillRule);
   }
 }
 
@@ -337,4 +409,113 @@ List<_Point> _ensureClosed(List<_Point> points) {
   final closed = List<_Point>.from(points);
   closed.add(_Point(first.x, first.y));
   return closed;
+}
+
+clipper.ClipType _clipTypeForOp(PathBooleanOp op) {
+  switch (op) {
+    case PathBooleanOp.union:
+      return clipper.ClipType.union;
+    case PathBooleanOp.intersection:
+      return clipper.ClipType.intersection;
+    case PathBooleanOp.difference:
+      return clipper.ClipType.difference;
+    case PathBooleanOp.xor:
+      return clipper.ClipType.xor;
+  }
+}
+
+clipper.FillRule _fillRuleFor(PathFillRule rule) {
+  switch (rule) {
+    case PathFillRule.nonZero:
+      return clipper.FillRule.nonZero;
+    case PathFillRule.evenOdd:
+      return clipper.FillRule.evenOdd;
+  }
+}
+
+clipper.Paths64 _toClipperPaths(IVertexSource path, double scale) {
+  final contours = _extractContours(path);
+  final result = <clipper.Path64>[];
+  for (final contour in contours) {
+    final cleaned = _dedupeConsecutive(contour);
+    if (cleaned.length < 3) continue;
+    final clipPath = cleaned
+        .map((p) => clipper.Point64.fromDouble(p.x, p.y, scale: scale))
+        .toList();
+    if (clipPath.length >= 3) {
+      result.add(clipPath);
+    }
+  }
+  return result;
+}
+
+VertexStorage _fromClipperPaths(clipper.Paths64 paths, double scale) {
+  final dest = VertexStorage();
+  if (paths.isEmpty) return dest;
+
+  for (final path in paths) {
+    if (path.length < 3) continue;
+    final first = path.first;
+    dest.moveTo(first.x / scale, first.y / scale);
+    for (var i = 1; i < path.length; i++) {
+      final p = path[i];
+      dest.lineTo(p.x / scale, p.y / scale);
+    }
+    dest.closePath();
+  }
+
+  return dest;
+}
+
+List<List<_Point>> _extractContours(IVertexSource path) {
+  final contours = <List<_Point>>[];
+  var current = <_Point>[];
+  void flush() {
+    if (current.isEmpty) return;
+    final cleaned = _dedupeConsecutive(current);
+    if (cleaned.length >= 3) {
+      contours.add(cleaned);
+    }
+    current = <_Point>[];
+  }
+
+  for (final v in path.vertices()) {
+    if (v.command.isStop) break;
+    if (v.command.isMoveTo) {
+      flush();
+      current.add(_Point(v.x, v.y));
+      continue;
+    }
+    if (v.command.isLineTo) {
+      current.add(_Point(v.x, v.y));
+      continue;
+    }
+    if (v.command.isEndPoly) {
+      flush();
+      continue;
+    }
+  }
+  if (current.isNotEmpty) {
+    flush();
+  }
+
+  return contours;
+}
+
+List<_Point> _dedupeConsecutive(List<_Point> points, {double epsilon = 1e-9}) {
+  if (points.isEmpty) return points;
+  final result = <_Point>[points.first];
+  for (var i = 1; i < points.length; i++) {
+    if (!_pointsEqual(points[i], result.last, epsilon: epsilon)) {
+      result.add(points[i]);
+    }
+  }
+  if (result.length > 1 && _pointsEqual(result.first, result.last, epsilon: epsilon)) {
+    result.removeLast();
+  }
+  return result;
+}
+
+bool _pointsEqual(_Point a, _Point b, {double epsilon = 1e-9}) {
+  return (a.x - b.x).abs() <= epsilon && (a.y - b.y).abs() <= epsilon;
 }

@@ -1,5 +1,9 @@
 import 'package:dart_graphics/src/dart_graphics/image/iimage.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/rectangle_double.dart';
+import 'package:dart_graphics/src/dart_graphics/recording/clip_stack.dart';
+import 'package:dart_graphics/src/dart_graphics/recording/layer_stack.dart';
+import 'package:dart_graphics/src/dart_graphics/recording/text_runs.dart';
 import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
 import 'package:dart_graphics/src/dart_graphics/vertex_source/ivertex_source.dart';
 
@@ -11,11 +15,13 @@ abstract class GraphicsBackend {
   void save();
   void restore();
   void setTransform(Affine transform);
-  void clipPath(IVertexSource path);
+  void saveLayer(Layer layer, {RectangleDouble? bounds});
+  void clipPath(IVertexSource path, {Affine? transform, ClipOp op = ClipOp.intersect, bool antialias = true});
 
   void clear(Color color);
   void drawPath(IVertexSource path, Paint paint, {StrokeStyle? stroke});
   void drawImage(IImageByte image, Affine transform, {Paint? paint});
+  void drawTextRun(TextRun run);
 }
 
 /// A lightweight stroke description independent of any backend.
@@ -146,10 +152,19 @@ class TransformCommand extends DrawCommand {
 
 class ClipPathCommand extends DrawCommand {
   final IVertexSource path;
-  const ClipPathCommand(this.path);
+  final Affine? transform;
+  final ClipOp op;
+  final bool antialias;
+
+  const ClipPathCommand(
+    this.path, {
+    this.transform,
+    this.op = ClipOp.intersect,
+    this.antialias = true,
+  });
 
   @override
-  void execute(GraphicsBackend backend) => backend.clipPath(path);
+  void execute(GraphicsBackend backend) => backend.clipPath(path, transform: transform, op: op, antialias: antialias);
 }
 
 class DrawPathCommand extends DrawCommand {
@@ -174,19 +189,168 @@ class DrawImageCommand extends DrawCommand {
   void execute(GraphicsBackend backend) => backend.drawImage(image, transform, paint: paint);
 }
 
+class SaveLayerCommand extends DrawCommand {
+  final Layer layer;
+  final RectangleDouble? bounds;
+
+  const SaveLayerCommand(this.layer, {this.bounds});
+
+  @override
+  void execute(GraphicsBackend backend) => backend.saveLayer(layer, bounds: bounds);
+}
+
+class DrawTextRunCommand extends DrawCommand {
+  final TextRun run;
+
+  const DrawTextRunCommand(this.run);
+
+  @override
+  void execute(GraphicsBackend backend) => backend.drawTextRun(run);
+}
+
 /// A command buffer that can be replayed by any backend.
 class CommandBuffer {
-  final List<DrawCommand> commands = [];
+  final List<DrawCommand> _commands = [];
+  final List<Affine> _transformStack = [];
+  Affine _currentTransform = Affine.identity();
 
-  void add(DrawCommand command) => commands.add(command);
+  List<DrawCommand> get commands => List.unmodifiable(_commands);
 
-  void clear() => commands.clear();
+  bool get isEmpty => _commands.isEmpty;
+
+  int get length => _commands.length;
+
+  void add(DrawCommand command) {
+    _applyState(command);
+    _commands.add(command);
+  }
+
+  void save() => add(const SaveCommand());
+
+  void restore() => add(const RestoreCommand());
+
+  void saveLayer(Layer layer, {RectangleDouble? bounds}) => add(SaveLayerCommand(layer, bounds: bounds));
+
+  void setTransform(Affine transform) {
+    if (transform == _currentTransform) return;
+    add(TransformCommand(transform.clone()));
+  }
+
+  void clipPath(IVertexSource path, {ClipOp op = ClipOp.intersect, bool antialias = true}) {
+    add(ClipPathCommand(path, transform: _currentTransform.clone(), op: op, antialias: antialias));
+  }
+
+  void clear(Color color) => add(ClearCommand(color));
+
+  void drawPath(IVertexSource path, Paint paint, {StrokeStyle? stroke}) =>
+      add(DrawPathCommand(path, paint, stroke: stroke));
+
+  void drawImage(IImageByte image, Affine transform, {Paint? paint}) =>
+      add(DrawImageCommand(image, transform, paint: paint));
+
+  void drawTextRun(TextRun run) => add(DrawTextRunCommand(run));
+
+  void clearCommands() {
+    _commands.clear();
+    _transformStack.clear();
+    _currentTransform = Affine.identity();
+  }
+
+  int optimize() {
+    if (_commands.isEmpty) return 0;
+
+    final optimized = <DrawCommand>[];
+    final transformStack = <Affine>[];
+    final saveIndexStack = <int>[];
+    final renderStack = <bool>[];
+    var currentTransform = Affine.identity();
+
+    void markRender() {
+      for (var i = 0; i < renderStack.length; i++) {
+        renderStack[i] = true;
+      }
+    }
+
+    for (final command in _commands) {
+      if (command is SaveCommand || command is SaveLayerCommand) {
+        saveIndexStack.add(optimized.length);
+        renderStack.add(false);
+        transformStack.add(currentTransform.clone());
+        optimized.add(command);
+        continue;
+      }
+
+      if (command is RestoreCommand) {
+        if (transformStack.isNotEmpty) {
+          currentTransform = transformStack.removeLast();
+        }
+
+        if (renderStack.isEmpty || saveIndexStack.isEmpty) {
+          optimized.add(command);
+          continue;
+        }
+
+        final rendered = renderStack.removeLast();
+        final saveIndex = saveIndexStack.removeLast();
+
+        if (rendered) {
+          optimized.add(command);
+        } else {
+          optimized.removeRange(saveIndex, optimized.length);
+        }
+        continue;
+      }
+
+      if (command is TransformCommand) {
+        if (command.transform == currentTransform) {
+          continue;
+        }
+        currentTransform = command.transform;
+        optimized.add(command);
+        continue;
+      }
+
+      if (command is ClearCommand ||
+          command is DrawPathCommand ||
+          command is DrawImageCommand ||
+          command is DrawTextRunCommand) {
+        markRender();
+      }
+
+      optimized.add(command);
+    }
+
+    final removed = _commands.length - optimized.length;
+    _commands
+      ..clear()
+      ..addAll(optimized);
+    return removed;
+  }
 
   void play(GraphicsBackend backend, int width, int height) {
     backend.beginFrame(width, height);
-    for (final command in commands) {
+    for (final command in _commands) {
       command.execute(backend);
     }
     backend.endFrame();
+  }
+
+  void _applyState(DrawCommand command) {
+    if (command is SaveCommand || command is SaveLayerCommand) {
+      _transformStack.add(_currentTransform.clone());
+      return;
+    }
+
+    if (command is RestoreCommand) {
+      if (_transformStack.isEmpty) {
+        throw StateError('CommandBuffer restore without matching save.');
+      }
+      _currentTransform = _transformStack.removeLast();
+      return;
+    }
+
+    if (command is TransformCommand) {
+      _currentTransform = command.transform.clone();
+    }
   }
 }

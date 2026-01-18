@@ -36,11 +36,12 @@
 - [x] `Path` utils: bounds/flatten/copy (MVP).
 
 ## Fase 8 — Robustez e otimização
-- [ ] Substituir MVP por implementações robustas (clip/layer, text runs, command buffer)
-- [ ] `PathUtils`: boolean ops
+- [x] Substituir MVP por implementações robustas (clip/layer, text runs, command buffer)
+- [x] `PathUtils`: boolean ops
 - [x] `PathUtils`: simplify robusto (Douglas–Peucker)
 - [x] `PathUtils`: flatten adaptativo (tolerância geométrica)
 - [ ] Otimizar hot paths com benchmarks e perf regressions
+	- [x] Adicionar benchmarks de `PathUtils` (flatten/simplify/boolean ops)
 
 ---
 ## Progresso atual
