@@ -25,6 +25,7 @@ export 'src/dart_graphics/spans/span_gradient.dart';
 export 'src/dart_graphics/image/iimage.dart';
 export 'src/dart_graphics/rasterizer_compound_aa.dart';
 export 'src/dart_graphics/primitives/pattern_repetition.dart';
+export 'src/dart_graphics/primitives/rectangle_int.dart';
 
 
 export 'src/dart_graphics/recording/graphics_commands.dart';
