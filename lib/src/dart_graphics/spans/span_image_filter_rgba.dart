@@ -36,6 +36,16 @@ class SpanImageFilterRgbaNnStepXby1 extends SpanImageFilter {
     
     int xLr = xHr >> ImageSubpixelScale.imageSubpixelShift;
     int yLr = yHr >> ImageSubpixelScale.imageSubpixelShift;
+    if (xLr < 0) {
+      xLr = 0;
+    } else if (xLr >= sourceRenderingBuffer.width) {
+      xLr = sourceRenderingBuffer.width - 1;
+    }
+    if (yLr < 0) {
+      yLr = 0;
+    } else if (yLr >= sourceRenderingBuffer.height) {
+      yLr = sourceRenderingBuffer.height - 1;
+    }
     
     int bufferIndex = sourceRenderingBuffer.getBufferOffsetXY(xLr, yLr);
     Uint8List fgPtr = sourceRenderingBuffer.getBuffer();
@@ -80,6 +90,16 @@ class SpanImageFilterRgbaNn extends SpanImageFilter {
       
       int xLr = xHr >> ImageSubpixelScale.imageSubpixelShift;
       int yLr = yHr >> ImageSubpixelScale.imageSubpixelShift;
+      if (xLr < 0) {
+        xLr = 0;
+      } else if (xLr >= sourceRenderingBuffer.width) {
+        xLr = sourceRenderingBuffer.width - 1;
+      }
+      if (yLr < 0) {
+        yLr = 0;
+      } else if (yLr >= sourceRenderingBuffer.height) {
+        yLr = sourceRenderingBuffer.height - 1;
+      }
       
       int bufferIndex = sourceRenderingBuffer.getBufferOffsetXY(xLr, yLr);
       
