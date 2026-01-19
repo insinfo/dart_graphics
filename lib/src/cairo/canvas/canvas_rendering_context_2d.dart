@@ -1047,11 +1047,11 @@ class CairoCanvasRenderingContext2D implements ICanvasRenderingContext2D {
   ICanvasPattern? createPattern(dynamic image, String repetition) {
     if (image is CairoSurfaceImpl) {
       final rep = switch (repetition) {
-        'repeat' => PatternRepetition.repeat,
-        'repeat-x' => PatternRepetition.repeatX,
-        'repeat-y' => PatternRepetition.repeatY,
-        'no-repeat' => PatternRepetition.noRepeat,
-        _ => PatternRepetition.repeat,
+        'repeat' => CanvasPatternRepetition.repeat,
+        'repeat-x' => CanvasPatternRepetition.repeatX,
+        'repeat-y' => CanvasPatternRepetition.repeatY,
+        'no-repeat' => CanvasPatternRepetition.noRepeat,
+        _ => CanvasPatternRepetition.repeat,
       };
       return CairoCanvasPattern.fromSurface(image, repetition: rep);
     }

@@ -36,7 +36,8 @@ import 'package:dart_graphics/src/dart_graphics/spans/span_pattern.dart';
 import 'package:dart_graphics/src/dart_graphics/image/raster_buffer_accessors.dart';
 import 'package:dart_graphics/src/dart_graphics/image_filters.dart';
 import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
-import 'package:dart_graphics/src/shared/canvas2d/canvas_pattern.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/pattern_repetition.dart';
+// import 'package:dart_graphics/src/shared/canvas2d/canvas_pattern.dart'; // Deprecated/Experimental for core.
 
 abstract class IStyleHandler {
   bool is_solid(int style);
@@ -123,7 +124,7 @@ abstract class Graphics2D {
   final List<({double offset, Color color})> _gradientStops = [];
 
   IImageByte? _patternImage;
-  PatternRepetition _patternRepetition = PatternRepetition.repeat;
+  DartGraphicsPatternRepetition _patternRepetition = DartGraphicsPatternRepetition.repeat;
   Affine _patternTransform = Affine.identity();
 
   Typeface? _typeface;
@@ -273,7 +274,7 @@ abstract class Graphics2D {
 
   void setPatternFill(
     IImageByte image, {
-    PatternRepetition repetition = PatternRepetition.repeat,
+    DartGraphicsPatternRepetition repetition = DartGraphicsPatternRepetition.repeat,
     Affine? transform,
   }) {
     _fillStyleType = FillStyleType.pattern;

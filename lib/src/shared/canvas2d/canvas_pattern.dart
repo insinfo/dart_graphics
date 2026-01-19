@@ -13,7 +13,7 @@ abstract class ICanvasPattern {
 }
 
 /// Pattern repetition modes
-enum PatternRepetition {
+enum CanvasPatternRepetition {
   /// Repeat in both directions (default)
   repeat,
   /// Repeat horizontally only

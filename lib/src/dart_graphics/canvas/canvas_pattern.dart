@@ -10,7 +10,7 @@ import '../primitives/color.dart';
 /// Represents a pattern for use with Canvas fill/stroke styles
 class DartGraphicsCanvasPattern implements ICanvasPattern {
   final ImageBuffer _image;
-  final PatternRepetition _repetition;
+  final CanvasPatternRepetition _repetition;
   DOMMatrix? _transform;
   
   /// Creates a pattern from an image
@@ -21,18 +21,18 @@ class DartGraphicsCanvasPattern implements ICanvasPattern {
       : _image = image,
         _repetition = _parseRepetition(repetition);
   
-  static PatternRepetition _parseRepetition(String repetition) {
+  static CanvasPatternRepetition _parseRepetition(String repetition) {
     switch (repetition.toLowerCase()) {
       case 'repeat':
-        return PatternRepetition.repeat;
+        return CanvasPatternRepetition.repeat;
       case 'repeat-x':
-        return PatternRepetition.repeatX;
+        return CanvasPatternRepetition.repeatX;
       case 'repeat-y':
-        return PatternRepetition.repeatY;
+        return CanvasPatternRepetition.repeatY;
       case 'no-repeat':
-        return PatternRepetition.noRepeat;
+        return CanvasPatternRepetition.noRepeat;
       default:
-        return PatternRepetition.repeat;
+        return CanvasPatternRepetition.repeat;
     }
   }
   
@@ -46,7 +46,7 @@ class DartGraphicsCanvasPattern implements ICanvasPattern {
   ImageBuffer get image => _image;
   
   /// The repetition mode
-  PatternRepetition get repetition => _repetition;
+  CanvasPatternRepetition get repetition => _repetition;
   
   /// The transform matrix
   DOMMatrix? get transform => _transform;
@@ -57,14 +57,14 @@ class DartGraphicsCanvasPattern implements ICanvasPattern {
     int srcY = y;
     
     switch (_repetition) {
-      case PatternRepetition.repeat:
+      case CanvasPatternRepetition.repeat:
         srcX = x % _image.width;
         srcY = y % _image.height;
         if (srcX < 0) srcX += _image.width;
         if (srcY < 0) srcY += _image.height;
         break;
         
-      case PatternRepetition.repeatX:
+      case CanvasPatternRepetition.repeatX:
         srcX = x % _image.width;
         if (srcX < 0) srcX += _image.width;
         if (srcY < 0 || srcY >= _image.height) {
@@ -72,7 +72,7 @@ class DartGraphicsCanvasPattern implements ICanvasPattern {
         }
         break;
         
-      case PatternRepetition.repeatY:
+      case CanvasPatternRepetition.repeatY:
         srcY = y % _image.height;
         if (srcY < 0) srcY += _image.height;
         if (srcX < 0 || srcX >= _image.width) {
@@ -80,7 +80,7 @@ class DartGraphicsCanvasPattern implements ICanvasPattern {
         }
         break;
         
-      case PatternRepetition.noRepeat:
+      case CanvasPatternRepetition.noRepeat:
         if (srcX < 0 || srcX >= _image.width ||
             srcY < 0 || srcY >= _image.height) {
           return Color.transparent;

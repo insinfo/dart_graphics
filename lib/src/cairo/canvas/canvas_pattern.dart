@@ -15,7 +15,7 @@ class CairoCanvasPattern implements ICanvasPattern {
   final Cairo _cairo;
   SurfacePattern? _pattern;
   final CairoSurfaceImpl _imageSurface;
-  final PatternRepetition _repetition;
+  final CanvasPatternRepetition _repetition;
   
   /// Creates a pattern from an image surface
   CairoCanvasPattern._(this._cairo, this._imageSurface, this._repetition);
@@ -26,7 +26,7 @@ class CairoCanvasPattern implements ICanvasPattern {
     Uint8List pixels,
     int width,
     int height, {
-    PatternRepetition repetition = PatternRepetition.repeat,
+    CanvasPatternRepetition repetition = CanvasPatternRepetition.repeat,
   }) {
     final surface = cairo.createSurfaceFromData(pixels, width, height);
     return CairoCanvasPattern._(cairo, surface, repetition);
@@ -35,7 +35,7 @@ class CairoCanvasPattern implements ICanvasPattern {
   /// Creates a pattern from a Cairo surface
   factory CairoCanvasPattern.fromSurface(
     CairoSurfaceImpl surface, {
-    PatternRepetition repetition = PatternRepetition.repeat,
+    CanvasPatternRepetition repetition = CanvasPatternRepetition.repeat,
   }) {
     return CairoCanvasPattern._(surface.cairo, surface, repetition);
   }
@@ -48,15 +48,15 @@ class CairoCanvasPattern implements ICanvasPattern {
     
     // Set extend mode based on repetition
     switch (_repetition) {
-      case PatternRepetition.repeat:
+      case CanvasPatternRepetition.repeat:
         _pattern!.setExtend(cairo_ffi.CairoExtendEnum.CAIRO_EXTEND_REPEAT);
         break;
-      case PatternRepetition.repeatX:
-      case PatternRepetition.repeatY:
+      case CanvasPatternRepetition.repeatX:
+      case CanvasPatternRepetition.repeatY:
         // Cairo doesn't have separate X/Y repeat, use repeat
         _pattern!.setExtend(cairo_ffi.CairoExtendEnum.CAIRO_EXTEND_REPEAT);
         break;
-      case PatternRepetition.noRepeat:
+      case CanvasPatternRepetition.noRepeat:
         _pattern!.setExtend(cairo_ffi.CairoExtendEnum.CAIRO_EXTEND_NONE);
         break;
     }

@@ -4,12 +4,12 @@ import 'package:dart_graphics/src/dart_graphics/image/iimage.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
 import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
 import 'package:dart_graphics/src/dart_graphics/spans/span_generator.dart';
-import 'package:dart_graphics/src/shared/canvas2d/canvas_pattern.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/pattern_repetition.dart';
 
 /// Span generator that fills with a repeating image pattern.
 class SpanPatternImage implements ISpanGenerator {
   final IImageByte _image;
-  final PatternRepetition _repetition;
+  final DartGraphicsPatternRepetition _repetition;
   final Affine _patternTransform;
   final double _masterAlpha;
   late final bool _useInverse;
@@ -57,15 +57,15 @@ class SpanPatternImage implements ISpanGenerator {
 
   Color _sample(int x, int y, int w, int h) {
     switch (_repetition) {
-      case PatternRepetition.repeat:
+      case DartGraphicsPatternRepetition.repeat:
         return _image.getPixel(_wrap(x, w), _wrap(y, h));
-      case PatternRepetition.repeatX:
+      case DartGraphicsPatternRepetition.repeatX:
         if (y < 0 || y >= h) return Color.transparent;
         return _image.getPixel(_wrap(x, w), _clamp(y, 0, h - 1));
-      case PatternRepetition.repeatY:
+      case DartGraphicsPatternRepetition.repeatY:
         if (x < 0 || x >= w) return Color.transparent;
         return _image.getPixel(_clamp(x, 0, w - 1), _wrap(y, h));
-      case PatternRepetition.noRepeat:
+      case DartGraphicsPatternRepetition.noRepeat:
         if (x < 0 || x >= w || y < 0 || y >= h) return Color.transparent;
         return _image.getPixel(x, y);
     }

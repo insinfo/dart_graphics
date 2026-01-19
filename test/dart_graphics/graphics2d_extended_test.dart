@@ -1,7 +1,8 @@
 import 'package:dart_graphics/src/dart_graphics/graphics2D.dart';
 import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
-import 'package:dart_graphics/src/shared/canvas2d/canvas_pattern.dart';
+import 'package:dart_graphics/src/dart_graphics/primitives/pattern_repetition.dart';
+
 import 'package:test/test.dart';
 
 void main() {
@@ -38,7 +39,7 @@ void main() {
     g.clear(Color.transparent);
     g.beginPath();
     g.rect(0, 0, img.width.toDouble(), img.height.toDouble());
-    g.setPatternFill(pattern, repetition: PatternRepetition.repeat);
+    g.setPatternFill(pattern, repetition: DartGraphicsPatternRepetition.repeat);
     g.fillPath();
 
     final c00 = img.getPixel(0, 0);
