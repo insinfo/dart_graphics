@@ -3,9 +3,11 @@ import 'dart:typed_data';
 import 'package:dart_graphics/src/dart_graphics/graphics2D.dart';
 import 'package:dart_graphics/src/dart_graphics/image/blender_rgba_float.dart';
 import 'package:dart_graphics/src/dart_graphics/image/iimage.dart';
+import 'package:dart_graphics/src/dart_graphics/image/image_graphics_2d.dart';
 import 'package:dart_graphics/src/dart_graphics/image/rgba.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color_f.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/rectangle_int.dart';
+import 'package:dart_graphics/src/dart_graphics/scanline_rasterizer.dart';
 import 'package:dart_graphics/src/vector_math/vector2.dart';
 
 /// Floating-point RGBA image buffer used for high precision rendering tests.
@@ -52,7 +54,9 @@ class ImageBufferFloat implements IImageFloat {
 
   @override
   Graphics2D newGraphics2D() {
-    throw UnimplementedError('ImageBufferFloat does not support Graphics2D yet.');
+    final g = ImageGraphics2D();
+    g.initializeFloat(this, ScanlineRasterizer());
+    return g;
   }
 
   @override

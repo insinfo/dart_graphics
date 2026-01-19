@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:dart_graphics/src/dart_graphics/dda_line.dart';
 import 'package:dart_graphics/src/dart_graphics/transform/i_transform.dart';
+import 'package:dart_graphics/src/dart_graphics/transform/affine.dart';
 import 'package:dart_graphics/src/dart_graphics/transform/perspective.dart';
 import 'package:dart_graphics/src/dart_graphics/util.dart';
 import 'package:dart_graphics/src/dart_graphics/spans/span_interpolator_linear.dart';
@@ -162,12 +163,22 @@ class SpanInterpolatorPerspLerp implements ISpanInterpolator {
 
   @override
   ITransform transformer() {
-    throw UnimplementedError();
+    return m_trans_dir;
   }
 
   @override
   void setTransformer(ITransform trans) {
-    throw UnimplementedError();
+    if (trans is Perspective) {
+      m_trans_dir = Perspective.copy(trans);
+      m_trans_inv = Perspective.copy(trans)..invert();
+    } else if (trans is Affine) {
+      m_trans_dir = Perspective.fromAffine(trans);
+      m_trans_inv = Perspective.fromAffine(trans)..invert();
+    } else {
+      // Fallback: identity
+      m_trans_dir = Perspective();
+      m_trans_inv = Perspective();
+    }
   }
 
   @override

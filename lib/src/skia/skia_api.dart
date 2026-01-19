@@ -185,6 +185,13 @@ class Skia {
     return SkiaFont._(this, handle);
   }
 
+  // ==================== Text Blob ====================
+
+  /// Create a text blob builder (fallback implementation).
+  SkiaTextBlobBuilder createTextBlobBuilder() {
+    return SkiaTextBlobBuilder._(this);
+  }
+
   // ==================== Shader Creation ====================
 
   /// Create a linear gradient shader
@@ -820,6 +827,33 @@ class SkiaCanvas {
     }
   }
 
+  /// Draw a text blob.
+  void drawTextBlob(SkiaTextBlob blob, double x, double y, SkiaPaint paint) {
+    _checkDisposed();
+    final handle = blob._handle;
+    if (handle != null) {
+      _bindings.sk_canvas_draw_text_blob(
+        _handle,
+        handle,
+        x,
+        y,
+        paint._handle,
+      );
+      return;
+    }
+
+    final run = blob._fallbackRun;
+    if (run == null) return;
+    drawSimpleText(
+      run.text,
+      x + run.x,
+      y + run.y,
+      run.font,
+      paint,
+      encoding: run.encoding,
+    );
+  }
+
   /// Draw an image at the specified position
   void drawImage(SkiaImage image, double x, double y, SkiaPaint paint) {
     _checkDisposed();
@@ -902,6 +936,82 @@ enum BlendMode {
 
 /// Text encoding
 enum SKTextEncoding { utf8, utf16, utf32, glyphId }
+
+class SkiaTextBlob {
+  final Skia skia;
+  final ffi.Pointer<ffi.Void>? _handle;
+  final _TextBlobRun? _fallbackRun;
+  bool _disposed = false;
+
+  SkiaTextBlob._fallback(this.skia, this._fallbackRun)
+      : _handle = null;
+
+  SkiaSharpBindings get _bindings => skia._bindings;
+
+  void dispose() {
+    if (_disposed) return;
+    final handle = _handle;
+    if (handle != null) {
+      _bindings.sk_textblob_unref(handle);
+    }
+    _disposed = true;
+  }
+
+  bool get isDisposed => _disposed;
+}
+
+class SkiaTextBlobBuilder {
+  final Skia skia;
+  final ffi.Pointer<ffi.Void> _handle;
+  bool _disposed = false;
+  _TextBlobRun? _run;
+
+  SkiaTextBlobBuilder._(this.skia)
+      : _handle = skia._bindings.sk_textblob_builder_new();
+
+  SkiaSharpBindings get _bindings => skia._bindings;
+
+  void addText(
+    String text,
+    SkiaFont font, {
+    double x = 0,
+    double y = 0,
+    SKTextEncoding encoding = SKTextEncoding.utf8,
+  }) {
+    _checkDisposed();
+    _run = _TextBlobRun(text, font, x, y, encoding);
+  }
+
+  SkiaTextBlob build() {
+    _checkDisposed();
+    if (_run == null) {
+      return SkiaTextBlob._fallback(skia, null);
+    }
+
+    // Fallback: store the run in Dart and render via drawSimpleText.
+    return SkiaTextBlob._fallback(skia, _run);
+  }
+
+  void dispose() {
+    if (_disposed) return;
+    _bindings.sk_textblob_builder_delete(_handle);
+    _disposed = true;
+  }
+
+  void _checkDisposed() {
+    if (_disposed) throw StateError('SkiaTextBlobBuilder has been disposed');
+  }
+}
+
+class _TextBlobRun {
+  final String text;
+  final SkiaFont font;
+  final double x;
+  final double y;
+  final SKTextEncoding encoding;
+
+  _TextBlobRun(this.text, this.font, this.x, this.y, this.encoding);
+}
 
 /// Paint for drawing operations
 class SkiaPaint {

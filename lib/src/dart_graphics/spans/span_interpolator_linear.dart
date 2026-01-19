@@ -161,7 +161,13 @@ class SpanInterpolatorLinearFloat implements ISpanInterpolatorFloat {
 
   @override
   void resynchronize(double xe, double ye, int len) {
-    throw UnimplementedError();
+    var pt = [xe, ye];
+    m_trans.transform(pt);
+    final endX = pt[0];
+    final endY = pt[1];
+
+    stepX = (endX - currentX) / len;
+    stepY = (endY - currentY) / len;
   }
 
   @override

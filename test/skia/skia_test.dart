@@ -9,6 +9,8 @@ import 'package:dart_graphics/skia.dart';
 
 /// Global Skia instance for all tests
 late final Skia skia;
+const liberationSansPath =
+  'resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf';
 
 void main() {
   setUpAll(() {
@@ -1104,8 +1106,29 @@ void main() {
   });
 
   group('SKTextBlobBuilder', () {
-    test('not available in OOP API', () {
-      expect(true, isTrue);
-    }, skip: 'SKTextBlobBuilder not exposed in new OOP API');
+    test('can build and draw text blob', () {
+      final surface = skia.createSurface(200, 80)!;
+      final canvas = surface.canvas;
+      canvas.clear(SKColors.white);
+
+      final typeface = skia.loadTypeface(liberationSansPath)!;
+      final font = skia.createFontFromTypeface(typeface, size: 20);
+      final paint = skia.createPaint()
+        ..color = SKColors.black
+        ..isAntialias = true;
+
+      final builder = skia.createTextBlobBuilder();
+      builder.addText('Blob', font, x: 10, y: 40);
+      final blob = builder.build();
+
+      canvas.drawTextBlob(blob, 0, 0, paint);
+
+      blob.dispose();
+      builder.dispose();
+      paint.dispose();
+      font.dispose();
+      typeface.dispose();
+      surface.dispose();
+    });
   });
 }

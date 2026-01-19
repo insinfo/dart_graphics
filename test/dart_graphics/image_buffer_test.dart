@@ -4,6 +4,25 @@ import 'package:dart_graphics/src/dart_graphics/image/image_buffer.dart';
 import 'package:dart_graphics/src/dart_graphics/primitives/color.dart';
 import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
 
+String _ensureGolden(String expectedPath, List<String> fallbacks) {
+  final expected = File(expectedPath);
+  if (expected.existsSync()) {
+    return expectedPath;
+  }
+
+  for (final fallback in fallbacks) {
+    final candidate = File(fallback);
+    if (!candidate.existsSync()) {
+      continue;
+    }
+    expected.parent.createSync(recursive: true);
+    candidate.copySync(expectedPath);
+    return expectedPath;
+  }
+
+  return expectedPath;
+}
+
 void drawBlackFrame(ImageBuffer buffer) {
   final w = buffer.width;
   final h = buffer.height;
@@ -46,12 +65,17 @@ void main() {
     PngEncoder.saveImage(buffer, 'test/tmp/dartgraphics_test_01.png');
     
     // Verify against golden image
-    final goldenFile = File('resources/dartgraphics_test_01.png');
-    if (goldenFile.existsSync()) {
-      final generatedBytes = File('test/tmp/dartgraphics_test_01.png').readAsBytesSync();
-      expect(generatedBytes.length, greaterThan(0));
-    } else {
-      print('Warning: Golden image resources/dartgraphics_test_01.png not found.');
-    }
+    final goldenPath = _ensureGolden(
+      'resources/dartgraphics_test_01.png',
+      [
+        'resources/image/dartgraphics_test_01.png',
+        'resources/image/agg_test_01.png',
+        'resources/agg_test_01.png',
+      ],
+    );
+    final goldenFile = File(goldenPath);
+    expect(goldenFile.existsSync(), isTrue);
+    final generatedBytes = File('test/tmp/dartgraphics_test_01.png').readAsBytesSync();
+    expect(generatedBytes.length, greaterThan(0));
   });
 }

@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:dart_graphics/src/dart_graphics/basics.dart';
 import 'package:dart_graphics/src/dart_graphics/line_aa_basics.dart';
 import 'package:dart_graphics/src/dart_graphics/outline_image_renderer.dart';
+import 'package:dart_graphics/src/dart_graphics/line_profile_aa.dart';
 import 'package:dart_graphics/src/dart_graphics/rasterizer_compound_aa.dart';
 import 'package:dart_graphics/src/dart_graphics/rasterizer_outline_aa.dart';
 import 'package:dart_graphics/src/dart_graphics/scanline_renderer.dart';
@@ -1113,12 +1114,24 @@ class BasicGraphics2D extends Graphics2D {
     final p1 = _transformPoint(x1, y1, t);
     final p2 = _transformPoint(x2, y2, t);
     final paint = applyMasterAlpha(color);
-    final renderer = ImageLineRenderer(
-      destImage,
-      color: paint,
-      thickness: thickness,
-      cap: CapStyle.butt,
-    );
+    final LineRenderer renderer;
+    if (thickness <= 1.5) {
+      renderer = ImageLineRenderer(
+        destImage,
+        color: paint,
+        thickness: thickness,
+        cap: CapStyle.butt,
+      );
+    } else {
+      final profile = LineProfileAA();
+      profile.width(thickness);
+      renderer = ProfileLineRenderer(
+        destImage,
+        profile: profile,
+        color: paint,
+        cap: CapStyle.butt,
+      );
+    }
     final outline = RasterizerOutlineAA(renderer);
     outline.moveTo(
       (p1.x * LineAABasics.line_subpixel_scale).toInt(),

@@ -25,7 +25,7 @@ final cairo = Cairo();
 
 void main() {
   setUpAll(() {
-    Directory('test/golden').createSync(recursive: true);
+    Directory('resources/golden').createSync(recursive: true);
   });
 
   group('Cairo Golden - Shapes', () {
@@ -66,10 +66,10 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(255, 0, 80, 255));
       canvas.fill();
 
-      canvas.saveToPng('test/golden/shape_heart.png');
+      canvas.saveToPng('resources/golden/shape_heart.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_heart.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_heart.png').existsSync(), isTrue);
     });
 
     test('Spiral shape', () {
@@ -103,10 +103,10 @@ void main() {
       canvas.setLineWidth(2.0);
       canvas.stroke();
 
-      canvas.saveToPng('test/golden/shape_spiral.png');
+      canvas.saveToPng('resources/golden/shape_spiral.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_spiral.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_spiral.png').existsSync(), isTrue);
     });
 
     test('Bezier curves', () {
@@ -133,10 +133,10 @@ void main() {
       canvas.setLineWidth(3.0);
       canvas.stroke();
 
-      canvas.saveToPng('test/golden/shape_bezier.png');
+      canvas.saveToPng('resources/golden/shape_bezier.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_bezier.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_bezier.png').existsSync(), isTrue);
     });
 
     test('Star shape', () {
@@ -168,10 +168,10 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(255, 200, 0, 255));
       canvas.fill();
 
-      canvas.saveToPng('test/golden/shape_star.png');
+      canvas.saveToPng('resources/golden/shape_star.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_star.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_star.png').existsSync(), isTrue);
     });
 
     test('Concentric circles', () {
@@ -189,10 +189,10 @@ void main() {
         canvas.fillCircle(150, 150, radius);
       }
 
-      canvas.saveToPng('test/golden/shape_concentric.png');
+      canvas.saveToPng('resources/golden/shape_concentric.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_concentric.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_concentric.png').existsSync(), isTrue);
     });
 
     test('Rounded rectangles', () {
@@ -218,10 +218,10 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(255, 255, 150, 255));
       canvas.fillRoundedRect(200, 120, 380 - 200, 200 - 120, 35);
 
-      canvas.saveToPng('test/golden/shape_rounded_rects.png');
+      canvas.saveToPng('resources/golden/shape_rounded_rects.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_rounded_rects.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_rounded_rects.png').existsSync(), isTrue);
     });
 
     test('Arrow shape', () {
@@ -267,10 +267,10 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(0, 150, 100, 255));
       canvas.fill();
 
-      canvas.saveToPng('test/golden/shape_arrow.png');
+      canvas.saveToPng('resources/golden/shape_arrow.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_arrow.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_arrow.png').existsSync(), isTrue);
     });
 
     test('Pie slice', () {
@@ -291,10 +291,10 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(150, 100, 200, 255));
       canvas.fill();
 
-      canvas.saveToPng('test/golden/shape_pie.png');
+      canvas.saveToPng('resources/golden/shape_pie.png');
       canvas.dispose();
 
-      expect(File('test/golden/shape_pie.png').existsSync(), isTrue);
+      expect(File('resources/golden/shape_pie.png').existsSync(), isTrue);
     });
   });
 
@@ -315,10 +315,10 @@ void main() {
       ctx.closePath();
       ctx.stroke();
 
-      canvas.saveAs('test/golden/canvas2d_stroke_triangle.png');
+      canvas.saveAs('resources/golden/canvas2d_stroke_triangle.png');
       canvas.dispose();
 
-      expect(File('test/golden/canvas2d_stroke_triangle.png').existsSync(),
+      expect(File('resources/golden/canvas2d_stroke_triangle.png').existsSync(),
           isTrue);
     });
 
@@ -335,10 +335,10 @@ void main() {
       ctx.arc(150.0, 120.0, 70.0, math.pi * 0.15, math.pi * 0.95);
       ctx.stroke();
 
-      canvas.saveAs('test/golden/canvas2d_stroke_arc.png');
+      canvas.saveAs('resources/golden/canvas2d_stroke_arc.png');
       canvas.dispose();
 
-      expect(File('test/golden/canvas2d_stroke_arc.png').existsSync(), isTrue);
+      expect(File('resources/golden/canvas2d_stroke_arc.png').existsSync(), isTrue);
     });
   });
 
@@ -352,10 +352,10 @@ void main() {
       canvas.setFontSize(48);
       canvas.drawText('Hello World!', 20, 60);
 
-      canvas.saveToPng('test/golden/text_hello_world.png');
+      canvas.saveToPng('resources/golden/text_hello_world.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_hello_world.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_hello_world.png').existsSync(), isTrue);
     });
 
     test('Outlined text', () {
@@ -373,10 +373,10 @@ void main() {
       canvas.setLineWidth(2.0);
       canvas.stroke();
 
-      canvas.saveToPng('test/golden/text_outlined.png');
+      canvas.saveToPng('resources/golden/text_outlined.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_outlined.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_outlined.png').existsSync(), isTrue);
     });
 
     test('Multiple font sizes', () {
@@ -401,10 +401,10 @@ void main() {
       canvas.setFontSize(48);
       canvas.drawText('Size 48', 20, 210);
 
-      canvas.saveToPng('test/golden/text_sizes.png');
+      canvas.saveToPng('resources/golden/text_sizes.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_sizes.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_sizes.png').existsSync(), isTrue);
     });
 
     test('Multiple lines', () {
@@ -425,10 +425,10 @@ void main() {
       canvas.setFontFaceFromFile(_liberationMonoRegular);
       canvas.drawText('Line 3: Monospace', 20, 150);
 
-      canvas.saveToPng('test/golden/text_multiline.png');
+      canvas.saveToPng('resources/golden/text_multiline.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_multiline.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_multiline.png').existsSync(), isTrue);
     });
 
     test('Mixed styles', () {
@@ -460,10 +460,10 @@ void main() {
       canvas.setFontSize(12);
       canvas.drawText('DartGraphics Typography Port - Dart', 20, 260);
 
-      canvas.saveToPng('test/golden/text_mixed_styles.png');
+      canvas.saveToPng('resources/golden/text_mixed_styles.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_mixed_styles.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_mixed_styles.png').existsSync(), isTrue);
     });
 
     test('Special characters', () {
@@ -483,10 +483,10 @@ void main() {
       canvas.setColor(CairoColor.fromRgba(128, 0, 0, 255));
       canvas.drawText('<>[]{}|\\;:\'",./?', 20, 120);
 
-      canvas.saveToPng('test/golden/text_special_chars.png');
+      canvas.saveToPng('resources/golden/text_special_chars.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_special_chars.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_special_chars.png').existsSync(), isTrue);
     });
 
     test('Rotated text', () {
@@ -512,10 +512,10 @@ void main() {
         canvas.restore();
       }
 
-      canvas.saveToPng('test/golden/text_rotated.png');
+      canvas.saveToPng('resources/golden/text_rotated.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_rotated.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_rotated.png').existsSync(), isTrue);
     });
 
     test('Unicode text', () {
@@ -531,10 +531,10 @@ void main() {
       canvas.drawText('Français: Bonjour le monde', 20, 120);
       canvas.drawText('Deutsch: Hallo Welt', 20, 160);
 
-      canvas.saveToPng('test/golden/text_unicode.png');
+      canvas.saveToPng('resources/golden/text_unicode.png');
       canvas.dispose();
 
-      expect(File('test/golden/text_unicode.png').existsSync(), isTrue);
+      expect(File('resources/golden/text_unicode.png').existsSync(), isTrue);
     });
   });
 
@@ -550,10 +550,10 @@ void main() {
         canvas.drawLine(10.0 + i * 20, 10, 20.0 + i * 20, 190);
       }
 
-      canvas.saveToPng('test/golden/aa_diagonals.png');
+      canvas.saveToPng('resources/golden/aa_diagonals.png');
       canvas.dispose();
 
-      expect(File('test/golden/aa_diagonals.png').existsSync(), isTrue);
+      expect(File('resources/golden/aa_diagonals.png').existsSync(), isTrue);
     });
 
     test('Small circles', () {
@@ -570,10 +570,10 @@ void main() {
         }
       }
 
-      canvas.saveToPng('test/golden/aa_small_circles.png');
+      canvas.saveToPng('resources/golden/aa_small_circles.png');
       canvas.dispose();
 
-      expect(File('test/golden/aa_small_circles.png').existsSync(), isTrue);
+      expect(File('resources/golden/aa_small_circles.png').existsSync(), isTrue);
     });
 
     test('Thin strokes', () {
@@ -589,10 +589,10 @@ void main() {
         canvas.drawLine(20, 20.0 + i * 35, 280, 30.0 + i * 35);
       }
 
-      canvas.saveToPng('test/golden/aa_thin_strokes.png');
+      canvas.saveToPng('resources/golden/aa_thin_strokes.png');
       canvas.dispose();
 
-      expect(File('test/golden/aa_thin_strokes.png').existsSync(), isTrue);
+      expect(File('resources/golden/aa_thin_strokes.png').existsSync(), isTrue);
     });
   });
 
@@ -610,10 +610,10 @@ void main() {
       canvas.fillRect(10, 10, 280, 80);
       gradient.dispose();
 
-      canvas.saveToPng('test/golden/gradient_linear_h.png');
+      canvas.saveToPng('resources/golden/gradient_linear_h.png');
       canvas.dispose();
 
-      expect(File('test/golden/gradient_linear_h.png').existsSync(), isTrue);
+      expect(File('resources/golden/gradient_linear_h.png').existsSync(), isTrue);
     });
 
     test('Linear gradient vertical', () {
@@ -628,10 +628,10 @@ void main() {
       canvas.fillRect(10, 10, 80, 280);
       gradient.dispose();
 
-      canvas.saveToPng('test/golden/gradient_linear_v.png');
+      canvas.saveToPng('resources/golden/gradient_linear_v.png');
       canvas.dispose();
 
-      expect(File('test/golden/gradient_linear_v.png').existsSync(), isTrue);
+      expect(File('resources/golden/gradient_linear_v.png').existsSync(), isTrue);
     });
 
     test('Radial gradient', () {
@@ -647,10 +647,10 @@ void main() {
       canvas.fillCircle(100, 100, 90);
       gradient.dispose();
 
-      canvas.saveToPng('test/golden/gradient_radial.png');
+      canvas.saveToPng('resources/golden/gradient_radial.png');
       canvas.dispose();
 
-      expect(File('test/golden/gradient_radial.png').existsSync(), isTrue);
+      expect(File('resources/golden/gradient_radial.png').existsSync(), isTrue);
     });
 
     test('Rainbow gradient', () {
@@ -670,10 +670,10 @@ void main() {
       canvas.fillRect(0, 0, 400, 100);
       gradient.dispose();
 
-      canvas.saveToPng('test/golden/gradient_rainbow.png');
+      canvas.saveToPng('resources/golden/gradient_rainbow.png');
       canvas.dispose();
 
-      expect(File('test/golden/gradient_rainbow.png').existsSync(), isTrue);
+      expect(File('resources/golden/gradient_rainbow.png').existsSync(), isTrue);
     });
   });
 
@@ -694,10 +694,10 @@ void main() {
       canvas.setColor(CairoColor(0, 0, 1, 0.5));
       canvas.fillCircle(100, 120, 60);
 
-      canvas.saveToPng('test/golden/layered_transparency.png');
+      canvas.saveToPng('resources/golden/layered_transparency.png');
       canvas.dispose();
 
-      expect(File('test/golden/layered_transparency.png').existsSync(), isTrue);
+      expect(File('resources/golden/layered_transparency.png').existsSync(), isTrue);
     });
 
     test('Strokes with various joins', () {
@@ -740,10 +740,10 @@ void main() {
       canvas.drawText('Round', 140, 130);
       canvas.drawText('Bevel', 240, 130);
 
-      canvas.saveToPng('test/golden/line_join.png');
+      canvas.saveToPng('resources/golden/line_join.png');
       canvas.dispose();
 
-      expect(File('test/golden/line_join.png').existsSync(), isTrue);
+      expect(File('resources/golden/line_join.png').existsSync(), isTrue);
     });
 
     test('Pattern - checker', () {
@@ -762,10 +762,10 @@ void main() {
         }
       }
 
-      canvas.saveToPng('test/golden/pattern_checker.png');
+      canvas.saveToPng('resources/golden/pattern_checker.png');
       canvas.dispose();
 
-      expect(File('test/golden/pattern_checker.png').existsSync(), isTrue);
+      expect(File('resources/golden/pattern_checker.png').existsSync(), isTrue);
     });
 
     test('Color wheel (HSV)', () {
@@ -792,10 +792,10 @@ void main() {
         canvas.fill();
       }
 
-      canvas.saveToPng('test/golden/color_hsv_wheel.png');
+      canvas.saveToPng('resources/golden/color_hsv_wheel.png');
       canvas.dispose();
 
-      expect(File('test/golden/color_hsv_wheel.png').existsSync(), isTrue);
+      expect(File('resources/golden/color_hsv_wheel.png').existsSync(), isTrue);
     });
   });
 }

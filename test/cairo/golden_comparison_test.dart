@@ -25,7 +25,7 @@ const double kAntialiasingPsnr = 20.0;
 
 void main() {
   setUpAll(() {
-    Directory('test/golden').createSync(recursive: true);
+    Directory('resources/golden').createSync(recursive: true);
     Directory('test/tmp').createSync(recursive: true);
   });
 
@@ -33,7 +33,7 @@ void main() {
     test('shape_heart: DartGraphics vs Cairo - BEZIER CURVES', () {
       final result = compareImages(
         'test/tmp/shape_heart.png',
-        'test/golden/shape_heart.png',
+        'resources/golden/shape_heart.png',
         'shape_heart',
       );
       _printResult('Heart shape (bezier curves)', result);
@@ -44,7 +44,7 @@ void main() {
     test('shape_spiral: DartGraphics vs Cairo - LINE SEGMENTS', () {
       final result = compareImages(
         'test/tmp/shape_spiral.png',
-        'test/golden/shape_spiral.png',
+        'resources/golden/shape_spiral.png',
         'shape_spiral',
       );
       _printResult('Spiral shape (line segments)', result);
@@ -55,7 +55,7 @@ void main() {
     test('shape_bezier: DartGraphics vs Cairo - BEZIER CURVES', () {
       final result = compareImages(
         'test/tmp/shape_bezier.png',
-        'test/golden/shape_bezier.png',
+        'resources/golden/shape_bezier.png',
         'shape_bezier',
       );
       _printResult('Bezier curves', result);
@@ -66,7 +66,7 @@ void main() {
     test('shape_star: DartGraphics vs Cairo - POLYGON', () {
       final result = compareImages(
         'test/tmp/shape_star.png',
-        'test/golden/shape_star.png',
+        'resources/golden/shape_star.png',
         'shape_star',
       );
       _printResult('Star shape (polygon)', result);
@@ -77,7 +77,7 @@ void main() {
     test('shape_concentric: DartGraphics vs Cairo - CIRCLES', () {
       final result = compareImages(
         'test/tmp/shape_concentric.png',
-        'test/golden/shape_concentric.png',
+        'resources/golden/shape_concentric.png',
         'shape_concentric',
       );
       _printResult('Concentric circles', result);
@@ -88,7 +88,7 @@ void main() {
     test('shape_rounded_rects: DartGraphics vs Cairo - ROUNDED RECTANGLES', () {
       final result = compareImages(
         'test/tmp/shape_rounded_rects.png',
-        'test/golden/shape_rounded_rects.png',
+        'resources/golden/shape_rounded_rects.png',
         'shape_rounded_rects',
       );
       _printResult('Rounded rectangles', result);
@@ -101,7 +101,7 @@ void main() {
     test('text_hello_world: DartGraphics vs Cairo - BASIC TEXT', () {
       final result = compareImages(
         'test/tmp/text_hello_world.png',
-        'test/golden/text_hello_world.png',
+        'resources/golden/text_hello_world.png',
         'text_hello_world',
       );
       _printResult('Hello World text', result);
@@ -112,7 +112,7 @@ void main() {
     test('text_outlined: DartGraphics vs Cairo - OUTLINED TEXT', () {
       final result = compareImages(
         'test/tmp/text_outlined.png',
-        'test/golden/text_outlined.png',
+        'resources/golden/text_outlined.png',
         'text_outlined',
       );
       _printResult('Outlined text', result);
@@ -123,7 +123,7 @@ void main() {
     test('text_mixed_styles: DartGraphics vs Cairo - MIXED STYLES', () {
       final result = compareImages(
         'test/tmp/text_mixed_styles.png',
-        'test/golden/text_mixed_styles.png',
+        'resources/golden/text_mixed_styles.png',
         'text_mixed_styles',
       );
       _printResult('Mixed styles text', result);
@@ -140,7 +140,7 @@ void main() {
       
       final result = compareImages(
         'test/tmp/aa_diagonals.png',
-        'test/golden/aa_diagonals.png',
+        'resources/golden/aa_diagonals.png',
         'aa_diagonals',
       );
       _printResult('Diagonal lines AA', result);
@@ -155,7 +155,7 @@ void main() {
       
       final result = compareImages(
         'test/tmp/aa_small_circles.png',
-        'test/golden/aa_small_circles.png',
+        'resources/golden/aa_small_circles.png',
         'aa_small_circles',
       );
       _printResult('Small circles AA', result);

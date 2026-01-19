@@ -21,7 +21,8 @@ bool compareImages(
   bool compareAlpha = false,
 }) {
   final generatedFile = File(generatedPath);
-  final referenceFile = File(referencePath);
+  final resolvedReferencePath = _resolveReferencePath(referencePath);
+  final referenceFile = File(resolvedReferencePath);
 
   if (!generatedFile.existsSync()) {
     print('Generated image not found: $generatedPath');
@@ -91,6 +92,33 @@ bool compareImages(
   }
 
   return true;
+}
+
+String _resolveReferencePath(String referencePath) {
+  final direct = File(referencePath);
+  if (direct.existsSync()) return referencePath;
+
+  final candidates = <String>{};
+
+  if (referencePath.contains('dartgraphics_test_')) {
+    candidates.add(referencePath.replaceAll('dartgraphics_test_', 'agg_test_'));
+  }
+
+  if (referencePath.contains('resources/') && !referencePath.contains('resources/image/')) {
+    final withImage = referencePath.replaceFirst('resources/', 'resources/image/');
+    candidates.add(withImage);
+    if (withImage.contains('dartgraphics_test_')) {
+      candidates.add(withImage.replaceAll('dartgraphics_test_', 'agg_test_'));
+    }
+  }
+
+  for (final path in candidates) {
+    if (File(path).existsSync()) {
+      return path;
+    }
+  }
+
+  return referencePath;
 }
 
 /// Saves a diff image highlighting the differences between two images.

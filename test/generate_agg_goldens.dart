@@ -7,7 +7,7 @@ import 'package:dart_graphics/src/agg/agg.dart';
 // --- Constants ---
 const int kWidth = 250;
 const int kHeight = 250;
-const String kOutDir = 'test/agg_golden';
+const String kOutDir = 'resources/agg_golden';
 
 void main() {
   final agg = Agg();

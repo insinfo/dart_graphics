@@ -25,12 +25,80 @@ class ImageLineRenderer extends LineRenderer {
 
   @override
   void semidot(CompareFunction cmp, int xc1, int yc1, int xc2, int yc2) {
-    // Not implemented
+    final double cx = xc1 / LineAABasics.line_subpixel_scale;
+    final double cy = yc1 / LineAABasics.line_subpixel_scale;
+    final double dx = (xc2 - xc1).toDouble();
+    final double dy = (yc2 - yc1).toDouble();
+
+    final double radius = thickness / 2 + 1.0;
+    final int minX = (cx - radius).floor();
+    final int maxX = (cx + radius).ceil();
+    final int minY = (cy - radius).floor();
+    final int maxY = (cy + radius).ceil();
+
+    for (int y = minY; y <= maxY; y++) {
+      if (y < 0 || y >= _image.height) continue;
+      for (int x = minX; x <= maxX; x++) {
+        if (x < 0 || x >= _image.width) continue;
+        final double px = x + 0.5;
+        final double py = y + 0.5;
+        final double vx = px - cx;
+        final double vy = py - cy;
+        final double dist = math.sqrt(vx * vx + vy * vy);
+        if (dist > radius + 1.0) continue;
+
+        final int signed = (dx * (py - cy) - dy * (px - cx)).round();
+        if (!cmp(signed)) continue;
+
+        double cov = 1.0;
+        if (dist > radius) {
+          cov = (1.0 - (dist - radius)).clamp(0.0, 1.0);
+        }
+        _plot(x, y, cov);
+      }
+    }
   }
 
   @override
   void pie(int x1, int y1, int x2, int y2, int x3, int y3) {
-    // Not needed for simple rendering; noop.
+    final double cx = x1 / LineAABasics.line_subpixel_scale;
+    final double cy = y1 / LineAABasics.line_subpixel_scale;
+    final double ax = (x2 - x1).toDouble();
+    final double ay = (y2 - y1).toDouble();
+    final double bx = (x3 - x1).toDouble();
+    final double by = (y3 - y1).toDouble();
+
+    final double radius = thickness / 2 + 1.0;
+    final int minX = (cx - radius).floor();
+    final int maxX = (cx + radius).ceil();
+    final int minY = (cy - radius).floor();
+    final int maxY = (cy + radius).ceil();
+
+    final double crossAB = ax * by - ay * bx;
+
+    for (int y = minY; y <= maxY; y++) {
+      if (y < 0 || y >= _image.height) continue;
+      for (int x = minX; x <= maxX; x++) {
+        if (x < 0 || x >= _image.width) continue;
+        final double px = x + 0.5 - cx;
+        final double py = y + 0.5 - cy;
+        final double dist = math.sqrt(px * px + py * py);
+        if (dist > radius + 1.0) continue;
+
+        final double crossAP = ax * py - ay * px;
+        final double crossPB = px * by - py * bx;
+        final bool inside = crossAB >= 0
+            ? (crossAP >= 0 && crossPB >= 0)
+            : (crossAP <= 0 && crossPB <= 0);
+        if (!inside) continue;
+
+        double cov = 1.0;
+        if (dist > radius) {
+          cov = (1.0 - (dist - radius)).clamp(0.0, 1.0);
+        }
+        _plot(x, y, cov);
+      }
+    }
   }
 
   @override
@@ -230,12 +298,90 @@ class ProfileLineRenderer extends LineRenderer {
 
   @override
   void semidot(CompareFunction cmp, int xc1, int yc1, int xc2, int yc2) {
-    // Not implemented
+    final double cx = xc1 / _subpixelScale;
+    final double cy = yc1 / _subpixelScale;
+    final double dx = (xc2 - xc1).toDouble();
+    final double dy = (yc2 - yc1).toDouble();
+
+    final double radius = (profile.profileSize() - profile.subpixelScale * 2) /
+        profile.subpixelScale;
+    int minX = (cx - radius - 1).floor();
+    int maxX = (cx + radius + 1).ceil();
+    int minY = (cy - radius - 1).floor();
+    int maxY = (cy + radius + 1).ceil();
+
+    if (clipBox != null) {
+      minX = math.max(minX, clipBox!.left);
+      minY = math.max(minY, clipBox!.bottom);
+      maxX = math.min(maxX, clipBox!.right);
+      maxY = math.min(maxY, clipBox!.top);
+    }
+
+    for (int y = minY; y <= maxY; y++) {
+      if (y < 0 || y >= _image.height) continue;
+      for (int x = minX; x <= maxX; x++) {
+        if (x < 0 || x >= _image.width) continue;
+        final double px = x + 0.5;
+        final double py = y + 0.5;
+        final double vx = px - cx;
+        final double vy = py - cy;
+        final double dist = math.sqrt(vx * vx + vy * vy);
+        final int signed = (dx * (py - cy) - dy * (px - cx)).round();
+        if (!cmp(signed)) continue;
+
+        final int cover = profile.value((dist * _subpixelScale).round());
+        if (cover > 0) {
+          _image.blendPixel(x, y, color, cover);
+        }
+      }
+    }
   }
 
   @override
   void pie(int x1, int y1, int x2, int y2, int x3, int y3) {
-    // Caps handled implicitly by distance-to-segment; nothing extra here.
+    final double cx = x1 / _subpixelScale;
+    final double cy = y1 / _subpixelScale;
+    final double ax = (x2 - x1).toDouble();
+    final double ay = (y2 - y1).toDouble();
+    final double bx = (x3 - x1).toDouble();
+    final double by = (y3 - y1).toDouble();
+
+    final double radius = (profile.profileSize() - profile.subpixelScale * 2) /
+        profile.subpixelScale;
+    int minX = (cx - radius - 1).floor();
+    int maxX = (cx + radius + 1).ceil();
+    int minY = (cy - radius - 1).floor();
+    int maxY = (cy + radius + 1).ceil();
+
+    if (clipBox != null) {
+      minX = math.max(minX, clipBox!.left);
+      minY = math.max(minY, clipBox!.bottom);
+      maxX = math.min(maxX, clipBox!.right);
+      maxY = math.min(maxY, clipBox!.top);
+    }
+
+    final double crossAB = ax * by - ay * bx;
+
+    for (int y = minY; y <= maxY; y++) {
+      if (y < 0 || y >= _image.height) continue;
+      for (int x = minX; x <= maxX; x++) {
+        if (x < 0 || x >= _image.width) continue;
+        final double px = x + 0.5 - cx;
+        final double py = y + 0.5 - cy;
+        final double dist = math.sqrt(px * px + py * py);
+        final double crossAP = ax * py - ay * px;
+        final double crossPB = px * by - py * bx;
+        final bool inside = crossAB >= 0
+            ? (crossAP >= 0 && crossPB >= 0)
+            : (crossAP <= 0 && crossPB <= 0);
+        if (!inside) continue;
+
+        final int cover = profile.value((dist * _subpixelScale).round());
+        if (cover > 0) {
+          _image.blendPixel(x, y, color, cover);
+        }
+      }
+    }
   }
 
   void _renderSegment(int sx, int sy, int ex, int ey) {

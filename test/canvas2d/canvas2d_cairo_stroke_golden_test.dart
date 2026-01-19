@@ -11,8 +11,8 @@ import 'package:dart_graphics/src/dart_graphics/canvas/canvas.dart';
 import 'package:dart_graphics/cairo.dart';
 import '../test_utils/png_golden.dart';
 
-const _triangleGolden = 'test/golden/canvas2d_stroke_triangle.png';
-const _arcGolden = 'test/golden/canvas2d_stroke_arc.png';
+const _triangleGolden = 'resources/golden/canvas2d_stroke_triangle.png';
+const _arcGolden = 'resources/golden/canvas2d_stroke_arc.png';
 
 void _drawStrokeTriangle(dynamic ctx) {
   ctx.fillStyle = 'white';

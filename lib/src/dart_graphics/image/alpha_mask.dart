@@ -49,7 +49,11 @@ class AlphaMaskByteUnclipped implements IAlphaMask {
 
   @override
   void fillHspan(int x, int y, Uint8List dst, int dstIndex, int numPix) {
-    throw UnimplementedError();
+    int maskIndex = m_rbuf.getBufferOffsetXY(x, y);
+    Uint8List mask = m_rbuf.getBuffer();
+    for (int i = 0; i < numPix; i++) {
+      dst[dstIndex++] = mask[maskIndex++];
+    }
   }
 
   @override
@@ -74,12 +78,25 @@ class AlphaMaskByteUnclipped implements IAlphaMask {
 
   @override
   void fillVspan(int x, int y, Uint8List dst, int dstIndex, int numPix) {
-    throw UnimplementedError();
+    int maskIndex = m_rbuf.getBufferOffsetXY(x, y);
+    Uint8List mask = m_rbuf.getBuffer();
+    final stride = m_rbuf.strideInBytes();
+    for (int i = 0; i < numPix; i++) {
+      dst[dstIndex++] = mask[maskIndex];
+      maskIndex += stride;
+    }
   }
 
   @override
   void combineVspan(int x, int y, Uint8List dst, int dstIndex, int numPix) {
-    throw UnimplementedError();
+    int maskIndex = m_rbuf.getBufferOffsetXY(x, y);
+    Uint8List mask = m_rbuf.getBuffer();
+    final stride = m_rbuf.strideInBytes();
+    for (int i = 0; i < numPix; i++) {
+      dst[dstIndex] = (255 + dst[dstIndex] * mask[maskIndex]) >> 8;
+      dstIndex++;
+      maskIndex += stride;
+    }
   }
 }
 
@@ -120,7 +137,41 @@ class AlphaMaskByteClipped implements IAlphaMask {
 
   @override
   void fillHspan(int x, int y, Uint8List dst, int dstIndex, int numPix) {
-    throw UnimplementedError();
+    int xmax = m_rbuf.width - 1;
+    int ymax = m_rbuf.height - 1;
+    int count = numPix;
+
+    if (y < 0 || y > ymax) {
+      Util.memClear(dst, dstIndex, numPix);
+      return;
+    }
+
+    if (x < 0) {
+      count += x;
+      if (count <= 0) {
+        Util.memClear(dst, dstIndex, numPix);
+        return;
+      }
+      Util.memClear(dst, dstIndex, -x);
+      dstIndex -= x;
+      x = 0;
+    }
+
+    if (x + count > xmax) {
+      int rest = x + count - xmax - 1;
+      count -= rest;
+      if (count <= 0) {
+        Util.memClear(dst, dstIndex, numPix);
+        return;
+      }
+      Util.memClear(dst, dstIndex + count, rest);
+    }
+
+    int maskIndex = m_rbuf.getBufferOffsetXY(x, y);
+    Uint8List mask = m_rbuf.getBuffer();
+    for (int i = 0; i < count; i++) {
+      dst[dstIndex++] = mask[maskIndex++];
+    }
   }
 
   @override
@@ -209,11 +260,84 @@ class AlphaMaskByteClipped implements IAlphaMask {
 
   @override
   void fillVspan(int x, int y, Uint8List dst, int dstIndex, int numPix) {
-    throw UnimplementedError();
+    int xmax = m_rbuf.width - 1;
+    int ymax = m_rbuf.height - 1;
+    int count = numPix;
+
+    if (x < 0 || x > xmax) {
+      Util.memClear(dst, dstIndex, numPix);
+      return;
+    }
+
+    if (y < 0) {
+      count += y;
+      if (count <= 0) {
+        Util.memClear(dst, dstIndex, numPix);
+        return;
+      }
+      Util.memClear(dst, dstIndex, -y);
+      dstIndex -= y;
+      y = 0;
+    }
+
+    if (y + count > ymax) {
+      int rest = y + count - ymax - 1;
+      count -= rest;
+      if (count <= 0) {
+        Util.memClear(dst, dstIndex, numPix);
+        return;
+      }
+      Util.memClear(dst, dstIndex + count, rest);
+    }
+
+    int maskIndex = m_rbuf.getBufferOffsetXY(x, y);
+    Uint8List mask = m_rbuf.getBuffer();
+    final stride = m_rbuf.strideInBytes();
+    for (int i = 0; i < count; i++) {
+      dst[dstIndex++] = mask[maskIndex];
+      maskIndex += stride;
+    }
   }
 
   @override
   void combineVspan(int x, int y, Uint8List dst, int dstIndex, int numPix) {
-    throw UnimplementedError();
+    int xmax = m_rbuf.width - 1;
+    int ymax = m_rbuf.height - 1;
+    int count = numPix;
+
+    if (x < 0 || x > xmax) {
+      Util.memClear(dst, dstIndex, numPix);
+      return;
+    }
+
+    if (y < 0) {
+      count += y;
+      if (count <= 0) {
+        Util.memClear(dst, dstIndex, numPix);
+        return;
+      }
+      Util.memClear(dst, dstIndex, -y);
+      dstIndex -= y;
+      y = 0;
+    }
+
+    if (y + count > ymax) {
+      int rest = y + count - ymax - 1;
+      count -= rest;
+      if (count <= 0) {
+        Util.memClear(dst, dstIndex, numPix);
+        return;
+      }
+      Util.memClear(dst, dstIndex + count, rest);
+    }
+
+    int maskIndex = m_rbuf.getBufferOffsetXY(x, y);
+    Uint8List mask = m_rbuf.getBuffer();
+    final stride = m_rbuf.strideInBytes();
+    for (int i = 0; i < count; i++) {
+      dst[dstIndex] = ((dst[dstIndex]) * mask[maskIndex] + 255) >> 8;
+      dstIndex++;
+      maskIndex += stride;
+    }
   }
 }

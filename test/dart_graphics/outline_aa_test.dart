@@ -7,6 +7,7 @@ import 'package:dart_graphics/src/dart_graphics/outline_renderer.dart';
 import 'package:dart_graphics/src/dart_graphics/line_profile_aa.dart';
 import 'package:dart_graphics/src/dart_graphics/line_aa_basics.dart';
 import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
+import 'package:dart_graphics/src/dart_graphics/graphics2D.dart';
 import '../test_utils/png_golden.dart';
 
 void main() {
@@ -41,5 +42,24 @@ void main() {
     PngEncoder.saveImage(buffer, outPath);
 
     expectPngMatchesGolden(outPath, 'resources/outline_aa.png');
+  });
+
+  test('BasicGraphics2D drawLine renders with profile', () {
+    const width = 32;
+    const height = 32;
+
+    final buffer = ImageBuffer(width, height);
+    final g = buffer.newGraphics2D() as BasicGraphics2D;
+    g.clear(Color(255, 255, 255, 255));
+    g.drawLine(4, 16, 28, 16, Color(0, 0, 0, 255), thickness: 6.0);
+
+    final center = buffer.getPixel(16, 16);
+    expect(center.alpha, equals(255));
+    expect(center.red, lessThan(10));
+    expect(center.green, lessThan(10));
+    expect(center.blue, lessThan(10));
+
+    final outside = buffer.getPixel(16, 2);
+    expect(outside, Color(255, 255, 255, 255));
   });
 }

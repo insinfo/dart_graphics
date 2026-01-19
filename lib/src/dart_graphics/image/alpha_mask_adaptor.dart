@@ -44,7 +44,9 @@ class AlphaMaskAdaptor extends ImageProxy {
 
   @override
   void copyHline(int x, int y, int len, Color c) {
-    throw UnimplementedError();
+    reallocSpan(len);
+    m_mask.combineHspanFullCover(x, y, m_span, 0, len);
+    linkedImage.blendSolidHspan(x, y, len, c, m_span, 0);
   }
 
   @override
@@ -63,12 +65,23 @@ class AlphaMaskAdaptor extends ImageProxy {
 
   @override
   void copyVline(int x, int y, int len, Color c) {
-    throw UnimplementedError();
+    reallocSpan(len);
+    m_mask.combineVspan(x, y, m_span, 0, len);
+    linkedImage.blendSolidVspan(x, y, len, c, m_span, 0);
   }
 
   @override
   void blendVline(int x, int y1, int y2, Color c, int cover) {
-    throw UnimplementedError();
+    int len = y2 - y1 + 1;
+    if (cover == coverFull) {
+      reallocSpan(len);
+      m_mask.combineVspan(x, y1, m_span, 0, len);
+      linkedImage.blendSolidVspan(x, y1, len, c, m_span, 0);
+    } else {
+      initSpan(len, cover);
+      m_mask.combineVspan(x, y1, m_span, 0, len);
+      linkedImage.blendSolidVspan(x, y1, len, c, m_span, 0);
+    }
   }
 
   @override
@@ -79,26 +92,43 @@ class AlphaMaskAdaptor extends ImageProxy {
 
   @override
   void blendSolidVspan(int x, int y, int len, Color c, Uint8List covers, int coversIndex) {
-    throw UnimplementedError();
+    m_mask.combineVspan(x, y, covers, coversIndex, len);
+    linkedImage.blendSolidVspan(x, y, len, c, covers, coversIndex);
   }
 
   @override
   void copyColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
-    throw UnimplementedError();
+    reallocSpan(len);
+    m_mask.combineHspanFullCover(x, y, m_span, 0, len);
+    linkedImage.blendColorHspan(x, y, len, colors, colorsIndex, m_span, 0, false);
   }
 
   @override
   void copyColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex) {
-    throw UnimplementedError();
+    reallocSpan(len);
+    m_mask.combineVspan(x, y, m_span, 0, len);
+    linkedImage.blendColorVspan(x, y, len, colors, colorsIndex, m_span, 0, false);
   }
 
   @override
   void blendColorHspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
-    throw UnimplementedError();
+    if (firstCoverForAll) {
+      initSpan(len, covers[coversIndex]);
+    } else {
+      initSpanFromCovers(len, covers, coversIndex);
+    }
+    m_mask.combineHspan(x, y, m_span, 0, len);
+    linkedImage.blendColorHspan(x, y, len, colors, colorsIndex, m_span, 0, false);
   }
 
   @override
   void blendColorVspan(int x, int y, int len, List<Color> colors, int colorsIndex, Uint8List covers, int coversIndex, bool firstCoverForAll) {
-    throw UnimplementedError();
+    if (firstCoverForAll) {
+      initSpan(len, covers[coversIndex]);
+    } else {
+      initSpanFromCovers(len, covers, coversIndex);
+    }
+    m_mask.combineVspan(x, y, m_span, 0, len);
+    linkedImage.blendColorVspan(x, y, len, colors, colorsIndex, m_span, 0, false);
   }
 }

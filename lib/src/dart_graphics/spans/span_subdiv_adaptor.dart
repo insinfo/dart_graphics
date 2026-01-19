@@ -32,7 +32,12 @@ class SpanSubdivAdaptor implements ISpanInterpolator {
 
   @override
   void resynchronize(double xe, double ye, int len) {
-    throw UnimplementedError();
+    m_pos = 0;
+    m_src_x = Util.iround(xe * subpixelScale);
+    m_src_y = ye;
+    m_len = len;
+    if (len > m_subdiv_size) len = m_subdiv_size;
+    m_interpolator.resynchronize(xe, ye, len);
   }
 
   ISpanInterpolator get interpolator => m_interpolator;

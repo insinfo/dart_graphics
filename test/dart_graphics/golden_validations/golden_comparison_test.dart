@@ -8,7 +8,7 @@ import 'package:dart_graphics/src/dart_graphics/image/png_encoder.dart';
 // Constants matching generate_agg_goldens.dart
 const int kWidth = 250;
 const int kHeight = 250;
-const String kGoldenDir = 'test/agg_golden';
+const String kGoldenDir = 'resources/agg_golden';
 
 void main() {
   group('Golden Validations', () {

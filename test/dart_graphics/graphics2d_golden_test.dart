@@ -8,12 +8,12 @@ import 'package:test/test.dart';
 
 import '../test_utils/png_golden.dart';
 
-const _goldenDir = 'test/golden';
+const _goldenDir = 'resources/golden';
 const _tmpDir = 'test/tmp';
 
-const _fillGolden = 'test/golden/graphics2d_fill.png';
-const _strokeGolden = 'test/golden/graphics2d_stroke.png';
-const _gradientGolden = 'test/golden/graphics2d_gradient.png';
+const _fillGolden = 'resources/golden/graphics2d_fill.png';
+const _strokeGolden = 'resources/golden/graphics2d_stroke.png';
+const _gradientGolden = 'resources/golden/graphics2d_gradient.png';
 
 void main() {
   group('Graphics2D goldens', () {

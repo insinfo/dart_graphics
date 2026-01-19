@@ -27,7 +27,7 @@ void main() {
 
   setUpAll(() async {
     Directory('test/tmp').createSync(recursive: true);
-    Directory('test/golden').createSync(recursive: true);
+    Directory('resources/golden').createSync(recursive: true);
 
     // Carregar fonte
     final fontData = await File('resources/fonts/liberation-fonts-ttf-1.07.0/LiberationSans-Regular.ttf').readAsBytes();
@@ -45,10 +45,10 @@ void main() {
       canvas.moveTo(20, 75);
       canvas.showText('o');
 
-      canvas.saveToPng('test/golden/letter_o.png');
+      canvas.saveToPng('resources/golden/letter_o.png');
       canvas.dispose();
 
-      expect(File('test/golden/letter_o.png').existsSync(), isTrue);
+      expect(File('resources/golden/letter_o.png').existsSync(), isTrue);
     });
 
     test('Cairo golden - letra "d"', () {
@@ -60,10 +60,10 @@ void main() {
       canvas.moveTo(20, 75);
       canvas.showText('d');
 
-      canvas.saveToPng('test/golden/letter_d.png');
+      canvas.saveToPng('resources/golden/letter_d.png');
       canvas.dispose();
 
-      expect(File('test/golden/letter_d.png').existsSync(), isTrue);
+      expect(File('resources/golden/letter_d.png').existsSync(), isTrue);
     });
 
     test('Cairo golden - "od"', () {
@@ -75,10 +75,10 @@ void main() {
       canvas.moveTo(10, 75);
       canvas.showText('od');
 
-      canvas.saveToPng('test/golden/letters_od.png');
+      canvas.saveToPng('resources/golden/letters_od.png');
       canvas.dispose();
 
-      expect(File('test/golden/letters_od.png').existsSync(), isTrue);
+      expect(File('resources/golden/letters_od.png').existsSync(), isTrue);
     });
 
     test('DartGraphics - letra "o"', () {
@@ -114,7 +114,7 @@ void main() {
     test('Comparação letra "o" - DartGraphics vs Cairo', () {
       // Carregar imagens
       final DartGraphicsFile = File('test/tmp/letter_o.png');
-      final cairoFile = File('test/golden/letter_o.png');
+      final cairoFile = File('resources/golden/letter_o.png');
 
       if (!DartGraphicsFile.existsSync() || !cairoFile.existsSync()) {
         fail('Imagens não encontradas. Execute os testes de geração primeiro.');
@@ -165,7 +165,7 @@ void main() {
     test('Comparação letra "d" - DartGraphics vs Cairo', () {
       // Carregar imagens
       final DartGraphicsFile = File('test/tmp/letter_d.png');
-      final cairoFile = File('test/golden/letter_d.png');
+      final cairoFile = File('resources/golden/letter_d.png');
 
       if (!DartGraphicsFile.existsSync() || !cairoFile.existsSync()) {
         fail('Imagens não encontradas. Execute os testes de geração primeiro.');

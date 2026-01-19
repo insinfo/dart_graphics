@@ -70,6 +70,18 @@ void main() {
       expect(_clearAndCheckImageFloat(image, ColorF(0, 0, 0, 0)), isTrue);
     });
 
+    test('Graphics2D clear works on float buffer', () {
+      final image = ImageBufferFloat(8, 8);
+      final g = image.newGraphics2D();
+      g.clear(Color(255, 0, 128, 255));
+
+      final pixel = image.getPixel(4, 4);
+      expect(pixel.red, closeTo(1.0, 1e-6));
+      expect(pixel.green, closeTo(0.0, 1e-6));
+      expect(pixel.blue, closeTo(0.5, 1e-6));
+      expect(pixel.alpha, closeTo(1.0, 1e-6));
+    });
+
     test('Contains tests (32-bit buffer)', () {
         final imageToSearch = ImageBuffer(150, 150);
         final graphics = imageToSearch.newGraphics2D() as BasicGraphics2D;
